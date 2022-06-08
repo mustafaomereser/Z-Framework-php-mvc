@@ -78,7 +78,7 @@ How i use parameters? (it's same for Controller's functions)
     })
 ```
 
-#model-doc
+#### model-doc
 ## 0.2 - Model
 ```php
     class User extends Model {
@@ -102,7 +102,7 @@ How i use parameters? (it's same for Controller's functions)
         ], ['id' => 1, 'email' => 'email@mail.com']),
     );
 ```
-#controller-doc
+#### controller-doc
 ## 0.3 - Controller
 ```php
     class ... {
@@ -121,7 +121,7 @@ How i use parameters? (it's same for Controller's functions)
         }
     }
 ```
-#view-doc
+#### view-doc
 ## 0.4 - View
 ```php
     use Core\View;                     // resource/views/main.php template
@@ -133,7 +133,7 @@ How i use parameters? (it's same for Controller's functions)
         <?= View::view('home.list', $view_parameters); ?> // Output: echo $hi; = hey
     </div>
 ```
-#zhelper-doc
+#### zhelper-doc
 ## 0.5 - zhelper
 ```php
     ....
@@ -149,7 +149,7 @@ How i use parameters? (it's same for Controller's functions)
     # Middleware                  // what are u want
     > php zhelper make middleware Test\Test
 ```
-#csrf-doc
+#### csrf-doc
 ## 0.6 - Csrf
 ```php
     // Usage:
@@ -158,7 +158,7 @@ How i use parameters? (it's same for Controller's functions)
     Csrf::unset(); // Destroy csrf token
     Csrf::remainTimeOut(); // How much seconds left for change csrf token
 ```
-#validator-doc
+#### validator-doc
 ## 0.7 - Validator
 ```php
     // In array validate values.
@@ -169,7 +169,7 @@ How i use parameters? (it's same for Controller's functions)
         'test2' => ['same:test1'],
     ]);
 ```
-#middleware-doc
+#### middleware-doc
 ## 0.8 - Middleware
 ```php
     # App\Middlewares\Auth.php
@@ -189,7 +189,7 @@ How i use parameters? (it's same for Controller's functions)
         }
     }
 ```
-#api-doc
+#### api-doc
 ## 0.9 - API
 ```php
     # route/api.php
@@ -200,11 +200,11 @@ How i use parameters? (it's same for Controller's functions)
     // example: http://localhost/api/test?user_token=12345678 (user logged in.)
 ```
 
-#development-doc
+#### development-doc
 ## 1.0 - Development
 --
 
-#run-doc
+#### run-doc
 ## 1.1 - Run Project
 ```php
     ....
