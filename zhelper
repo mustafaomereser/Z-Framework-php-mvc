@@ -45,7 +45,7 @@ function setAsset($asset, $fromPath, $toPath)
         }
     }
 
-    $asset = str_replace(['{namespace}', '{name}', '{table}'], [$namespace, ucfirst($name), lcfirst($name) . "s"], $asset);
+    $asset = str_replace(['{namespace}', '{name}', '{table}'], [$namespace, ucfirst($name), lcfirst($name)], $asset);
 
     @mkdir($toPath . $namespace, 0777, true);
 
