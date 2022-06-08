@@ -1,4 +1,7 @@
 <?php
+
+use Core\Facedas\Config;
+
 function base_path($url = null)
 {
     return dirname(__DIR__) . $url;
@@ -6,7 +9,7 @@ function base_path($url = null)
 
 function public_path($url = null)
 {
-    return base_path('\public_path') . $url;
+    return base_path('\\' . Config::get('app.public')) . $url;
 }
 
 function host()
@@ -36,6 +39,10 @@ function uri()
 function method()
 {
     return strtolower($_REQUEST['_method'] ?? $_SERVER['REQUEST_METHOD']);
+}
+function showMethod($method = "GET")
+{
+    echo '<input type="hidden" name="_method" value="' . strtoupper($method) . '" />';
 }
 
 function ip()

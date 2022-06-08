@@ -1,9 +1,10 @@
 <?php
 
-use Core\View;
+use Core\Csrf;
 ?>
-Home
-<br>
-(test parameter = <?= $test ?>)
-<br>
-<?= View::view('home.include', $view_parameters) ?>
+
+<form>
+    <?= Csrf::csrf(); ?>
+    <?= showMethod('PUT') ?>
+    <button type="submit">Gönder</button>
+</form>

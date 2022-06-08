@@ -8,6 +8,11 @@ class Csrf
 {
     static $timeOut = 120;
 
+    public static function csrf()
+    {
+        echo "<input type='hidden' name='_token' value='" . self::get() . "' />";
+    }
+
     public static function get()
     {
         if (!@$_SESSION['csrf_token'] || time() > @$_SESSION['csrf_token_timeout']) self::set();

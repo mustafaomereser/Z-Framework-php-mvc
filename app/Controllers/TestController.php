@@ -21,7 +21,7 @@ class TestController
      */
     public function show($id)
     {
-        abort(404);
+        return "show: $id";
     }
 
     /** Create page | GET: /create
@@ -29,7 +29,7 @@ class TestController
      */
     public function create()
     {
-        abort(404);
+        return "create";
     }
 
     /** Edit page | GET: /id/edit
@@ -38,7 +38,7 @@ class TestController
      */
     public function edit($id)
     {
-        abort(404);
+        return "edit: $id";
     }
 
     /** POST page | POST: /
@@ -46,7 +46,7 @@ class TestController
      */
     public function store()
     {
-        abort(404);
+        return 'store';
     }
 
     /** Update page | PATCH/PUT: /id
@@ -54,7 +54,7 @@ class TestController
      */
     public function update($id)
     {
-        abort(404);
+        return "update: $id";
     }
 
     /** Delete page | DELETE: /id
@@ -62,6 +62,6 @@ class TestController
      */
     public function delete($id)
     {
-        abort(404);
+        return "delete: $id";
     }
 }
