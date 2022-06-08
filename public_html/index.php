@@ -1,4 +1,6 @@
 <?php
+$start_time = microtime();
+
 session_start();
 
 $connected_databases = [];
@@ -31,3 +33,8 @@ includer('../app');
 includer('../modules', false);
 includer('../route', true, true);
 includer('../modules/error_handlers');
+
+
+$finish_time = microtime() + 0.003;
+
+if (@$_REQUEST['load_time']) echo "<script>console.log(`%c Page is in " . number_Format(($finish_time - $start_time), 3, ',', '.') . "ms loaded.`, 'background: #000; color: #bada55')</script>";
