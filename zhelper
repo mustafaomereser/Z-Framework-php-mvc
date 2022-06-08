@@ -1,0 +1,102 @@
+<?php
+unset($argv[0]);
+$argv = array_values($argv);
+
+function commandParser($commands = null)
+{
+    if (!$commands) return [];
+
+    $data = [];
+    $commands = explode(',', $commands);
+
+    foreach ($commands as $command) {
+        $command = trim($command);
+        $explode = explode('=', $command);
+
+        if (isset($explode[1]))
+            $data[$explode[0]] = $explode[1];
+        else
+            $data[$explode[0]] = true;
+    }
+
+    return $data;
+}
+
+function setAsset($asset, $fromPath, $toPath)
+{
+    $asset = file_get_contents($asset);
+
+    $fPath = $fromPath;
+    if (strstr($fromPath, '/'))
+        $fromPath = explode('/', $fromPath);
+    elseif (strstr($fromPath, '\\'))
+        $fromPath = explode('\\', $fromPath);
+
+    $namespace = "";
+    $name = $fPath;
+    if (is_array($fromPath)) {
+        $namespace = null;
+        $fromPath_count = count($fromPath) - 1;
+        foreach ($fromPath as $key => $val) {
+            if ($key != $fromPath_count)
+                $namespace .= "\\$val";
+            else
+                $name = $val;
+        }
+    }
+
+    $asset = str_replace(['{namespace}', '{name}'], [$namespace, ucfirst($name)], $asset);
+
+    @mkdir($toPath . $namespace, 0777, true);
+
+    $totalPath = ($toPath . $namespace . "\\$name.php");
+
+    blank();
+    if (!file_exists($totalPath)) {
+        file_put_contents($totalPath, $asset);
+        text("'$totalPath' oluşturuldu.", 32);
+    } else {
+        text("'$totalPath' ZATEN MEVCUT!", 31);
+    }
+}
+
+function blank()
+{
+    echo str_repeat("\n", 50);
+}
+
+function text($text, $color = "39")
+{
+    echo "\e[" . $color . "m$text\n\e[39m";
+}
+
+class Make
+{
+    public $toPath = "app";
+    public $makeAssets = "zhelper_assets/make";
+
+    public function controller()
+    {
+        $args = func_get_args()[0];
+        $asset = "$this->makeAssets\Controller";
+        if (@$args['resource']) $asset .= "_resource";
+        setAsset($asset, $args['path'], "$this->toPath\Controllers");
+    }
+
+    public function model()
+    {
+        $args = func_get_args()[0];
+        $asset = "$this->makeAssets/Model";
+        setAsset($asset, $args['path'], "$this->toPath\Models");
+    }
+
+    public function middleware()
+    {
+        $args = func_get_args()[0];
+        $asset = "$this->makeAssets/Middleware";
+        setAsset($asset, $args['path'], "$this->toPath\Middlewares");
+    }
+}
+
+$argv[0] = ucfirst($argv[0]);
+call_user_func([new $argv[0], $argv[1]], array_merge(commandParser(@$argv[3]), ['path' => @$argv[2]]));

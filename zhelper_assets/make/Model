@@ -1,0 +1,10 @@
+<?php
+
+namespace App\Models{namespace};
+
+use Abstracts\Model;
+
+class {name} extends Model
+{
+    public $table = "{name}";
+}
