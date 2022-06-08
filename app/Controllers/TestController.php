@@ -12,7 +12,7 @@ class TestController
      */
     public function index()
     {
-        echo View::view('home.index', ['test' => 'OK'], 'main');
+        return View::view('home.index', ['test' => 'OK'], 'main');
     }
 
     /** Show page | GET: /id

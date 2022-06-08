@@ -69,7 +69,7 @@ class Route
                 abort();
         }
 
-        call_user_func_array($callback, $parameters);
+        echo call_user_func_array($callback, $parameters);
     }
 
     public static function name($name, $data = [])
