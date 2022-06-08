@@ -27,7 +27,6 @@ function includer($_path, $include_in_folder = true, $reverse_include = false, $
 }
 
 includer('../core');
-includer('../abstracts');
 includer('../app');
 includer('../modules', false);
 includer('../route', true, true);

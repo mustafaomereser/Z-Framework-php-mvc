@@ -45,7 +45,7 @@ function setAsset($asset, $fromPath, $toPath)
         }
     }
 
-    $asset = str_replace(['{namespace}', '{name}'], [$namespace, ucfirst($name)], $asset);
+    $asset = str_replace(['{namespace}', '{name}', '{table}'], [$namespace, ucfirst($name), lcfirst($name) . "s"], $asset);
 
     @mkdir($toPath . $namespace, 0777, true);
 
@@ -54,9 +54,9 @@ function setAsset($asset, $fromPath, $toPath)
     blank();
     if (!file_exists($totalPath)) {
         file_put_contents($totalPath, $asset);
-        text("'$totalPath' olusturuldu.", 32);
+        text("'$totalPath' created.", 32);
     } else {
-        text("'$totalPath' ZATEN MEVCUT!", 31);
+        text("'$totalPath' already exists!", 31);
     }
 }
 

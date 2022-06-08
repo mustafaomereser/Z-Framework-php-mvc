@@ -6,5 +6,5 @@ use Core\Abstracts\Model;
 
 class {name} extends Model
 {
-    public $table = "{name}";
+    public $table = "{table}";
 }
