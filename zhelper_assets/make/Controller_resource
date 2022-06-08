@@ -15,7 +15,7 @@ class {name}
      */
     public function index()
     {
-        abort(404);
+        //
     }
 
     /** Show page | GET: /id

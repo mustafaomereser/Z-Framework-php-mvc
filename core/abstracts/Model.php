@@ -1,6 +1,6 @@
 <?php
 
-namespace Abstracts;
+namespace Core\Abstracts;
 
 use Core\Facedas\DB;
 

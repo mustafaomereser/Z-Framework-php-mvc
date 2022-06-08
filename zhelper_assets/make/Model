@@ -2,7 +2,7 @@
 
 namespace App\Models{namespace};
 
-use Abstracts\Model;
+use Core\Abstracts\Model;
 
 class {name} extends Model
 {

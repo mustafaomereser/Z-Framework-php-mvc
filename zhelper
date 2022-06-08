@@ -54,7 +54,7 @@ function setAsset($asset, $fromPath, $toPath)
     blank();
     if (!file_exists($totalPath)) {
         file_put_contents($totalPath, $asset);
-        text("'$totalPath' oluşturuldu.", 32);
+        text("'$totalPath' olusturuldu.", 32);
     } else {
         text("'$totalPath' ZATEN MEVCUT!", 31);
     }
