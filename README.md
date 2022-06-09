@@ -104,6 +104,9 @@ How i use parameters? (it's same for Controller's functions)
             'email' => 'test@mail.com'
         ]),
     ]);
+
+    // Where examples
+    $user->where('id', '=', 1)->where('email', '=', 'test@mail.com', 'OR')->get();
 ```
 #### controller-doc
 ## 0.3 - Controller
