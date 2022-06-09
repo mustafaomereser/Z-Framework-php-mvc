@@ -200,6 +200,17 @@ ALSO you can normal query like /1?test=true
             abort(401);
         }
     }
+
+    // Usage:
+    Middleware::middleware([Auth::class, Guest::class]); // output: false
+    Middleware::middleware([Auth::class]); // if you are logged in      # output: true 
+    Middleware::middleware([Guest::class]); // if you are not logged in # output: true 
+    
+
+    Middleware::middleware([Auth::class, Guest::class], function($declined) {
+        print_r($declined);
+    }); // if you are logged in     # output: Array ('Guest::class')
+        // if you are not logged in # output: Array ('Auth::class')
 ```
 #### api-doc
 ## 0.9 - API
