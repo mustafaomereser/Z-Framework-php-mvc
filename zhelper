@@ -1,7 +1,7 @@
 <?php
+error_reporting(0);
 include('database/connections.php');
 foreach ($databases as $key => $val) $databases[$key] = new PDO($val[0], $val[1], $val[2]);
-
 
 unset($argv[0]);
 $argv = array_values($argv);
@@ -125,11 +125,26 @@ class Db
             $table = $class::$table;
 
             foreach ($columns as $name => $val) {
-                
-            
-                $query = $databases[$class::$db]->query("ALTER TABLE $table ADD $name char(50)")->rowCount();
+                $options = '';
+
+
+                foreach ($val as $switch) switch ($switch) {
+                    case 'primary':
+                        $options .= "PRIMARY KEY ";
+                        break;
+
+                    case 'notnull':
+                        $options .= "NOT NULL ";
+                        break;
+
+                    case 'varchar':
+                        $options .= "VARCHAR (255) ";
+                        break;
+                }
+                $options = trim($options);
+
+                $query = $databases[$class::$db]->query("ALTER TABLE $table ADD $name $options;")->rowCount();
             }
-            
         }
     }
 }
