@@ -18,6 +18,11 @@
 #### route-doc
 ## 0.1 - Route
 ```php
+    // Any METHOD Route
+   Route::any('/', function() {
+        return 'Method: ' . method();
+   });
+    
     // Get METHOD Route
    Route::get('/', function() {
         return 'Hi 👋';
