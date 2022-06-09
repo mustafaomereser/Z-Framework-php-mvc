@@ -51,7 +51,8 @@ function ip()
     return ($_SERVER['HTTP_CLIENT_IP'] ?? ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR']));
 }
 
-function abort($code = 418)
+function abort($code = 418, $message = null)
 {
+    if($message) echo $message;
     die(http_response_code($code));
 }

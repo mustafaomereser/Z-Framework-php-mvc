@@ -1,5 +1,5 @@
 <?php
 return array(
-  'public' => 'public_html',
   'title' => 'Z Framework',
+  'public' => 'public_html',
 );

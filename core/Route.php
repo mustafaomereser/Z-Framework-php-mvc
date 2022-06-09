@@ -40,7 +40,7 @@ class Route
         return compact('parameters', 'uri', 'url');
     }
 
-    private static function call(array $data, $method)
+    private static function call(array $data, $method = null)
     {
         $callback = $data[1] ?? null;
         $options = $data[2] ?? [];
@@ -50,8 +50,8 @@ class Route
         Middleware::middleware($options['middlewares'] ?? []);
         //
 
-        if (($url != $uri || $method != method()) || self::$called == true) return;
-        if (($method != 'get' && @$_REQUEST['_token'] != Csrf::get()) && @$options['no-csrf'] != true) die('CSRF token geçersiz.');
+        if (($url != $uri || ($method && $method != method())) || self::$called == true) return;
+        if ((method() != 'get' && @$_REQUEST['_token'] != Csrf::get()) && @$options['no-csrf'] != true) abort(400, 'CSRF token geçersiz.');
 
 
         self::$called = true;
@@ -77,6 +77,11 @@ class Route
         $url = self::$routes[$name]['url'];
         foreach ($data as $key => $val) $url = str_replace("{" . $key . "}", $val, $url);
         return $url;
+    }
+
+    public static function any()
+    {
+        self::call(func_get_args());
     }
 
     public static function get()
