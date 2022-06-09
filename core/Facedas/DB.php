@@ -40,21 +40,21 @@ class DB
         return $this;
     }
 
-    public function update(array $sets, array $wheres = [])
+    public function update(array $sets)
     {
         $sql_set = '';
-        $sql_where = '';
+        $where = @$this->buildQuery['where'];
 
-        foreach ($sets as $key => $_) $sql_set .= "$key = :$key, ";
-        $sql_set = substr($sql_set, 0, -2);
+        foreach ($sets as $key => $_) {
+            $sql_set .= "$key = :$key, ";
+            $this->buildQuery['data'][$key] = $_;
+        }
+        $sql_set = rtrim($sql_set, ', ');
 
-        foreach ($wheres as $key => $_) $sql_where .= "$key = :$key AND ";
-        $sql_where = substr($sql_where, 0, -5);
-
-        $update = self::prepare("UPDATE $this->table SET $sql_set" . ($sql_where ? " WHERE $sql_where" : null), array_merge($sets, $wheres));
+        $update = self::prepare("UPDATE $this->table SET $sql_set" . ($where ? " WHERE $where" : null), $this->buildQuery['data'] ?? []);
         if ($update) return true;
 
-        die('Veri güncellenemedi.');
+        abort(500);
     }
 
     public function insert(array $data)
@@ -68,7 +68,7 @@ class DB
             return $this->prepare("SELECT * FROM $this->table WHERE id = " . $this->lastID)->fetch(\PDO::FETCH_ASSOC);
         }
 
-        die('Veri yazılamadı.');
+        abort(500);
     }
 
     public function first()
@@ -105,7 +105,7 @@ class DB
     public function buildSQL()
     {
         $select = $this->buildQuery['select'] ?? '*';
-        $where = $this->buildQuery['where'];
+        $where = @$this->buildQuery['where'];
 
         $sql = "SELECT $select FROM $this->table" . ($where ? " WHERE $where" : null);
         return $sql;
@@ -113,6 +113,10 @@ class DB
 
     private function run()
     {
-        return self::prepare(self::buildSQL(), $this->buildQuery['data']);
+        $r = self::prepare(self::buildSQL(), $this->buildQuery['data'] ?? []);
+
+        $this->buildQuery = [];
+
+        return $r;
     }
 }

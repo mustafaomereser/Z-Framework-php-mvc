@@ -40,7 +40,8 @@ function method()
 {
     return strtolower($_REQUEST['_method'] ?? $_SERVER['REQUEST_METHOD']);
 }
-function showMethod($method = "GET")
+
+function inputMethod($method = "GET")
 {
     echo '<input type="hidden" name="_method" value="' . strtoupper($method) . '" />';
 }

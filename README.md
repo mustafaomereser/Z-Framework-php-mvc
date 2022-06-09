@@ -87,20 +87,23 @@ How i use parameters? (it's same for Controller's functions)
     }
     
     // Usage:
+    
+    use App\Models\User;
     $user = new User;
-    print_r(
-        $user->where('id', '=', 1)->get(),
-        $user->where('id', '=', 1)->first(),
-        $user->count(),
-        $user->insert([
+    echo "<pre>";
+    print_r([
+        "get" => $user->get(),
+        "first" => $user->where('id', '=', 1)->first(),
+        "count" => $user->count(),
+        "insert" => $user->insert([
             'username' => 'username',
             'password' => 'password',
             'email' => 'email@mail.com'
         ]),
-        $user->update([
-            'email' => 'changed@mail.com'
-        ], ['id' => 1, 'email' => 'email@mail.com']),
-    );
+        "update" => $user->where('id', '=', 1)->update([
+            'email' => 'test@mail.com'
+        ]),
+    ]);
 ```
 #### controller-doc
 ## 0.3 - Controller

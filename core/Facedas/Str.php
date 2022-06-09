@@ -4,6 +4,12 @@ namespace Core\Facedas;
 
 class Str
 {
+    public static function limit($text, $length = 50, $continue = "...")
+    {
+        if (strlen($text) > $length) $text = substr($text, 0, $length) . $continue;
+        return $text;
+    }
+
     public static function rand($length = 5)
     {
         $q = "QWERTYUIOPASDFHJKLZXCVBNMqwertyuopasdfghjklizxcvbnm0987654321";

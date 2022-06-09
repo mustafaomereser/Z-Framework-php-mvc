@@ -5,6 +5,6 @@ use Core\Csrf;
 
 <form>
     <?= Csrf::csrf(); ?>
-    <?= showMethod('PUT') ?>
+    <?= inputMethod('PUT') ?>
     <button type="submit">Gönder</button>
 </form>

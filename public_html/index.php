@@ -5,7 +5,7 @@ session_start();
 
 $connected_databases = [];
 $databases = [
-    'local' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', null]
+    'local' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123']
 ];
 
 
@@ -38,3 +38,20 @@ includer('../modules/error_handlers');
 $finish_time = microtime() + 0.003;
 
 if (@$_REQUEST['load_time']) echo "<script>console.log(`%c Page is in " . number_Format(($finish_time - $start_time), 3, ',', '.') . "ms loaded.`, 'background: #000; color: #bada55')</script>";
+
+use App\Models\User;
+$user = new User;
+echo "<pre>";
+print_r([
+    "get" => $user->get(),
+    "first" => $user->where('id', '=', 1)->first(),
+    "count" => $user->count(),
+    "insert" => $user->insert([
+        'username' => 'username',
+        'password' => 'password',
+        'email' => 'email@mail.com'
+    ]),
+    "update" => $user->where('id', '=', 1)->update([
+        'email' => 'test@mail.com'
+    ]),
+]);
