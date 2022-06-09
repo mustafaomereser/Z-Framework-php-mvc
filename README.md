@@ -122,7 +122,6 @@ ALSO you can normal query like /1?test=true
         "delete" => $user->where('id', '>', 0)->delete()
     ]);
 
-
     // if you wanna get type class = ->get(true) | ->first(true);
 
     // Where example

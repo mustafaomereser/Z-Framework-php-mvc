@@ -6,8 +6,11 @@ class DB
 {
     private $table;
     private $buildQuery = [];
-
     public $lastID = 0;
+
+    public $attributes = [];
+    public $attrCount = 0;
+
     public function __construct($db = null)
     {
         global $databases;
@@ -38,6 +41,10 @@ class DB
     public function table($table)
     {
         $this->table = $table;
+        // Table columns
+        $this->attributes = $this->prepare("DESCRIBE $this->table")->fetchAll(\PDO::FETCH_COLUMN);
+        $this->attrCount = count($this->attributes);
+        //
         return $this;
     }
 
