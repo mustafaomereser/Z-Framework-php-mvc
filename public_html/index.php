@@ -44,6 +44,17 @@ if (@$_REQUEST['load_time']) echo "<script>console.log(`%c Page is in " . number
 
 $user = new User;
 echo "<pre>";
-print_r(
-    $user->join('RIGHT', 'join_test', ['join_test.user_id', '=', 'users.id'])->select('join_test.id as joinID, users.id as userID')->buildSQL()
-);
+print_r([
+    "get" => $user->get(),
+    "first" => $user->where('id', '=', 1)->first(),
+    "count" => $user->count(),
+    "insert" => $user->insert([
+        'username' => 'username',
+        'password' => 'password',
+        'email' => 'email@mail.com'
+    ]),
+    "update" => $user->where('id', '>', 1)->update([
+        'email' => 'test@mail.com'
+    ]),
+    "delete" => $user->where('id', '>', 0)->delete()
+]);

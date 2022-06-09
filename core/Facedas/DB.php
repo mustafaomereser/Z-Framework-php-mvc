@@ -27,10 +27,11 @@ class DB
         return $databases[$this->db] = new \PDO($databases[$this->db][0], $databases[$this->db][1], $databases[$this->db][2]);
     }
 
+    // Execute
     public function prepare($sql, $data = [])
     {
         $e = $this->db()->prepare($sql);
-        $e->execute($data);
+        $e->execute($this->buildQuery['data'] ?? ($data ?? []));
         return $e;
     }
 
@@ -40,21 +41,8 @@ class DB
         return $this;
     }
 
-    public function update(array $sets)
-    {
-        $sql_set = '';
-        foreach ($sets as $key => $_) {
-            $sql_set .= "$key = :$key, ";
-            $this->buildQuery['data'][$key] = $_;
-        }
-        $sql_set = rtrim($sql_set, ', ');
 
-        $update = self::prepare("UPDATE $this->table SET $sql_set" . $this->getWhere(), $this->buildQuery['data'] ?? []);
-        if ($update) return true;
-
-        abort(500);
-    }
-
+    // Query methods
     public function insert(array $data)
     {
 
@@ -69,14 +57,38 @@ class DB
         abort(500);
     }
 
-    public function first()
+    public function update(array $sets)
     {
-        return self::run()->fetch(\PDO::FETCH_ASSOC);
+        $sql_set = '';
+        foreach ($sets as $key => $_) {
+            $sql_set .= "$key = :$key, ";
+            $this->buildQuery['data'][$key] = $_;
+        }
+        $sql_set = rtrim($sql_set, ', ');
+
+        $update = self::prepare("UPDATE $this->table SET $sql_set" . $this->getWhere())->rowCount();
+        return $update ? 1 : 0;
     }
 
-    public function get()
+    public function delete()
     {
-        return self::run()->fetchAll(\PDO::FETCH_ASSOC);
+        $delete = self::prepare("DELETE FROM $this->table" . $this->getWhere())->rowCount();
+        return $delete ? 1 : 0;
+    }
+
+    // SELECT METHODS
+    public function first($class = false)
+    {
+        self::limit(1);
+        return self::get($class)[0] ?? null;
+    }
+
+    public function get($class = false)
+    {
+        $fetch = \PDO::FETCH_ASSOC;
+        if ($class) $fetch = \PDO::FETCH_CLASS;
+
+        return self::run()->fetchAll($fetch);
     }
 
     public function count()
@@ -170,7 +182,7 @@ class DB
 
     private function run()
     {
-        $r = self::prepare(self::buildSQL(), $this->buildQuery['data'] ?? []);
+        $r = self::prepare(self::buildSQL());
         $this->buildQuery = []; // reset buildQuery
         return $r;
     }

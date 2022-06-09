@@ -119,7 +119,11 @@ ALSO you can normal query like /1?test=true
         "update" => $user->where('id', '=', 1)->update([
             'email' => 'test@mail.com'
         ]),
+        "delete" => $user->where('id', '>', 0)->delete()
     ]);
+
+
+    // if you wanna get type class = ->get(true) | ->first(true);
 
     // Where example
     $user->where('id', '=', 1)->where('email', '=', 'test@mail.com', 'OR')->get();
