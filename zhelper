@@ -1,4 +1,6 @@
 <?php
+// include('public_html/index.php');
+
 unset($argv[0]);
 $argv = array_values($argv);
 
@@ -95,6 +97,21 @@ class Make
         $args = func_get_args()[0];
         $asset = "$this->makeAssets/Middleware";
         setAsset($asset, $args['path'], "$this->toPath\Middlewares");
+    }
+
+    public function migrate()
+    {
+        $args = func_get_args()[0];
+        $asset = "$this->makeAssets/Migration";
+        setAsset($asset, $args['path'], "database\migrations");
+    }
+}
+
+class Db
+{
+    public function migrate()
+    {
+        echo 'sa';
     }
 }
 

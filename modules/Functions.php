@@ -33,7 +33,7 @@ function back()
 
 function uri()
 {
-    return $_SERVER['REQUEST_URI'];
+    return @$_SERVER['REQUEST_URI'];
 }
 
 function method()

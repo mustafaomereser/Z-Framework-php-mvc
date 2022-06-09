@@ -1,0 +1,15 @@
+<?php
+
+namespace Database\Migrations{namespace};
+
+class {name} {
+
+    public $table = "{table}";
+    public $db = 'local';
+
+    public function up() {
+        return [
+            'id' => ['primary']
+        ];
+    }
+}
