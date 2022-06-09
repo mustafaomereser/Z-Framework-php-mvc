@@ -22,7 +22,7 @@ function includer($_path, $include_in_folder = true, $reverse_include = false, $
             include($inc);
     }
 }
-includer('../database/connections.php'); #db connections strings
+include('../database/connections.php'); #db connections strings
 
 // includes
 includer('../core');
@@ -33,5 +33,4 @@ includer('../modules/error_handlers');
 
 
 $finish_time = microtime() + 0.003;
-
-if (@$_REQUEST['load_time']) echo "<script>console.log(`%c Page is in " . number_Format(($finish_time - $start_time), 3, ',', '.') . "ms loaded.`, 'background: #000; color: #bada55')</script>";
+if (@$_REQUEST['load_time']) echo "<script>console.log(`%c Page is in " . number_format(($finish_time - $start_time), 3, ',', '.') . "ms loaded.`, 'background: #000; color: #bada55')</script>";

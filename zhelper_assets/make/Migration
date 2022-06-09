@@ -1,13 +1,12 @@
 <?php
+class {name}
+{
 
-namespace Database\Migrations{namespace};
+    static $table = "{table}";
+    static $db = 'local';
 
-class {name} {
-
-    public $table = "{table}";
-    public $db = 'local';
-
-    public function up() {
+    public static function up()
+    {
         return [
             'id' => ['primary']
         ];

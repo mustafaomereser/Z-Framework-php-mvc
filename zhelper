@@ -116,11 +116,13 @@ class Db
         global $databases;
         $migrations = glob('database/migrations/*.php');
         foreach ($migrations as $inc) {
-            include($inc);
-            $class = ucfirst(strtok(@end(explode('/', $inc)), '.php')) . "::class";
+            $class = include($inc);
+            $class = ucfirst(strtok(@end(explode('/', $inc)), '.php'));
+            if (!class_exists($class)) die(text('There are not migrate class.', 31));
 
-            $migrate = new $class();
-            echo call_user_func($migrate, 'up');
+            // print_r($class::up());
+            // echo $class::$table;
+            // echo $class::$db;
         }
     }
 }
