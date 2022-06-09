@@ -25,17 +25,23 @@ class Route
             self::$routes[] = $inf;
         //
 
+        //
         $uri = explode('/', $_uri);
         $url = explode('/', $_url);
+        unset($uri[0], $url[0]);
+        $url = array_values($url);
+        $uri = array_values($uri);
+        //
 
         $parameters = [];
         foreach ($uri as $key => $val) {
-            if (!$urlVal = @$url[$key]) continue;
-            if ((strstr($urlVal, '{') || strstr($urlVal, '}'))) {
-                $url[$key] = $val;
-                $parameters[str_replace(['{', '}'], '', $urlVal)] = $val;
-            }
+            $urlVal = @$url[$key];
+            if ((!$urlVal || !$val) || !preg_match('/[^a-zA-Z0-9]+/i', $urlVal)) continue;
+
+            $url[$key] = $val;
+            $parameters[str_replace(['{', '}'], '', $urlVal)] = $val;
         }
+
 
         return compact('parameters', 'uri', 'url');
     }
@@ -79,6 +85,13 @@ class Route
         return $url;
     }
 
+    public static function redirect($url, $to)
+    {
+        self::call([$url, function () use ($to) {
+            return redirect($to);
+        }]);
+    }
+
     public static function any()
     {
         self::call(func_get_args());
@@ -114,12 +127,13 @@ class Route
         self::get($url, [$callback, 'index'], $options);
         self::post($url, [$callback, 'store'], $options);
 
+        self::get("$url/create", [$callback, 'create'], $options);
         self::get("$url/{id}", [$callback, 'show'], $options);
         self::get("$url/{id}/edit", [$callback, 'edit'], $options);
-        self::get("$url/create", [$callback, 'create'], $options);
 
         self::patch("$url/{id}", [$callback, 'update'], $options);
         self::put("$url/{id}", [$callback, 'update'], $options);
+
         self::delete("$url/{id}", [$callback, 'delete'], $options);
     }
 }

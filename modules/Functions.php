@@ -53,6 +53,23 @@ function ip()
 
 function abort($code = 418, $message = null)
 {
-    if($message) echo $message;
+    if ($message) echo $message;
     die(http_response_code($code));
+}
+
+function request($name = null)
+{
+    return $name ? @$_REQUEST[$name] : $_REQUEST;
+}
+
+function response($type, $data = [])
+{
+    switch ($type) {
+        case "json":
+            header("Content-Type: application/json");
+            $data = json_encode($data, JSON_UNESCAPED_UNICODE);
+            break;
+    }
+
+    return $data;
 }

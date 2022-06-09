@@ -1,7 +1,7 @@
 <?php
 
+use App\Controllers\TestController;
 use Core\Route;
 
-Route::any('/', function () {
-    echo "1";
-});
+Route::redirect('/test', '/');
+Route::resource('/', TestController::class);

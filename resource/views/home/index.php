@@ -3,8 +3,8 @@
 use Core\Csrf;
 ?>
 
-<form>
+<form method="POST">
     <?= Csrf::csrf(); ?>
-    <?= inputMethod('PUT') ?>
+    <?= inputMethod('PATCH') ?>
     <button type="submit">Gönder</button>
 </form>
