@@ -87,7 +87,7 @@ ALSO you can normal query like /1?test=true
 ### Route Options
 ```php                                                  
                                                         // Last array is Options
-    Route::post('/store', [TestController::class, 'index'], [
+    Route::post('/store', [TestController::class, 'store'], [
         'name' => 'store',
         'no-csrf' => true,
         'middlewares' => [Auth::class]
