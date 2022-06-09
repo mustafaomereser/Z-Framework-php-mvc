@@ -84,6 +84,16 @@ How i use parameters? (it's same for Controller's functions)
 ```
 ALSO you can normal query like /1?test=true
 
+#### Options
+```php                                                  
+                                                        // Last array is Options
+    Route::post('/store', [TestController::class, 'index'], [
+        'name' => 'store',
+        'no-csrf' => true,
+        'middlewares' => [Auth::class]
+    ]);
+```
+
 #### model-doc
 ## 0.2 - Model
 ```php
