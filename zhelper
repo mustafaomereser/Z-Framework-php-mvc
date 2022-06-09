@@ -1,5 +1,7 @@
 <?php
-// include('public_html/index.php');
+include('database/connections.php');
+foreach ($databases as $key => $val) $databases[$key] = new PDO($val[0], $val[1], $val[2]);
+
 
 unset($argv[0]);
 $argv = array_values($argv);
@@ -111,7 +113,15 @@ class Db
 {
     public function migrate()
     {
-        echo 'sa';
+        global $databases;
+        $migrations = glob('database/migrations/*.php');
+        foreach ($migrations as $inc) {
+            include($inc);
+            $class = ucfirst(strtok(@end(explode('/', $inc)), '.php')) . "::class";
+
+            $migrate = new $class();
+            echo call_user_func($migrate, 'up');
+        }
     }
 }
 

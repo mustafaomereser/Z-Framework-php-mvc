@@ -3,9 +3,6 @@ $start_time = microtime();
 session_start();
 
 $connected_databases = [];
-$databases = [
-    'local' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123']
-];
 
 function includer($_path, $include_in_folder = true, $reverse_include = false, $ext = '.php')
 {
@@ -25,7 +22,9 @@ function includer($_path, $include_in_folder = true, $reverse_include = false, $
             include($inc);
     }
 }
+includer('../database/connections.php'); #db connections strings
 
+// includes
 includer('../core');
 includer('../app');
 includer('../modules', false);
