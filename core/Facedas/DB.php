@@ -43,15 +43,13 @@ class DB
     public function update(array $sets)
     {
         $sql_set = '';
-        $where = @$this->buildQuery['where'];
-
         foreach ($sets as $key => $_) {
             $sql_set .= "$key = :$key, ";
             $this->buildQuery['data'][$key] = $_;
         }
         $sql_set = rtrim($sql_set, ', ');
 
-        $update = self::prepare("UPDATE $this->table SET $sql_set" . ($where ? " WHERE $where" : null), $this->buildQuery['data'] ?? []);
+        $update = self::prepare("UPDATE $this->table SET $sql_set" . $this->getWhere(), $this->buildQuery['data'] ?? []);
         if ($update) return true;
 
         abort(500);
@@ -86,6 +84,7 @@ class DB
         return self::run()->rowCount();
     }
 
+    // Build
     public function select($select)
     {
         $this->buildQuery['select'] = $select;
@@ -96,27 +95,83 @@ class DB
     {
         if (strlen(@$this->buildQuery['where']) == 0) $trim = true;
         @$this->buildQuery['where'] .= " $prev $key $operator :$key";
-        if (@$trim) @$this->buildQuery['where'] = substr($this->buildQuery['where'], (strlen($prev) + 1));
+        if (@$trim) @$this->buildQuery['where'] = ltrim($this->buildQuery['where'], " $prev");
 
         $this->buildQuery['data'][$key] = $value;
         return $this;
     }
 
+    private function getWhere()
+    {
+        $where = @$this->buildQuery['where'];
+        return $where ? " WHERE $where " : null;
+    }
+
+    public function orderBy(array $array)
+    {
+        $this->buildQuery['orderBy'] = $array;
+        return $this;
+    }
+
+    private function getOrderBy()
+    {
+        $orderBy = $this->buildQuery['orderBy'] ?? [];
+
+        if (count($orderBy)) {
+            $orderByStr = '';
+            foreach ($orderBy as $column => $order) $orderByStr .= "$column $order, ";
+            $orderByStr = rtrim($orderByStr, ', ');
+            return " ORDER BY $orderByStr ";
+        }
+
+        return null;
+    }
+
+    public function limit(int $startPoint = 0, $getCount = null)
+    {
+        $this->buildQuery['limit'] = $startPoint . ($getCount ? ", $getCount" : null);
+        return $this;
+    }
+
+    private function getLimit()
+    {
+        $limit = @$this->buildQuery['limit'];
+        return $limit ? " LIMIT $limit " : null;
+    }
+
+    public function join($type = null, $table = "", $onArray = [])
+    {
+        if ($type) $type = strtoupper($type);
+
+        if (!in_array($type, [null, 'LEFT', 'OUTER', 'RIGHT', 'FULL'])) abort(500, 'This not acceptable join type.');
+        $this->buildQuery['joins'][] = ($type ? "$type " : null) . "JOIN $table ON " . $onArray[0] . " " . $onArray[1] . " " . $onArray[2];
+        return $this;
+    }
+
+    private function getJoins()
+    {
+        $joins = $this->buildQuery['joins'] ?? [];
+
+        if (count($joins)) {
+            $joinStr = '';
+            foreach ($joins as $join) $joinStr .= " $join ";
+            return " $joinStr ";
+        }
+
+        return null;
+    }
+
     public function buildSQL()
     {
         $select = $this->buildQuery['select'] ?? '*';
-        $where = @$this->buildQuery['where'];
-
-        $sql = "SELECT $select FROM $this->table" . ($where ? " WHERE $where" : null);
+        $sql = trim(str_replace(['  '], [' '], "SELECT $select FROM $this->table" . $this->getJoins() . $this->getWhere() . $this->getOrderBy() . $this->getLimit()));
         return $sql;
     }
 
     private function run()
     {
         $r = self::prepare(self::buildSQL(), $this->buildQuery['data'] ?? []);
-
-        $this->buildQuery = [];
-
+        $this->buildQuery = []; // reset buildQuery
         return $r;
     }
 }

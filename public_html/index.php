@@ -1,4 +1,7 @@
 <?php
+
+use App\Models\User;
+
 $start_time = microtime();
 
 session_start();
@@ -38,3 +41,9 @@ includer('../modules/error_handlers');
 $finish_time = microtime() + 0.003;
 
 if (@$_REQUEST['load_time']) echo "<script>console.log(`%c Page is in " . number_Format(($finish_time - $start_time), 3, ',', '.') . "ms loaded.`, 'background: #000; color: #bada55')</script>";
+
+$user = new User;
+echo "<pre>";
+print_r(
+    $user->join('RIGHT', 'join_test', ['join_test.user_id', '=', 'users.id'])->select('join_test.id as joinID, users.id as userID')->buildSQL()
+);

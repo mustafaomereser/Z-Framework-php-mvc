@@ -3,6 +3,7 @@
 namespace Core\Facedas;
 
 use App\Models\User;
+use Core\Validator;
 
 class Auth
 {
@@ -14,15 +15,16 @@ class Auth
         return true;
     }
 
-    public static function api_login()
+    public static function api_login($token)
     {
         $user = new User;
-        $user = $user->select('id')->where('api_token', '=', $_REQUEST['user_token'])->first();
+        $user = $user->select('id')->where('api_token', '=', $token)->first();
         if (@$user['id']) self::login($user);
     }
 
     public static function logout()
     {
+        self::$user = null;
         unset($_SESSION['user_id']);
     }
 
@@ -34,7 +36,7 @@ class Auth
 
     public static function user()
     {
-        if (!self::check()) return;
+        if (!self::check()) return false;
 
         if (self::$user == null) {
             $user = new User;
@@ -42,5 +44,10 @@ class Auth
         }
 
         return self::$user;
+    }
+
+    public static function id()
+    {
+        return self::user()['id'];
     }
 }

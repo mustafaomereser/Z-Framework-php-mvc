@@ -121,8 +121,21 @@ ALSO you can normal query like /1?test=true
         ]),
     ]);
 
-    // Where examples
+    // Where example
     $user->where('id', '=', 1)->where('email', '=', 'test@mail.com', 'OR')->get();
+
+    // Select example
+    $user->select('id, username')->get();
+
+    // OrderBy example
+    $user->orderBy(['id' => 'ASC', 'username' => 'DESC'])->get();
+    
+    // Limit example args: 10(startCount), 10(rowCount)
+    $user->limit(5, 10)->get();
+
+    // Joins example
+    $user->join('LEFT|RIGHT|OUTER|FULL|NULL', 'table_name', ['table_name.id', '=', 'this_table.id'])->get();
+
 ```
 #### controller-doc
 ## 0.3 - Controller
@@ -227,7 +240,7 @@ ALSO you can normal query like /1?test=true
 ```php
     # route/api.php
     Route::get('/test', function () {
-        echo "API page user_id: ".Auth::user()['id'];
+        echo "API Page / user_id: " . Auth::id();
     });
     
     // example: http://localhost/api/test?user_token=12345678 (user logged in.)
