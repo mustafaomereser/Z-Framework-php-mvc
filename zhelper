@@ -143,7 +143,7 @@ class Db
                 }
                 $options = trim($options);
 
-                $query = $databases[$class::$db]->query("ALTER TABLE $table ADD $name $options;")->rowCount();
+                $query = $databases[$class::$db]->query("ALTER TABLE $table ADD $name $options")->rowCount();
             }
         }
     }
