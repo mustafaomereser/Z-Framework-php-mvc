@@ -82,6 +82,7 @@ How i use parameters? (it's same for Controller's functions)
         return "ID: $id";
     })
 ```
+ALSO you can normal query like /1?test=true
 
 #### model-doc
 ## 0.2 - Model
