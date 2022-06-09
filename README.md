@@ -84,7 +84,7 @@ How i use parameters? (it's same for Controller's functions)
 ```
 ALSO you can normal query like /1?test=true
 
-#### Options
+### Route Options
 ```php                                                  
                                                         // Last array is Options
     Route::post('/store', [TestController::class, 'index'], [
