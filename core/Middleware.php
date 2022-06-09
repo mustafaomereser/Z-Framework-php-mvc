@@ -6,15 +6,16 @@ class Middleware
 {
     public static function middleware($middlewares, $callback = null)
     {
-        $declined = 0;
+        $declined = [];
 
         foreach ($middlewares as $middleware) {
-            $middleware = new $middleware();
-            if (!call_user_func_array([$middleware, '__construct'], [])) {
-                $declined++;
-                call_user_func_array([$middleware, 'error'], []);
+            $call = new $middleware();
+            if (!call_user_func_array([$call, '__construct'], [])) {
+                $declined[] = $middleware;
+                call_user_func_array([$call, 'error'], []);
             }
         }
-        return $callback ? $callback($declined) : ($declined ? false : true);
+
+        return $callback ? $callback($declined) : (count($declined) ? false : true);
     }
 }
