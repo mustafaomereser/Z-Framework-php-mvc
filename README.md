@@ -91,7 +91,7 @@
 ```
 
 
-Callback function can be a Controller class example:
+#### Callback function can be a Controller class example:
 ```php
     // App\Controllers\TestController.php
     class ...{
@@ -102,7 +102,7 @@ Callback function can be a Controller class example:
     // Route/web.php
     Route::get('/', [TestController::class, 'index']);
 ```
-### 1.2.2. How i use parameters? (it's same for Controller's functions)
+#### 1.2.2. How i use parameters? (it's same for Controller's functions)
 ```php
     Route::get('/{id}', function($id) {
         return "ID: $id";
