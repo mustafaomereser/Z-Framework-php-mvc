@@ -207,8 +207,10 @@ class Db
                 unset($tryModify);
             }
 
-            foreach ($dropColumns as $drop) $db->exec("ALTER TABLE $table DROP COLUMN $drop");
-
+            foreach ($dropColumns as $drop) {
+                $query = $db->exec("ALTER TABLE $table DROP COLUMN $drop");
+                text("Dropped column: $drop", 33);
+            }
             text("\nMigrate finish.", 32);
         }
     }
