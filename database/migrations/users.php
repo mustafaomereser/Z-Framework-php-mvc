@@ -8,7 +8,10 @@ class Users
     public static function up()
     {
         return [
-            'id' => ['primary']
+            'id' => ['primary'],
+            'username' => ['varchar:52', 'charset:utf8:general_ci'],
+            'password' => ['varchar:50', 'charset:utf8:general_ci'],
+            'email' => ['varchar:50', 'charset:utf8:general_ci', 'unique'],
         ];
     }
 }

@@ -1,5 +1,6 @@
 <?php
-error_reporting(0);
+blank();
+// error_reporting(0);
 include('database/connections.php');
 foreach ($databases as $key => $val) $databases[$key] = new PDO($val[0], $val[1], $val[2]);
 
@@ -84,28 +85,28 @@ class Make
         $args = func_get_args()[0];
         $asset = "$this->makeAssets\Controller";
         if (@$args['resource']) $asset .= "_resource";
-        setAsset($asset, $args['path'], "$this->toPath\Controllers");
+        setAsset($asset, $args['firstCommand'], "$this->toPath\Controllers");
     }
 
     public function model()
     {
         $args = func_get_args()[0];
         $asset = "$this->makeAssets/Model";
-        setAsset($asset, $args['path'], "$this->toPath\Models");
+        setAsset($asset, $args['firstCommand'], "$this->toPath\Models");
     }
 
     public function middleware()
     {
         $args = func_get_args()[0];
         $asset = "$this->makeAssets/Middleware";
-        setAsset($asset, $args['path'], "$this->toPath\Middlewares");
+        setAsset($asset, $args['firstCommand'], "$this->toPath\Middlewares");
     }
 
     public function migrate()
     {
         $args = func_get_args()[0];
         $asset = "$this->makeAssets/Migration";
-        setAsset($asset, $args['path'], "database\migrations");
+        setAsset($asset, $args['firstCommand'], "database\migrations");
     }
 }
 
@@ -114,6 +115,7 @@ class Db
     public function migrate()
     {
         global $databases;
+        $args = func_get_args()[0];
 
         $migrations = glob('database/migrations/*.php');
         foreach ($migrations as $inc) {
@@ -123,31 +125,90 @@ class Db
 
             $columns = $class::up();
             $table = $class::$table;
+            $db = $databases[$class::$db];
+
+            $initColumnName = "table_initilazing";
+
+            if ($args['firstCommand'] == 'fresh') {
+                $db->exec("DROP TABLE $table");
+                $db->exec("CREATE TABLE $table ($initColumnName int DEFAULT 1 NOT NULL)");
+                $dropInitColumn = true;
+            }
 
             foreach ($columns as $name => $val) {
                 $options = '';
+                $extras = '';
 
+                foreach ($val as $switch) {
+                    $switch = explode(':', $switch);
+                    switch ($switch[0]) {
+                        case 'primary':
+                            $options .= "INT PRIMARY KEY AUTO_INCREMENT ";
+                            // $extras .= "ADD PRIMARY KEY (`$name`) ";
+                            break;
 
-                foreach ($val as $switch) switch ($switch) {
-                    case 'primary':
-                        $options .= "PRIMARY KEY ";
-                        break;
+                        case 'required':
+                            $options .= "NOT NULL ";
+                            break;
 
-                    case 'notnull':
-                        $options .= "NOT NULL ";
-                        break;
+                        case 'nullable':
+                            $options .= "NULL ";
+                            break;
 
-                    case 'varchar':
-                        $options .= "VARCHAR (255) ";
-                        break;
+                        case 'unique':
+                            $db->exec("ALTER TABLE $table DROP index $name;");
+                            $extras .= "ADD UNIQUE (`$name`) ";
+                            break;
+
+                        case 'text':
+                            $options .= "TEXT ";
+                            break;
+
+                        case 'int':
+                            $options .= "INT ";
+                            break;
+
+                        case 'varchar':
+                            $options .= "VARCHAR(" . ($switch[1] ?? 255) . ") ";
+                            break;
+
+                        case 'default':
+                            $options .= "DEFAULT" . (@$switch[1] ? "(`" . $switch[1] . "`)" : ' NULL') . " ";
+                            break;
+
+                        case 'charset':
+                            $options .= "CHARACTER SET " . $switch[1] . " COLLATE " . $switch[1] . "_" . $switch[2] . " ";
+                            break;
+                    }
                 }
-                $options = trim($options);
 
-                $query = $databases[$class::$db]->query("ALTER TABLE $table ADD $name $options")->rowCount();
+                $options = trim($options);
+                $extras = trim($extras);
+
+                $buildSQL = "ALTER TABLE $table ADD $name $options" . ($extras ? ", $extras" : null) . ";";
+                $query = $db->exec($buildSQL);
+
+                if (!is_numeric($query)) {
+                    $buildSQL = str_replace("$table ADD", "$table MODIFY", $buildSQL);
+                    $tryModify = $db->exec($buildSQL);
+
+                    if (!is_numeric($tryModify)) {
+                        unset($tryModify);
+                        text("(Maybe everything same) (Failure) $name | SQL: $buildSQL", 31);
+                        continue;
+                    }
+                }
+
+                text("(" . (isset($tryModify) && is_numeric($tryModify) ? 'Modified' : 'Added') . " Success) $name ", 32);
+                unset($tryModify);
             }
+
+            if (isset($dropInitColumn) && $dropInitColumn) $db->exec("ALTER TABLE $table DROP COLUMN $initColumnName");
+
+            text("\nMigrate finish.", 32);
         }
     }
 }
 
 $argv[0] = ucfirst($argv[0]);
-call_user_func([new $argv[0], $argv[1]], array_merge(commandParser(@$argv[3]), ['path' => @$argv[2]]));
+call_user_func([new $argv[0], $argv[1]], array_merge(commandParser(@$argv[3]), ['firstCommand' => @$argv[2]]));
