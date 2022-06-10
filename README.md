@@ -65,6 +65,31 @@
    |   /{id}      |   DELETE  | delete($id)    |
    |-------------------------------------------|
 ```
+### Form examples
+
+```html
+    <!-- for store() method -->
+    <form method="POST">
+        <?= Csrf::csrf() ?>
+        <input type="submit">
+    </form>
+
+    <!-- for update() method -->
+    <form action="/1" method="POST">
+        <?= Csrf::csrf() ?>
+        <?= inputMethod('PATCH') ?>
+        <input type="submit">
+    </form>
+
+    <!-- for delete() method -->
+    <form action="/1" method="POST">
+        <?= Csrf::csrf() ?>
+        <?= inputMethod('DELETE') ?>
+        <input type="submit">
+    </form>
+```
+
+
 Callback function can be a Controller class example:
 ```php
     // App\Controllers\TestController.php
