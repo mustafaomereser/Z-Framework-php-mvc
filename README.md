@@ -1,21 +1,24 @@
-<!-- # Z Framework (V1.0.1)
+# Z Framework (V1.0.1)
 ### Easiest, fastest PHP framework. (Simple)
 
-## Features -->
+## Features
 
-- [1. Route](#1-route)
-  - [1.1. Form examples](#11-form-examples)
-  - [1.2. Route Options](#12-route-options)
-- [2. Model](#2-model)
-- [3. Controller](#3-controller)
-- [4. View](#4-view)
-- [5. zhelper](#5-zhelper)
-- [6. Csrf](#6-csrf)
-- [7. Validator](#7-validator)
-- [8. Middleware](#8-middleware)
-- [9. API](#9-api)
-- [## 10. Development](#-10-development)
-- [11. Run Project](#11-run-project)
+- [Z Framework (V1.0.1)](#z-framework-v101)
+    - [Easiest, fastest PHP framework. (Simple)](#easiest-fastest-php-framework-simple)
+  - [Features](#features)
+  - [1. Route](#1-route)
+    - [1.1. Form examples](#11-form-examples)
+    - [1.2. Route Options](#12-route-options)
+  - [2. Model](#2-model)
+  - [3. Controller](#3-controller)
+  - [4. View](#4-view)
+  - [5. zhelper](#5-zhelper)
+  - [6. Csrf](#6-csrf)
+  - [7. Validator](#7-validator)
+  - [8. Middleware](#8-middleware)
+  - [9. API](#9-api)
+  - [## 10. Development](#-10-development)
+  - [11. Run Project](#11-run-project)
 
 ## 1. Route
 ```php
