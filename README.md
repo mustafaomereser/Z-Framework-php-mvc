@@ -14,7 +14,7 @@
   - [7. Validator](#7-validator)
   - [8. Middleware](#8-middleware)
   - [9. API](#9-api)
-  - [## 10. Development](#-10-development)
+  - [## 10. Development](#10-development)
   - [11. Run Project](#11-run-project)
 
 ## 1. Route
