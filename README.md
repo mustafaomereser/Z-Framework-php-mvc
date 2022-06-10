@@ -54,17 +54,18 @@
    
    
     Resource Route list:
-   |-------------------------------------------|
-   | URL                                         | METHOD    | Callback Function |
-   | ------------------------------------------- |
-   | /                                           | GET       | index()           |
-   | /                                           | POST      | store()           |
-   | /{id}                                       | GET       | show($id)         |
-   | /{id}/edit                                  | GET       | edit($id)         |
-   | /create                                     | GET       | create()          |
-   | /{id}                                       | PUT/PATCH | update($id)       |
-   | /{id}                                       | DELETE    | delete($id)       |
-   | ------------------------------------------- |
+   
+    |--------------------------------------------|
+    | URL        | METHOD    | Callback Function |
+    |------------|-----------|-------------------|
+    | /          | GET       | index()           |
+    | /          | POST      | store()           |
+    | /{id}      | GET       | show($id)         |
+    | /{id}/edit | GET       | edit($id)         |
+    | /create    | GET       | create()          |
+    | /{id}      | PUT/PATCH | update($id)       |
+    | /{id}      | DELETE    | delete($id)       |
+    |--------------------------------------------|
 ```
 ### 1.1. Form examples
 
