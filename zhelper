@@ -102,7 +102,7 @@ class Make
         setAsset($asset, $args['firstCommand'], "$this->toPath\Middlewares");
     }
 
-    public function migrate()
+    public function migration()
     {
         $args = func_get_args()[0];
         $asset = "$this->makeAssets/Migration";
@@ -189,7 +189,7 @@ class Db
                     }
                 }
 
-                $buildSQL = str_replace('  ', ' ', ("ALTER TABLE $table ADD $name " . (@$data['type'] . @$data['charset'] . @$data['nullstatus'] . @$data['default'] . @$data['index']) . (isset($data['extras']) ? ", " . implode(', ', $data['extras']) : null) . ";"));
+                $buildSQL = str_replace(['  ', ' ;'], [' ', ';'], ("ALTER TABLE $table ADD $name " . (@$data['type'] . @$data['charset'] . @$data['nullstatus'] . @$data['default'] . @$data['index']) . (isset($data['extras']) ? ", " . implode(', ', $data['extras']) : null) . ";"));
                 $query = $db->exec($buildSQL);
 
                 if (!is_numeric($query)) {

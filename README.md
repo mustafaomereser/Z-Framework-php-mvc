@@ -186,6 +186,14 @@ ALSO you can normal query like /1?test=true
     
     # Middleware                  // what are u want
     > php zhelper make middleware Test\Test
+
+    # Database Migration          // what are u want
+    > php zhelper make migration Users
+
+
+    # Database Migrator:
+    php zhelper db migrate // output: just add/modify after changes columns.
+    php zhelper db migrate fresh // output: reset table and write all columns.
 ```
 #### csrf-doc
 ## 0.6 - Csrf
