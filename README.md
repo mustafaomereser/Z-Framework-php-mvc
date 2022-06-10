@@ -1,7 +1,7 @@
-# 1. Z Framework (V1.0.1)
-### 1.0.1. Easiest, fastest PHP framework. (Simple)
+# Z Framework (V1.0.1)
+### Easiest, fastest PHP framework. (Simple)
 
-## 1.1. Features
+## Features
 
   - [1. Route](#1-route)
     - [1.1. Form examples](#11-form-examples)
@@ -17,7 +17,7 @@
   - [## 10. Development](#-10-development)
   - [11. Run Project](#11-run-project)
 
-## 1.2. Route
+## 1. Route
 ```php
     // Any METHOD Route
    Route::any('/', function() {
@@ -66,7 +66,7 @@
    | /{id}                                       | DELETE    | delete($id)       |
    | ------------------------------------------- |
 ```
-### 1.2.1. Form examples
+### 1.1. Form examples
 
 ```html
     <!-- for store() method -->
@@ -91,7 +91,7 @@
 ```
 
 
-#### Callback function can be a Controller class example:
+Callback function can be a Controller class example:
 ```php
     // App\Controllers\TestController.php
     class ...{
@@ -102,7 +102,7 @@
     // Route/web.php
     Route::get('/', [TestController::class, 'index']);
 ```
-#### 1.2.2. How i use parameters? (it's same for Controller's functions)
+How i use parameters? (it's same for Controller's functions)
 ```php
     Route::get('/{id}', function($id) {
         return "ID: $id";
@@ -110,7 +110,7 @@
 ```
 ALSO you can normal query like /1?test=true
 
-### 1.2.3. Route Options
+### 1.2. Route Options
 ```php                                                  
                                                         // Last array is Options
     Route::post('/store', [TestController::class, 'store'], [
@@ -119,7 +119,7 @@ ALSO you can normal query like /1?test=true
         'middlewares' => [Auth::class]
     ]);
 ```
-## 1.3. Model
+## 2. Model
 ```php
     class User extends Model {
         public $table = "users";
@@ -164,7 +164,7 @@ ALSO you can normal query like /1?test=true
     $user->join('LEFT|RIGHT|OUTER|FULL|NULL', 'table_name', ['table_name.id', '=', 'this_table.id'])->get();
 
 ```
-## 1.4. Controller
+## 3. Controller
 ```php
     class ... {
         public function __construct() {
@@ -182,7 +182,7 @@ ALSO you can normal query like /1?test=true
         }
     }
 ```
-## 1.5. View
+## 4. View
 ```php
     use Core\View;                     // resource/views/main.php template
     echo View::view('home.index', ['hi' => 'hey'], 'main');
@@ -193,7 +193,7 @@ ALSO you can normal query like /1?test=true
         <?= View::view('home.list', $view_parameters); ?> // Output: echo $hi; = hey
     </div>
 ```
-## 1.6. zhelper
+## 5. zhelper
 ```php
     ....
     C:\Users\...\Desktop\Project>php zhelper
@@ -216,7 +216,7 @@ ALSO you can normal query like /1?test=true
     php zhelper db migrate // output: just add/modify after changes columns.
     php zhelper db migrate fresh // output: reset table and write all columns.
 ```
-## 1.7. Csrf
+## 6. Csrf
 ```php
     // Usage:
     Csrf::get(); // Output: random_csrf_string
@@ -224,7 +224,7 @@ ALSO you can normal query like /1?test=true
     Csrf::unset(); // Destroy csrf token
     Csrf::remainTimeOut(); // How much seconds left for change csrf token
 ```
-## 1.8. Validator
+## 7. Validator
 ```php
     // In array validate values.
     // Current: type, required, max, min, same.
@@ -234,7 +234,7 @@ ALSO you can normal query like /1?test=true
         'test2' => ['same:test1'],
     ]);
 ```
-##  1.9. Middleware
+##  8. Middleware
 ```php
     # App\Middlewares\Auth.php
     # Validate first and go on.
@@ -265,7 +265,7 @@ ALSO you can normal query like /1?test=true
         // if you are not logged in # output: Array ('Auth::class')
 ```
 
-## 1.10. API
+## 9. API
 ```php
     # route/api.php
     Route::get('/test', function () {
@@ -274,10 +274,10 @@ ALSO you can normal query like /1?test=true
     // example: http://localhost/api/test?user_token=12345678 (user logged in.)
 ```
 
-## 1.11. Development
+## 10. Development
 --
 
-## 1.12. Run Project
+## 11. Run Project
 ```php
     ....
     C:\Users\...\Desktop\Project>php run (press enter)
