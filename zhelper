@@ -123,17 +123,24 @@ class Db
             $class = ucfirst(strtok(@end(explode('/', $inc)), '.php'));
             if (!class_exists($class)) die(text('There are not migrate class.', 31));
 
+            // settings
             $columns = $class::up();
             $table = $class::$table;
             $db = $databases[$class::$db];
+            //
+            text("\n$table migrating:", 33);
 
-            $initColumnName = "table_initilazing";
+            $dropColumns = [];
 
             if ($args['firstCommand'] == 'fresh') {
+                $initColumnName = "table_initilazing";
                 $db->exec("DROP TABLE $table");
                 $db->exec("CREATE TABLE $table ($initColumnName int DEFAULT 1 NOT NULL)");
-                $dropInitColumn = true;
             }
+
+            $tableAttributes = $db->query("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
+            foreach ($tableAttributes as $val) if (!isset($columns[$val])) $dropColumns[] = $val;
+
 
             foreach ($columns as $name => $val) {
                 $options = '';
@@ -203,7 +210,7 @@ class Db
                 unset($tryModify);
             }
 
-            if (isset($dropInitColumn) && $dropInitColumn) $db->exec("ALTER TABLE $table DROP COLUMN $initColumnName");
+            foreach ($dropColumns as $drop) $db->exec("ALTER TABLE $table DROP COLUMN $drop");
 
             text("\nMigrate finish.", 32);
         }
