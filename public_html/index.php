@@ -1,7 +1,4 @@
 <?php
-
-use Core\Facedas\Lang;
-
 $start_time = microtime();
 session_start();
 
@@ -38,8 +35,10 @@ includer('../modules/error_handlers');
 $finish_time = microtime() + 0.003;
 if (@$_REQUEST['load_time']) echo "<script>console.log(`%c Page is in " . number_format(($finish_time - $start_time), 3, ',', '.') . "ms loaded.`, 'background: #000; color: #bada55')</script>";
 
+use Core\Facedas\Lang;
+
 Lang::locale('en');
-echo Lang::get('lang.test');
+echo Lang::get('lang.test') . "<br>";
 
 Lang::locale('tr');
 echo Lang::get('lang.test');
