@@ -124,7 +124,7 @@ class Db
             if (!class_exists($class)) die(text('There are not migrate class.', 31));
 
             // settings
-            $columns = $class::up();
+            $columns = $class::columns();
             $table = $class::$table;
             $db = $databases[$class::$db];
             //

@@ -4,7 +4,7 @@ class Users
     static $table = "users";
     static $db = 'local';
 
-    public static function up()
+    public static function columns()
     {
         return [
             'id' => ['primary'],
