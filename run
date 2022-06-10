@@ -1,0 +1,13 @@
+<?php
+$public = include('config/app.php');
+$public = $public['public'];
+chdir($public);
+
+$server = getHostByName(getHostName()) ?? '127.0.0.1';
+$port = 1000;
+
+shell_exec("start http://$server:$port");
+
+echo str_repeat("\n", 100);
+echo "\e[33mServer running on \e[32m`" . getHostName() . "`\e[33m host: \e[31m\n";
+shell_exec("php -S $server:$port");

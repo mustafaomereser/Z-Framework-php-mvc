@@ -290,5 +290,5 @@ ALSO you can normal query like /1?test=true
 ## 1.1 - Run Project
 ```php
     ....
-    C:\Users\...\Desktop\Project>run (press enter)
+    C:\Users\...\Desktop\Project>php run (press enter)
 ```
