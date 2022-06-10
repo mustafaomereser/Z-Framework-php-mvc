@@ -143,56 +143,53 @@ class Db
 
 
             foreach ($columns as $name => $val) {
-                $options = '';
-                $extras = '';
+                $data = [
+                    'type' => 'INT'
+                ];
+                $db->exec("ALTER TABLE $table DROP index $name;");
 
                 foreach ($val as $switch) {
                     $switch = explode(':', $switch);
                     switch ($switch[0]) {
                         case 'primary':
-                            $options .= "INT PRIMARY KEY AUTO_INCREMENT ";
-                            // $extras .= "ADD PRIMARY KEY (`$name`) ";
+                            $data['index'] = " PRIMARY KEY AUTO_INCREMENT ";
                             break;
 
                         case 'required':
-                            $options .= "NOT NULL ";
+                            $data['nullstatus'] = " NOT NULL ";
                             break;
 
                         case 'nullable':
-                            $options .= "NULL ";
+                            $data['nullstatus'] = " NULL ";
                             break;
 
                         case 'unique':
-                            $db->exec("ALTER TABLE $table DROP index $name;");
-                            $extras .= "ADD UNIQUE (`$name`) ";
+                            $data['extras'][] = " ADD UNIQUE (`$name`) ";
                             break;
 
                         case 'text':
-                            $options .= "TEXT ";
+                            $data['type'] = " TEXT ";
                             break;
 
                         case 'int':
-                            $options .= "INT ";
+                            $data['type'] = " INT ";
                             break;
 
                         case 'varchar':
-                            $options .= "VARCHAR(" . ($switch[1] ?? 255) . ") ";
+                            $data['type'] = " VARCHAR(" . ($switch[1] ?? 255) . ") ";
                             break;
 
                         case 'default':
-                            $options .= "DEFAULT" . (@$switch[1] ? "(`" . $switch[1] . "`)" : ' NULL') . " ";
+                            $data['default'] = " DEFAULT" . (@$switch[1] ? "(`" . $switch[1] . "`)" : ' NULL') . " ";
                             break;
 
                         case 'charset':
-                            $options .= "CHARACTER SET " . $switch[1] . " COLLATE " . $switch[1] . "_" . $switch[2] . " ";
+                            $data['charset'] =  " CHARACTER SET " . $switch[1] . " COLLATE " . $switch[1] . "_" . $switch[2] . " ";
                             break;
                     }
                 }
 
-                $options = trim($options);
-                $extras = trim($extras);
-
-                $buildSQL = "ALTER TABLE $table ADD $name $options" . ($extras ? ", $extras" : null) . ";";
+                $buildSQL = str_replace('  ', ' ', ("ALTER TABLE $table ADD $name " . (@$data['type'] . @$data['charset'] . @$data['nullstatus'] . @$data['default'] . @$data['index']) . (isset($data['extras']) ? ", " . implode(', ', $data['extras']) : null) . ";"));
                 $query = $db->exec($buildSQL);
 
                 if (!is_numeric($query)) {

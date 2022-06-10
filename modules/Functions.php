@@ -38,7 +38,7 @@ function uri()
 
 function method()
 {
-    return strtolower($_REQUEST['_method'] ?? $_SERVER['REQUEST_METHOD']);
+    return strtolower($_POST['_method'] ?? $_SERVER['REQUEST_METHOD']);
 }
 
 function inputMethod($method = "GET")
