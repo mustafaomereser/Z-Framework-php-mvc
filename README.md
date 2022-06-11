@@ -1,12 +1,13 @@
-### Z Framework (V1.0.1)
-### Easiest, fastest PHP framework. (Simple)
+### 0.1. Z Framework (V1.0.1)
+### 0.2. Easiest, fastest PHP framework. (Simple)
 
-### Document
+### 0.3. Document
 - [1. Route](#1-route)
   - [1.1. Form examples](#11-form-examples)
   - [1.2. Route Options](#12-route-options)
   - [1.3. Find Route's Url](#13-find-routes-url)
 - [2. Model](#2-model)
+  - [2.1. Database Migrate](#21-database-migrate)
 - [3. Controller](#3-controller)
 - [4. View](#4-view)
 - [5. zhelper](#5-zhelper)
@@ -200,6 +201,46 @@ ALSO you can normal query like /1?test=true
     $user->join('LEFT|RIGHT|OUTER|FULL|NULL', 'table_name', ['table_name.id', '=', 'this_table.id'])->get();
 
 ```
+### 2.1. Database Migrate
+```php
+    // Folder path: database/migrations
+
+    // Example: (that file is real)
+    // (Folder path)/Users.php
+    class Users
+    {
+        static $table = "users"; // create table name
+        static $db = 'local'; // db key from database/connections.php
+
+        public static function columns() // Insert columns
+        {
+            return [
+                'id' => ['primary'],
+                'username' => ['varchar:50', 'charset:utf8:general_ci'],
+                'password' => ['varchar:50', 'charset:utf8:general_ci'],
+                'email' => ['varchar:50', 'charset:utf8:general_ci', 'unique'],
+                'api_token' => ['varchar:60', 'required', 'charset:utf8:general_ci']
+            ];
+        }
+    }
+
+    // can use parameters:
+    [
+        'primary',
+        'unique', 
+        'text',
+        'int', 
+        'varchar', 
+        'varchar:(length)', 
+        'required', 
+        'nullable', 
+        'default', 
+        'default:default value', 
+        'charset:utf8mb4:general_ci'
+    ]
+
+```
+
 ## 3. Controller
 ```php
     class ... {
