@@ -18,7 +18,8 @@
 - [10. Middleware](#10-middleware)
 - [11. API](#11-api)
 - [12. Development](#12-development)
-- [13. Run Project](#13-run-project)
+- [13. Helper Methods](#13-helper-methods)
+- [14. Run Project](#14-run-project)
 
 ## 1. Route
 ```php
@@ -405,7 +406,49 @@ ALSO you can normal query like /1?test=true
     
 ```
 
-## 13. Run Project
+## 13. Helper Methods
+```php
+    // main base path
+    base_path("optional url add");
+    
+    // Public path
+    public_path("optional url add");
+
+    // Show host name
+    host();
+
+    // Redirect
+    redirect("URL");
+
+    // Redirect to REFERER
+    back();
+
+    // Show current uri
+    uri();
+
+    // get current request method
+    method();
+
+    // show input method
+    inputMethod('GET|POST|PATCH|PUT|DELETE');
+
+    // Get Client IP
+    ip();
+
+    // Set http response code 200 to 500 and optional message.
+    abort(200, 'OK');
+
+    // get request
+    request('name');
+
+    // Response for Controllers or routes callbacks
+    response('json', array);
+
+    // show csrf input
+    csrf();
+```
+
+## 14. Run Project
 ```php
     ....
     C:\Users\...\Desktop\Project>php run (press enter)
