@@ -1,7 +1,7 @@
-# Z Framework (V1.0.1)
+<!-- # Z Framework (V1.0.1)
 ### Easiest, fastest PHP framework. (Simple)
 
-## Features
+## Features -->
 
   - [1. Route](#1-route)
     - [1.1. Form examples](#11-form-examples)
@@ -11,12 +11,12 @@
   - [4. View](#4-view)
   - [5. zhelper](#5-zhelper)
   - [6. Csrf](#6-csrf)
-  - [6. Language](#6-Language)
-  - [7. Validator](#7-validator)
-  - [8. Middleware](#8-middleware)
-  - [9. API](#9-api)
-  - [## 10. Development](#10-development)
-  - [11. Run Project](#11-run-project)
+  - [7. Language](#6-Language)
+  - [8. Validator](#7-validator)
+  - [9. Middleware](#8-middleware)
+  - [10. API](#9-api)
+  - [## 11. Development](#10-development)
+  - [12. Run Project](#11-run-project)
 
 ## 1. Route
 ```php
@@ -226,7 +226,7 @@ ALSO you can normal query like /1?test=true
     Csrf::unset(); // Destroy csrf token
     Csrf::remainTimeOut(); // How much seconds left for change csrf token
 ```
-## 6. Language
+## 7. Language
 ```php
     // Usage:
     
@@ -250,7 +250,7 @@ ALSO you can normal query like /1?test=true
             app.php ->
                     lang => 'tr'
 ```
-## 7. Validator
+## 8. Validator
 ```php
     // In array validate values.
     // Current: type, required, max, min, same.
@@ -260,7 +260,7 @@ ALSO you can normal query like /1?test=true
         'test2' => ['same:test1'],
     ]);
 ```
-##  8. Middleware
+##  9. Middleware
 ```php
     # App\Middlewares\Auth.php
     # Validate first and go on.
@@ -291,7 +291,7 @@ ALSO you can normal query like /1?test=true
         // if you are not logged in # output: Array ('Auth::class')
 ```
 
-## 9. API
+## 10. API
 ```php
     # route/api.php
     Route::get('/test', function () {
@@ -300,10 +300,10 @@ ALSO you can normal query like /1?test=true
     // example: http://localhost/api/test?user_token=12345678 (user logged in.)
 ```
 
-## 10. Development
+## 11. Development
 --
 
-## 11. Run Project
+## 12. Run Project
 ```php
     ....
     C:\Users\...\Desktop\Project>php run (press enter)
