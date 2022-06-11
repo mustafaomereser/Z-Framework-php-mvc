@@ -129,6 +129,16 @@ ALSO you can normal query like /1?test=true
         'no-csrf' => true,
         'middlewares' => [Auth::class]
     ]);
+
+    // Other way for middleware
+    Middleware::middleware([Auth::class, Guest::class], function ($declined) {
+        if (count($declined)) return;
+        
+        Route::get('/test', function () {
+            return "Hey 👋";
+        });
+    });
+
 ```
 ### 1.3. Find Route's Url
 ```php

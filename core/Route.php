@@ -80,6 +80,8 @@ class Route
 
     public static function name($name, $data = [])
     {
+        if(!isset(self::$routes[$name])) return;
+
         $url = self::$routes[$name]['url'];
         foreach ($data as $key => $val) $url = str_replace("{" . $key . "}", $val, $url);
         return $url;
