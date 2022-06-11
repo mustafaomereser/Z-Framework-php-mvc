@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use Core\Facedas\Alerts;
 use Core\View;
 
 class TestController
@@ -16,6 +17,10 @@ class TestController
      */
     public function index()
     {
+        Alerts::success('sa')::danger('sa');
+
+        print_r(Alerts::get());
+
         return View::view('home.index', [], 'main');
     }
 
