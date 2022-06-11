@@ -16,3 +16,15 @@ use Core\Facedas\Lang;
 </form>
 
 <?= Lang::get('lang.test', ['id' => 'id', 'test' => 'TEST']) ?>
+
+<br>
+<br>
+<br>
+<div>
+    file upload example
+    <form method="POST" enctype="multipart/form-data">
+        <?= csrf() ?>
+        <input type="file" name="file" id="file">
+        <button type="submit">upload</button>
+    </form>
+</div>

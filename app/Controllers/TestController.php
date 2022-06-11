@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use Core\Facedas\Alerts;
 use Core\Facedas\Config;
+use Core\Helpers\File;
 use Core\View;
 
 class TestController
@@ -47,7 +48,7 @@ class TestController
      */
     public function store()
     {
-        echo "store";
+        echo File::resizeImage(File::upload('/assets/images', $_FILES['file']), 500, 300);
     }
 
     /** Update page | PATCH/PUT: /id
