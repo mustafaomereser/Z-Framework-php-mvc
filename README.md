@@ -418,7 +418,7 @@ ALSO you can normal query like /1?test=true
         'custom_db_name' => ['mysql:host=localhost;dbname=test_2;charset=utf8mb4', 'root', '123123'],
     ];
 
-    // result two connection.
+    // result database two connection.
 ```
 
 ## 13. Helper Methods
