@@ -292,6 +292,8 @@ ALSO you can normal query like /1?test=true
     # Database Migrator:
     php zhelper db migrate // output: just add/modify after changes columns.
     php zhelper db migrate fresh // output: reset table and write all columns.
+
+    // Note: if you create first time tables you must do use fresh option.
 ```
 ## 6. Csrf
 ```php
