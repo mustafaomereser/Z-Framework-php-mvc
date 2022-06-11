@@ -26,7 +26,7 @@ class Lang
     public static function locale($lang = null, $syncSession = true)
     {
         $lang = ($lang ?? substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
-        if (!$path = self::canSelect($lang)) return self::locale(Config::get('app.lang'));
+        if (!$path = self::canSelect($lang)) return self::locale(Config::get('app.lang') ?? self::list()[0]);
         if ($syncSession) $_SESSION['lang'] = $lang;
 
         self::$locale = $lang;
@@ -44,8 +44,7 @@ class Lang
     {
         $name = explode('.', $_name);
         $lang = self::$path . "\\" . $name[0] . ".php";
-
-        if (!is_file($lang)) return $_name;
+        if (!is_file($lang)) return null;
 
         $lang = include($lang);
         unset($name[0]);
