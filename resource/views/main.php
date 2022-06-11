@@ -1,5 +1,8 @@
 <?php
+
 use Core\Facedas\Config;
+use Core\View;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -12,6 +15,7 @@ use Core\Facedas\Config;
 </head>
 
 <body>
+    <?= View::view('inc.errors') ?>
     <!--body-->
 </body>
 

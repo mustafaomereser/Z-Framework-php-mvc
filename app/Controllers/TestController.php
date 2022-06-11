@@ -18,9 +18,6 @@ class TestController
     public function index()
     {
         Alerts::success('sa')::danger('sa');
-
-        print_r(Alerts::get());
-
         return View::view('home.index', [], 'main');
     }
 
