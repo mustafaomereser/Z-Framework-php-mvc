@@ -480,7 +480,9 @@ ALSO you can normal query like /1?test=true
     request('name');
 
     // Response for Controllers or routes callbacks
-    response('json', array);
+    Response::json([
+        'test' => 1
+    ]);
 
     // show csrf input
     csrf();
