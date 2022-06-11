@@ -7,7 +7,8 @@
   - [1.2. Route Options](#12-route-options)
   - [1.3. Find Route's Url](#13-find-routes-url)
 - [2. Model](#2-model)
-  - [2.1. Database Migrate](#21-database-migrate)
+  - [2.1. User](#21-user)
+  - [2.2. Database Migrate](#22-database-migrate)
 - [3. Controller](#3-controller)
 - [4. View](#4-view)
 - [5. zhelper](#5-zhelper)
@@ -203,7 +204,26 @@ ALSO you can normal query like /1?test=true
     $user->join('LEFT|RIGHT|OUTER|FULL|NULL', 'table_name', ['table_name.id', '=', 'this_table.id'])->get();
 
 ```
-### 2.1. Database Migrate
+
+### 2.1. User
+```php
+    Auth::login($user) // login with $user->first()
+
+    Auth::api_login($token) // login with api_token
+
+    Auth::logout() // logout user
+    
+    Auth::check() // check is logged in?
+    
+    Auth::user() // (if logged in) get user
+
+    Auth::attempt(array) // example ['username' => 'test', 'password' => 'test']
+ 
+    Auth::id() // get user id
+    
+```
+
+### 2.2. Database Migrate
 ```php
     // Folder path: database/migrations
 
