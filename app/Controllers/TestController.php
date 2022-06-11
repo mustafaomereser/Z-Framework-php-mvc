@@ -7,11 +7,6 @@ use Core\View;
 
 class TestController
 {
-
-    public function __construct()
-    {
-    }
-
     /** Index page | GET: /
      * @return mixed
      */
