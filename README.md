@@ -71,6 +71,9 @@
 ### 1.1. Form examples
 
 ```html
+    You must use csrf token for POST methods. (if you not add "no-csrf" option.)
+
+
     <!-- for store() method -->
     <form method="POST">
         <?= Csrf::csrf() ?>
