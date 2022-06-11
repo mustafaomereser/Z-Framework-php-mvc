@@ -60,7 +60,7 @@ use Core\Facedas\Lang;
                 <?= Lang::get('lang.welcome') ?>
             </div>
             <div>
-                Languages: (Current: <?= Lang::currentLocale() ?>)
+                <?= Lang::get('lang.languages') ?>: (<?= Lang::get('lang.current') ?>: <?= Lang::currentLocale() ?>)
                 <ul>
                     <?php foreach (Lang::list() as $lang) : ?>
                         <li>
