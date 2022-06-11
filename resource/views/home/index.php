@@ -10,14 +10,14 @@ use Core\Facedas\Lang;
 
     Data's value: <?= Config::get('test.value') ?? 'Nothing.' ?>
     <br>
-    Click `Update` button, update ID data.
+    Click `Increse` button for increse data.
     <br>
-    <button type="submit">Update</button>
+    <button type="submit">Increse</button>
 </form>
 
+<br>
 <?= Lang::get('lang.test', ['id' => 'id', 'test' => 'TEST']) ?>
 
-<br>
 <br>
 <br>
 <div>
