@@ -331,7 +331,9 @@ ALSO you can normal query like /1?test=true
 
 ## 8. Alerts
 ```php
-    // Alerts is show just one time.
+    // Alerts is show just one time, when you refresh your page Alerts is gone.
+
+    # Usage:
     Alerts::danger('text');
     Alerts::success('text');
     Alerts::info('text');
