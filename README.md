@@ -1,4 +1,4 @@
-### 0.1. Z Framework (V1.1.1)
+### 0.1. Z Framework (V1.2.1)
 ### 0.2. Easiest, fastest PHP framework. (Simple)
 
 ### 0.3. Document
