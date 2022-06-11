@@ -13,11 +13,12 @@
 - [5. zhelper](#5-zhelper)
 - [6. Csrf](#6-csrf)
 - [7. Language](#7-language)
-- [8. Validator](#8-validator)
-- [9. Middleware](#9-middleware)
-- [10. API](#10-api)
-- [11. Development](#11-development)
-- [12. Run Project](#12-run-project)
+- [8. Alerts](#8-alerts)
+- [9. Validator](#9-validator)
+- [10. Middleware](#10-middleware)
+- [11. API](#11-api)
+- [12. Development](#12-development)
+- [13. Run Project](#13-run-project)
 
 ## 1. Route
 ```php
@@ -43,7 +44,7 @@
    
     // PUT METHOD Route
    Route::put('/', function() {
-        return 'patch.';
+        return 'put.';
    });
    
    // DELETE METHOD Route
@@ -327,7 +328,27 @@ ALSO you can normal query like /1?test=true
             app.php ->
                     lang => 'tr'
 ```
-## 8. Validator
+
+## 8. Alerts
+```php
+    // Alerts is show just one time.
+    Alerts::danger('text');
+    Alerts::success('text');
+    Alerts::info('text');
+    Alerts::warning('text');
+    
+    // if you wanna use like chain
+    Alerts::danger('text')::success('text')::info('text')::warning('text');
+
+    // get alerts
+    Alerts::get(); // output: Array ([0] => ('success', 'text'), [1] => ('danger', 'text'))
+
+    // unset alerts
+    Alerts::unset();
+
+```
+
+## 9. Validator
 ```php
     // In array validate values.
     // Current: type, required, max, min, same.
@@ -337,7 +358,7 @@ ALSO you can normal query like /1?test=true
         'test2' => ['same:test1'],
     ]);
 ```
-##  9. Middleware
+##  10. Middleware
 ```php
     # App\Middlewares\Auth.php
     # Validate first and go on.
@@ -368,7 +389,7 @@ ALSO you can normal query like /1?test=true
         // if you are not logged in # output: Array ('Auth::class')
 ```
 
-## 10. API
+## 11. API
 ```php
     # route/api.php
     Route::get('/test', function () {
@@ -377,12 +398,12 @@ ALSO you can normal query like /1?test=true
     // example: http://localhost/api/test?user_token=12345678 (user logged in.)
 ```
 
-## 11. Development
+## 12. Development
 ```php
     
 ```
 
-## 12. Run Project
+## 13. Run Project
 ```php
     ....
     C:\Users\...\Desktop\Project>php run (press enter)
