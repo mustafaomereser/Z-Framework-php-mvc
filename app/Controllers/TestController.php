@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use Core\Facedas\Alerts;
+use Core\Facedas\Config;
 use Core\View;
 
 class TestController
@@ -12,7 +13,6 @@ class TestController
      */
     public function index()
     {
-        Alerts::success('That success text')::danger('That danger text')::success('Another success text');
         return View::view('home.index', [], 'main');
     }
 
@@ -55,7 +55,13 @@ class TestController
      */
     public function update($id)
     {
-        return "Update: $id";
+        Config::set('test', [
+            'value' => (Config::get('test.value') ?? 0) + 1
+        ]);
+
+        Alerts::success("Success data($id) is updated.");
+        // return response('json', Alerts::get());
+        return back();
     }
 
     /** Delete page | DELETE: /id

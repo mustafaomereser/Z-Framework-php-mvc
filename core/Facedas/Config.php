@@ -35,6 +35,8 @@ class Config
     public static function get($config)
     {
         $arr = self::parseUrl($config);
+        if (!is_file($arr[0])) return;
+
         $config = include($arr[0]);
 
         if (isset($arr[1])) {
@@ -50,8 +52,12 @@ class Config
         $path = self::parseUrl($config, true)[0];
         $arr = self::get($config);
 
-        foreach ($sets as $key => $set) $arr[$key] = $set;
+        foreach ($sets as $key => $set)
+            if (!empty($set))
+                $arr[$key] = $set;
+            else
+                unset($arr[$key]);
 
-        file_put_contents($path, "<?php \nreturn " . var_export($arr, true) . ";");
+        file_put_contents(strstr($path, '.php') ? $path : "$path.php", "<?php \nreturn " . var_export($arr, true) . ";");
     }
 }
