@@ -40,7 +40,7 @@ class Lang
         return self::$locale;
     }
 
-    public static function get($_name)
+    public static function get($_name, array $data = [])
     {
         $name = explode('.', $_name);
         $lang = self::$path . "\\" . $name[0] . ".php";
@@ -51,6 +51,8 @@ class Lang
         unset($name[0]);
 
         foreach ($name as $val) if (isset($lang[$val])) $lang = $lang[$val];
+
+        foreach ($data as $key => $val) $lang = str_replace("{" . $key . "}", $val, $lang);
 
         return $lang;
     }

@@ -6,7 +6,7 @@ use Core\Facedas\Str;
 
 class Csrf
 {
-    static $timeOut = 120;
+    static $timeOut = (10 * 60);
 
     public static function csrf()
     {

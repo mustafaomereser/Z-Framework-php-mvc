@@ -1,4 +1,4 @@
 <?php 
 return array (
-  'value' => 28,
+  'value' => 30,
 );

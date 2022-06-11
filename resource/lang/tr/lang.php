@@ -1,5 +1,5 @@
 <?php
 
 return [
-    'test' => 'deneme türkçe'
+    'test' => 'deneme türkçe {id} {test}'
 ];

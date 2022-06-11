@@ -321,7 +321,7 @@ ALSO you can normal query like /1?test=true
     Lang::locale('tr');
     
     // if you wanna get a parameter
-    Lang::get('lang.test');
+    Lang::get('lang.test', ['id' => 1, 'test' => 'hey']);
     Lang::get('auth.wrong-password');
 
     // How i select default lang? (if not exists in lang list browser language select default)
