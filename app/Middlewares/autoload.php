@@ -3,7 +3,7 @@
 use Core\Middleware;
 
 $list = [
-    // App\Middlewares\Language
+    App\Middlewares\Language::class
 ];
 
 Middleware::middleware($list);

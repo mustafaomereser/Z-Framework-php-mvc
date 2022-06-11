@@ -11,6 +11,7 @@
   - [4. View](#4-view)
   - [5. zhelper](#5-zhelper)
   - [6. Csrf](#6-csrf)
+  - [6. Language](#6-Language)
   - [7. Validator](#7-validator)
   - [8. Middleware](#8-middleware)
   - [9. API](#9-api)
@@ -224,6 +225,30 @@ ALSO you can normal query like /1?test=true
     Csrf::set(); // Random/Renew set token
     Csrf::unset(); // Destroy csrf token
     Csrf::remainTimeOut(); // How much seconds left for change csrf token
+```
+## 6. Language
+```php
+    // Usage:
+    
+    // Dir tree:
+    tr -> 
+        lang.php // return array
+        auth.php // return array
+    en -> 
+        lang.php // return array
+        auth.php // return array
+
+    // if you want change locale
+    Lang::locale('tr');
+    
+    // if you wanna get a parameter
+    Lang::get('lang.test');
+    Lang::get('auth.wrong-password');
+
+    // How i select default lang? (if not exists in lang list browser language select default)
+    config -> 
+            app.php ->
+                    lang => 'tr'
 ```
 ## 7. Validator
 ```php

@@ -1,7 +1,6 @@
 <?php
 
 namespace Core;
-
 class View
 {
     static $path = "../resource/views/";

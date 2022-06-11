@@ -1,5 +1,4 @@
 <?php
-
 use Core\Facedas\Config;
 ?>
 <!DOCTYPE html>

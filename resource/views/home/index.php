@@ -1,5 +1,6 @@
 <?php
 
+use Core\Facedas\Lang;
 use Core\Csrf;
 ?>
 
@@ -8,3 +9,5 @@ use Core\Csrf;
     <?= inputMethod('PATCH') ?>
     <button type="submit">Gönder</button>
 </form>
+
+<?= Lang::get('lang.test') ?>;

@@ -28,7 +28,8 @@ function redirect($url = "/")
 
 function back()
 {
-    return redirect($_SERVER['HTTP_REFERER']);
+    if (@$_SERVER['HTTP_REFERER'])
+        return redirect($_SERVER['HTTP_REFERER']);
 }
 
 function uri()
