@@ -27,6 +27,7 @@ class Auth
     {
         self::$user = null;
         unset($_SESSION['user_id']);
+        return true;
     }
 
     public static function check()
