@@ -17,7 +17,7 @@ class TestController
      */
     public function index()
     {
-        Alerts::success('That success text')::danger('That danger text');
+        Alerts::success('That success text')::danger('That danger text')::success('Another success text');
         return View::view('home.index', [], 'main');
     }
 

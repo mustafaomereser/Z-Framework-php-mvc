@@ -15,7 +15,7 @@ use Core\View;
 </head>
 
 <body>
-    <?= View::view('inc.errors') ?>
+    <?= View::view('inc.alerts') ?>
     <!--body-->
 </body>
 
