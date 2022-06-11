@@ -64,23 +64,10 @@ function request($name = null)
     return $name ? @$_REQUEST[$name] : $_REQUEST;
 }
 
-function response($type, $data = [])
-{
-    switch ($type) {
-        case "json":
-            header("Content-Type: application/json");
-            $data = json_encode($data, JSON_UNESCAPED_UNICODE);
-            break;
-    }
-
-    return $data;
-}
-
 function csrf()
 {
     return Csrf::csrf();
 }
-
 
 function human_filesize($bytes, $decimals = 2)
 {
