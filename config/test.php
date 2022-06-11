@@ -1,4 +1,4 @@
 <?php 
 return array (
-  'value' => 60,
+  'value' => 70,
 );

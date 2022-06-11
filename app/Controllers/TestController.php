@@ -54,6 +54,9 @@ class TestController
         if ($uploaded_file) Alerts::success('File uploaded');
         if ($resized_file) Alerts::success('File resized');
 
+        if ($uploaded_file && $resized_file)
+            Alerts::warning("file: <a href='$resized_file' target='_blank'>File</a>");
+
         back();
         // return response('json', Alerts::get());
     }

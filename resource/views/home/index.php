@@ -4,8 +4,18 @@ use Core\Facedas\Config;
 use Core\Facedas\Lang;
 
 ?>
-<div>
-    <h5>Patch Example</h5>
+<style>
+    fieldset {
+        margin-bottom: 25px;
+    }
+
+    legend {
+        font-weight: bold;
+    }
+</style>
+
+<fieldset>
+    <legend>Patch Example</legend>
     <form method="POST" action="/1">
         <?= csrf() ?>
         <?= inputMethod('PATCH') ?>
@@ -16,17 +26,18 @@ use Core\Facedas\Lang;
         <br>
         <button type="submit">Increse</button>
     </form>
-</div>
+</fieldset>
 
-<div>
-    <h5>Lang Example</h5>
+<fieldset>
+    <legend>Lang Example</legend>
     <?= Lang::get('lang.test', ['id' => 'id', 'test' => 'TEST']) ?>
-</div>
-<div>
-    <h5>File Upload Example</h5>
+</fieldset>
+
+<fieldset>
+    <legend>File Upload Example</legend>
     <form method="POST" enctype="multipart/form-data">
         <?= csrf() ?>
         <input type="file" name="file" id="file">
         <button type="submit">upload</button>
     </form>
-</div>
+</fieldset>
