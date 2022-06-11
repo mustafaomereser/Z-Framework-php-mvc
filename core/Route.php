@@ -2,6 +2,8 @@
 
 namespace Core;
 
+use Core\Facedas\Lang;
+
 class Route
 {
     static $routes = [];
@@ -57,7 +59,7 @@ class Route
         //
 
         if (($url != $uri || ($method && $method != method())) || self::$called == true) return;
-        if ((method() != 'get' && @$_REQUEST['_token'] != Csrf::get()) && @$options['no-csrf'] != true) abort(400, 'CSRF token geçersiz.');
+        if (!Csrf::check(@$options['no-csrf'])) abort(400, Lang::get('errors.csrf.no-verify'));
 
 
         self::$called = true;
@@ -80,7 +82,7 @@ class Route
 
     public static function name($name, $data = [])
     {
-        if(!isset(self::$routes[$name])) return;
+        if (!isset(self::$routes[$name])) return;
 
         $url = self::$routes[$name]['url'];
         foreach ($data as $key => $val) $url = str_replace("{" . $key . "}", $val, $url);

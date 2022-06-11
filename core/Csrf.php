@@ -34,4 +34,10 @@ class Csrf
     {
         return @$_SESSION['csrf_token_timeout'] - time();
     }
+
+    public static function check($alwaysTrue = false)
+    {
+        if ((method() != 'get' && request('_token') != self::get()) && $alwaysTrue != true) return false;
+        return true;
+    }
 }

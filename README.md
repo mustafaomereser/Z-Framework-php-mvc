@@ -328,6 +328,9 @@ ALSO you can normal query like /1?test=true
     config -> 
             app.php ->
                     lang => 'tr'
+
+    // get lang list
+    print_r(Lang::list());
 ```
 
 ## 8. Alerts

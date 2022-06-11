@@ -14,6 +14,14 @@ class Lang
         return $path;
     }
 
+    public static function list()
+    {
+        $list = scandir(base_path() . "\\resource\lang");
+        unset($list[0], $list[1]);
+        $list = array_values($list);
+
+        return $list;
+    }
 
     public static function locale($lang = null, $syncSession = true)
     {

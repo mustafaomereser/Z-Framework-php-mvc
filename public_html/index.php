@@ -33,6 +33,7 @@ includer('../modules/error_handlers');
 
 // forget alerts
 use Core\Facedas\Alerts;
+use Core\Facedas\Lang;
 
 Alerts::unset();
 //
