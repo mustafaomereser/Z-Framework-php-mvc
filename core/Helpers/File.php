@@ -42,6 +42,7 @@ class File
     public static function resizeImage($file, $width = 50, $height = 50)
     {
         $file = public_path($file);
+        
         // Yeni boyutları hesaplayalım
         list($image_width, $image_height) = getimagesize($file);
 
