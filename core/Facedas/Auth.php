@@ -3,6 +3,7 @@
 namespace Core\Facedas;
 
 use App\Models\User;
+use Core\Crypter;
 use Core\Validator;
 
 class Auth
@@ -44,6 +45,26 @@ class Auth
         }
 
         return self::$user;
+    }
+
+    public static function attempt($fields = [])
+    {
+        if (self::check()) return false;
+
+        $user = new User;
+        $user = $user->select('id');
+        foreach ($fields as $key => $val) {
+            if ($key == 'password') $val = Crypter::encode($val);
+            $user->where($key, '=', $val);
+        }
+        $user = $user->first();
+
+        if (@$user['id']) {
+            $_SESSION['user_id'] = $user['id'];
+            return true;
+        }
+
+        return false;
     }
 
     public static function id()
