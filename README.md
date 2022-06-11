@@ -1,21 +1,22 @@
-<!-- # Z Framework (V1.0.1)
-### Easiest, fastest PHP framework. (Simple)
+Z Framework (V1.0.1)
+Easiest, fastest PHP framework. (Simple)
 
-## Features -->
-
+# Document
+- [Document](#document)
   - [1. Route](#1-route)
     - [1.1. Form examples](#11-form-examples)
     - [1.2. Route Options](#12-route-options)
+    - [1.3. Find Route's Url](#13-find-routes-url)
   - [2. Model](#2-model)
   - [3. Controller](#3-controller)
   - [4. View](#4-view)
   - [5. zhelper](#5-zhelper)
   - [6. Csrf](#6-csrf)
-  - [7. Language](#7-Language)
+  - [7. Language](#7-language)
   - [8. Validator](#8-validator)
   - [9. Middleware](#9-middleware)
   - [10. API](#10-api)
-  - [## 11. Development](#11-development)
+  - [## 11. Development](#-11-development)
   - [12. Run Project](#12-run-project)
 
 ## 1. Route
@@ -130,6 +131,19 @@ ALSO you can normal query like /1?test=true
         'middlewares' => [Auth::class]
     ]);
 ```
+### 1.3. Find Route's Url
+```php
+    // Route/web.php
+    Route::get('/test/{id}/{username}', function ($id, $username) {
+        echo "$id - $username";
+    }, [
+        'name' => 'test'
+    ]);
+
+    // Usage:
+    echo Route::name('test', ['id' => 1, 'username' => 'Admin']); // output: /test/1/Admin
+```
+
 ## 2. Model
 ```php
     class User extends Model {
