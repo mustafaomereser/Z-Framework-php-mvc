@@ -403,7 +403,22 @@ ALSO you can normal query like /1?test=true
 
 ## 12. Development
 ```php
+    // Database connections
+    # Folder: database/connections.php
+    <?php
     
+    // before
+    $databases = [
+        'local' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123'],
+    ];
+
+    # add a database
+    $databases = [
+        'local' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123'],
+        'custom_db_name' => ['mysql:host=localhost;dbname=test_2;charset=utf8mb4', 'root', '123123'],
+    ];
+
+    // result two connection.
 ```
 
 ## 13. Helper Methods
