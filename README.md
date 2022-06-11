@@ -130,13 +130,15 @@ ALSO you can normal query like /1?test=true
         'middlewares' => [Auth::class]
     ]);
 
-    // Other way for middleware
+    // Other way for middleware (if you use that way you can not find route name.)
     Middleware::middleware([Auth::class, Guest::class], function ($declined) {
         if (count($declined)) return;
         
         Route::get('/test', function () {
             return "Hey 👋";
-        });
+        }, [
+            'name' => 'test' // if middleware not verify you can not find that name.
+        ]);
     });
 
 ```
