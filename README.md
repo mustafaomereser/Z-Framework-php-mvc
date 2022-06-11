@@ -90,6 +90,12 @@
         <?= inputMethod('DELETE') ?>
         <input type="submit">
     </form>
+
+    Also you can use `csrf()` method
+    <form method="POST">
+        <?= csrf() ?>
+        ...
+    </form>
 ```
 
 
