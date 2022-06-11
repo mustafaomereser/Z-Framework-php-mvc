@@ -12,7 +12,7 @@
   - [5. zhelper](#5-zhelper)
   - [6. Csrf](#6-csrf)
   - [7. Language](#7-Language)
-  - [8. Validator](#7-validator)
+  - [8. Validator](#8-validator)
   - [9. Middleware](#9-middleware)
   - [10. API](#10-api)
   - [## 11. Development](#11-development)
