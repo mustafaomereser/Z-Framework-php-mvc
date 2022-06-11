@@ -1,5 +1,6 @@
 <?php
 
+use Core\Csrf;
 use Core\Facedas\Config;
 
 function base_path($url = null)
@@ -73,4 +74,9 @@ function response($type, $data = [])
     }
 
     return $data;
+}
+
+function csrf()
+{
+    return Csrf::csrf();
 }
