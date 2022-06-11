@@ -9,9 +9,7 @@ if (@$_REQUEST['user_token']) Auth::api_login($_REQUEST['user_token']);
 //
 
 
-Route::get('/test', function () {
-    echo "API sayfası / user_id: " . Auth::id();
-});
+
 
 
 // Do not touch

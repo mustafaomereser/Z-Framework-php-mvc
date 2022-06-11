@@ -1,7 +1,14 @@
 <?php
 
-use App\Controllers\TestController;
+use Core\Facedas\Lang;
 use Core\Route;
+use Core\View;
 
-Route::redirect('/test', '/');
-Route::resource('/', TestController::class);
+Route::any('/', function () {
+    return View::view('welcome');
+});
+
+Route::get('/language/{lang}', function ($lang) {
+    Lang::locale($lang);
+    back();
+});
