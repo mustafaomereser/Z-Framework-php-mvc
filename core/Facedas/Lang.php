@@ -7,19 +7,29 @@ class Lang
     static $locale = null;
     static $path = null;
 
-    public static function locale($lang = null, $syncSession = true)
+    private static function canSelect($lang)
     {
-        $lang = ($lang ?? (Config::get('app.lang') ?? null));
-
         $path = base_path() . "\\resource\lang\\$lang";
         if (!is_dir($path)) return false;
+        return $path;
+    }
 
+
+    public static function locale($lang = null, $syncSession = true)
+    {
+        $lang = ($lang ?? substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
+        if (!$path = self::canSelect($lang)) return self::locale(Config::get('app.lang'));
         if ($syncSession) $_SESSION['lang'] = $lang;
 
         self::$locale = $lang;
         self::$path = $path;
 
         return true;
+    }
+
+    public static function currentLocale()
+    {
+        return self::$locale;
     }
 
     public static function get($_name)

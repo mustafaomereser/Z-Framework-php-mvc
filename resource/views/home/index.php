@@ -10,4 +10,4 @@ use Core\Csrf;
     <button type="submit">Gönder</button>
 </form>
 
-<?= Lang::get('lang.test') ?>;
+<?= Lang::get('lang.test') ?>
