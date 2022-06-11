@@ -464,6 +464,19 @@ ALSO you can normal query like /1?test=true
 
     // show csrf input
     csrf();
+
+    // File
+    
+    # Usage:
+    File::save('/uploads', 'http://images.com/image.jpg'); // uploads/**********.jpg
+
+    File::upload('/uploads', $_FILES['file'], [ // settings is optional
+        'accept' => ['jpg', 'jpeg', 'png'],
+        'size' => 300000 # byte
+    ]); // return /uploads/image.ext
+
+                                # width, height
+    File::resizeImage('file_path', 50, 50);
 ```
 
 ## 14. Run Project

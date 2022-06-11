@@ -48,7 +48,14 @@ class TestController
      */
     public function store()
     {
-        echo File::resizeImage(File::upload('/assets/images', $_FILES['file']), 500, 300);
+        $uploaded_file = File::upload('/assets/images', $_FILES['file'], ['accept' => ['pdf', 'jpg'], 'size' => 90000000]);
+        $resized_file = File::resizeImage($uploaded_file, 500, 300);
+
+        if ($uploaded_file) Alerts::success('File uploaded');
+        if ($resized_file) Alerts::success('File resized');
+
+        back();
+        // return response('json', Alerts::get());
     }
 
     /** Update page | PATCH/PUT: /id
