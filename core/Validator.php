@@ -54,6 +54,10 @@ class Validator
                         if ($type == $val) $ok = true;
                         break;
 
+                    case 'email':
+                        if (filter_var($value, FILTER_VALIDATE_EMAIL)) $ok = true;
+                        break;
+
                     case 'required':
                         if (!empty($value)) $ok = true;
                         break;
