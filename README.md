@@ -377,7 +377,7 @@ ALSO you can normal query like /1?test=true
 ## 9. Validator
 ```php
     // In array validate values.
-    // Current: type, required, max, min, same.
+    // Current: type, required, max, min, same, email.
     
     Validator::validate($_REQUEST, [
         'test1' => ['type:string', 'required', 'max:10', 'min:5', 'same:test2'],
