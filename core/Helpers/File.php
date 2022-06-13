@@ -72,8 +72,11 @@ class File
         $source = imagecreatefromjpeg($file);
         imagecopyresampled($target, $source, 0, 0, 0, 0, $width, $height, $image_width, $image_height);
 
+
+        $ext = @end(explode('.', $file));
+
         // Görüntüyü çıktılayalım
-        imagejpeg($target, $file, 100);
+        imagejpeg($target, "$file-$width" . "x" . "$height.$ext", 100);
 
         return self::removePublic($file);
     }
