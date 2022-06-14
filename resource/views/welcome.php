@@ -1,5 +1,4 @@
 <?php
-
 use Core\Facedas\Lang;
 ?>
 <!DOCTYPE html>

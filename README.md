@@ -371,7 +371,15 @@ ALSO you can normal query like /1?test=true
 
     // unset alerts
     Alerts::unset();
+```
 
+```html
+    <!-- shown alerts example bootstrap -->
+    <?php foreach(Alerts::get() as $alert): ?>
+        <div class="alert alert-<?= $alert[0] ?>">
+            <?= $alert[0] ?>: <?= $alert[1] ?>
+        </div>
+    <?php endforeach; ?>
 ```
 
 ## 9. Validator
