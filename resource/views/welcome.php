@@ -45,6 +45,11 @@ use Core\Facedas\Lang;
 </head>
 
 <body>
+    <form method="POST" enctype="multipart/form-data">
+        <?= csrf() ?>
+        <input type="file" name="file">
+        <input type="submit">
+    </form>
 
     <div class="container">
         <h2 class="text" style="overflow: hidden;">

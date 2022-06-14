@@ -76,7 +76,7 @@ class File
         $ext = @end(explode('.', $file));
 
         // Görüntüyü çıktılayalım
-        imagejpeg($target, "$file-$width" . "x" . "$height.$ext", 100);
+        imagejpeg($target, str_replace(".$ext", '', $file) . "-$width" . "x" . "$height.$ext", 100);
 
         return self::removePublic($file);
     }
