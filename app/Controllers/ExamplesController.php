@@ -23,9 +23,9 @@ class ExamplesController
     {
         $user = new User;
 
-        return View::view('examples', [
+        return view('examples', [
             'users' => $user->paginate(1),
-            'users2' => $user->paginate(1, 'page_2'),
+            'users2' => $user->paginate(2, 'page_2'),
             'createdUser' => $createdUser
         ]);
     }

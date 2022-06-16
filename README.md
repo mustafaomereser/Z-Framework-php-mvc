@@ -501,6 +501,9 @@ ALSO you can normal query like /1?test=true
     // show csrf input
     csrf();
 
+    // Call view method easy way, it's same View::view() 
+    view(...., ....., ....);
+
     // File
     
     # Usage:

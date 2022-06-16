@@ -45,6 +45,16 @@ function inputMethod($method = "GET")
     echo '<input type="hidden" name="_method" value="' . strtoupper($method) . '" />';
 }
 
+function csrf()
+{
+    return Core\Csrf::csrf();
+}
+
+function view()
+{
+    return call_user_func_array([Core\View::class, 'view'], func_get_args());
+}
+
 function ip()
 {
     return ($_SERVER['HTTP_CLIENT_IP'] ?? ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR']));
@@ -60,11 +70,6 @@ function request($name = null, $val = NULL)
 {
     if ($val === NULL) return $name ? ($_REQUEST[$name] ?? false) : $_REQUEST;
     return $_REQUEST[$name] = $val;
-}
-
-function csrf()
-{
-    return Core\Csrf::csrf();
 }
 
 function human_filesize($bytes, $decimals = 2)
