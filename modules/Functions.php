@@ -1,8 +1,5 @@
 <?php
 
-use Core\Csrf;
-use Core\Facedas\Config;
-
 function base_path($url = null)
 {
     return dirname(__DIR__) . $url;
@@ -10,7 +7,7 @@ function base_path($url = null)
 
 function public_path($url = null)
 {
-    return base_path('\\' . Config::get('app.public')) . $url;
+    return base_path('\\' . Core\Facedas\Config::get('app.public')) . $url;
 }
 
 function host()
@@ -67,7 +64,7 @@ function request($name = null, $val = NULL)
 
 function csrf()
 {
-    return Csrf::csrf();
+    return Core\Csrf::csrf();
 }
 
 function human_filesize($bytes, $decimals = 2)

@@ -320,6 +320,7 @@ ALSO you can normal query like /1?test=true
 ## 6. Csrf
 ```php
     // Usage:
+    Csrf::csrf(); // Output: ready csrf input
     Csrf::get(); // Output: random_csrf_string
     Csrf::set(); // Random/Renew set token
     Csrf::unset(); // Destroy csrf token

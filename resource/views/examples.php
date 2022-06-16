@@ -1,7 +1,3 @@
-<?php
-
-use Core\Facedas\Alerts;
-?>
 <style>
     fieldset {
         margin-bottom: 15px;
@@ -28,7 +24,7 @@ use Core\Facedas\Alerts;
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<?php if ($alerts = Alerts::get()) : ?>
+<?php if ($alerts = Core\Facedas\Alerts::get()) : ?>
     <div style="margin-bottom: 20px;">
         Alerts:
         <?php foreach ($alerts as $alert) : ?>
