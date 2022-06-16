@@ -278,18 +278,25 @@ ALSO you can normal query like /1?test=true
         
         public function show($id) {
             return View::view('home.user', ['user' => $this->user->first()], 'main');
+            //
+            return view('home.user', ['user' => $this->user->first()], 'main'); // also you can use that
         }
     }
 ```
 ## 4. View
 ```php
+    // Use That
+    view('home.index', ['hi' => 'hey'], 'main');
+    
+    // OR That
     use Core\View;                     // resource/views/main.php template
     echo View::view('home.index', ['hi' => 'hey'], 'main');
-    
-    // in home.index:
+
+    // call in view. In home.index:
     <div>
         List:
-        <?= View::view('home.list', $view_parameters); ?> // Output: echo $hi; = hey
+        <?= view('home.list', $view_parameters); ?> // Output: echo $hi; = hey       // SAME
+        <?= View::view('home.list', $view_parameters); ?> // Output: echo $hi; = hey // RESULT
     </div>
 ```
 ## 5. zhelper
