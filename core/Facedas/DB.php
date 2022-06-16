@@ -6,6 +6,7 @@ class DB
 {
     private $table;
     private $buildQuery = [];
+    private $cache = [];
     public $lastID = 0;
 
     public $attributes = [];
@@ -27,7 +28,7 @@ class DB
         if (in_array($this->db, $connected_databases)) return $databases[$this->db];
 
         $connected_databases[] = $this->db;
-        return $databases[$this->db] = new \PDO($databases[$this->db][0], $databases[$this->db][1], $databases[$this->db][2]);
+        return $databases[$this->db] = new \PDO($databases[$this->db][0], $databases[$this->db][1], ($databases[$this->db][2] ?? null));
     }
 
     // Execute
@@ -48,11 +49,9 @@ class DB
         return $this;
     }
 
-
     // Query methods
     public function insert(array $data)
     {
-
         $keys = array_keys($data);
         $insert = $this->prepare("INSERT INTO $this->table(" . implode(', ', $keys) . ") VALUES (:" . implode(', :', $keys) . ")", $data)->rowCount();
 
@@ -86,8 +85,7 @@ class DB
     // SELECT METHODS
     public function first($class = false)
     {
-        self::limit(1);
-        return self::get($class)[0] ?? null;
+        return self::limit(1)->get($class)[0] ?? null;
     }
 
     public function get($class = false)
@@ -101,6 +99,52 @@ class DB
     public function count()
     {
         return self::run()->rowCount();
+    }
+
+    public function paginate($per_page_count = 20, $page_request_name = 'page', $class = false)
+    {
+        $uniqueID = uniqid();
+
+        $current_page = (request($page_request_name) ?? 1);
+        $row_count = self::count();
+        $max_page_count = ceil($row_count / $per_page_count);
+
+        if ($current_page > $max_page_count)
+            $current_page = $max_page_count;
+        elseif ($current_page <= 0)
+            $current_page = 1;
+
+
+        // Again reload same query
+        $this->buildQuery = $this->cache['buildQuery'];
+        //
+
+        $start_count = ($per_page_count * ($current_page - 1));
+
+        parse_str(@$_SERVER['QUERY_STRING'], $queryString);
+        $queryString[$page_request_name] = "{change_page_$uniqueID}";
+        $url = "?" . http_build_query($queryString);
+
+
+        $return = [
+            'items' => self::limit($start_count, $per_page_count)->get($class),
+            'start' => ($start_count + 1),
+            'links' => function () use ($max_page_count, $current_page, $url, $uniqueID) {
+?>
+            <ul class="pagination">
+                <?php for ($x = 1; $x <= $max_page_count; $x++) : ?>
+                    <li class="<?= $x == $current_page ? 'active' : null ?>">
+                        <a href="<?= str_replace("%7Bchange_page_$uniqueID%7D", $x, $url) ?>">
+                            <?= $x ?>
+                        </a>
+                    </li>
+                <?php endfor; ?>
+            </ul>
+<?php
+            }
+        ];
+
+        return $class ? (object) $return : $return;
     }
 
     // Build
@@ -190,6 +234,7 @@ class DB
     private function run()
     {
         $r = self::prepare(self::buildSQL());
+        $this->cache['buildQuery'] = $this->buildQuery;
         $this->buildQuery = []; // reset buildQuery
         return $r;
     }

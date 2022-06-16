@@ -10,13 +10,13 @@ class Str
         return $text;
     }
 
-    public static function rand($length = 5)
+    public static function rand($length = 5, $unique = false)
     {
         $q = "QWERTYUIOPASDFHJKLZXCVBNMqwertyuopasdfghjklizxcvbnm0987654321";
         $q_count = strlen($q) - 1;
         $r = "";
         for ($x = $length; $x > 0; $x--) $r .= $q[rand(0, $q_count)];
-        return $r;
+        return $r . ($unique ? uniqid('', true) : null);
     }
 
     public static function slug($text, string $divider = '-')

@@ -59,9 +59,10 @@ function abort($code = 418, $message = null)
     die(http_response_code($code));
 }
 
-function request($name = null)
+function request($name = null, $val = NULL)
 {
-    return $name ? @$_REQUEST[$name] : $_REQUEST;
+    if ($val === NULL) return $name ? ($_REQUEST[$name] ?? false) : $_REQUEST;
+    return $_REQUEST[$name] = $val;
 }
 
 function csrf()

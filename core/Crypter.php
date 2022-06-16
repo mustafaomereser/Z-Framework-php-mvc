@@ -18,7 +18,7 @@ class Crypter
 
     public static function decode($xml)
     {
-        $xml = base64_decode(str_replace([self::salt], '', $xml));
+        $xml = base64_decode(str_replace([self::salt()], '', $xml));
         $keys = self::key();
 
         $decrypted = "";

@@ -385,8 +385,13 @@ ALSO you can normal query like /1?test=true
 ## 9. Validator
 ```php
     // In array validate values.
-    // Current: type, required, max, min, same, email.
+    // Current: type, required, max, min, same, email, unique.
     
+    // Unique ussage: 
+    # unique:table_name cl=column_name,db=database // cl and db parameters is optional, if you not add cl parameter get request key name, if you not add db parameter get first in array connection.
+    
+    // Unique Example: 'email' => ["unique:users cl=email,db=local"]
+
     Validator::validate($_REQUEST, [
         'test1' => ['type:string', 'required', 'max:10', 'min:5', 'same:test2'],
         'test2' => ['same:test1'],

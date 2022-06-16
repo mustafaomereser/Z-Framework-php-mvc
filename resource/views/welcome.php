@@ -1,4 +1,5 @@
 <?php
+
 use Core\Facedas\Lang;
 ?>
 <!DOCTYPE html>
@@ -53,6 +54,9 @@ use Core\Facedas\Lang;
                 <a href="https://github.com/mustafaomereser/Z-Framework-php-mvc" target="_blank">Github & Docs</a>
             </div>
         </h2>
+
+        <a href="/examples">Example page</a>
+
         <div class="box">
             <div style="text-align: center;">
                 <?= Lang::get('lang.welcome') ?>

@@ -2,6 +2,12 @@
 
 namespace Core;
 
+use Core\Facedas\Alerts;
+use Core\Facedas\DB;
+use Core\Facedas\Lang;
+use Core\Facedas\Response;
+use Core\Helpers\Http;
+
 class Validator
 {
     public static function validate(array $data = [], array $validate = [], array $attributeNames = [])
@@ -10,20 +16,20 @@ class Validator
         $statics = [];
 
         foreach ($validate as $dataKey => $validateArray) {
-            $value = @$data[$dataKey];
+            $dataValue = @$data[$dataKey];
 
             $length = -1;
-            if (empty($value)) {
+            if (empty($dataValue)) {
                 $type  = 'null';
-            } elseif (is_numeric($value)) {
+            } elseif (is_numeric($dataValue)) {
                 $type = 'integer';
-                $length = $value;
-            } elseif (is_string($value)) {
+                $length = $dataValue;
+            } elseif (is_string($dataValue)) {
                 $type = 'string';
-                $length = strlen($value);
-            } elseif (is_array($value)) {
+                $length = strlen($dataValue);
+            } elseif (is_array($dataValue)) {
                 $type = 'array';
-                $length = count($value);
+                $length = count($dataValue);
             }
 
             foreach ($validateArray as $validate) {
@@ -38,7 +44,7 @@ class Validator
                         $arr_parameter = @explode(',', $_[1]);
                         $parameters = [];
                         foreach ($arr_parameter as $parameter) {
-                            $parameter = explode('=', $parameter);
+                            $parameter = explode('=', trim($parameter));
 
                             if (isset($parameter[1]))
                                 $parameters[$parameter[0]] = $parameter[1];
@@ -52,40 +58,56 @@ class Validator
                 switch ($key) {
                     case 'type':
                         if ($type == $val) $ok = true;
+                        else $errorData = ['now-type' => $val, 'must-type' => $type];
                         break;
 
                     case 'email':
-                        if (filter_var($value, FILTER_VALIDATE_EMAIL)) $ok = true;
+                        if (filter_var($dataValue, FILTER_VALIDATE_EMAIL)) $ok = true;
                         break;
 
                     case 'required':
-                        if (!empty($value)) $ok = true;
+                        if (!empty($dataValue)) $ok = true;
                         break;
 
                     case 'max':
                         if ($val >= $length) $ok = true;
+                        else $errorData = ['now-val' => $length, 'max-val' => $val];
                         break;
 
                     case 'min':
                         if ($length >= $val) $ok = true;
+                        else $errorData = ['now-val' => $length, 'min-val' => $val];
                         break;
 
                     case 'same':
-                        if ($value === @$data[$val]) $ok = true;
+                        if ($dataValue === @$data[$val]) $ok = true;
+                        else $errorData = ['attribute-name' => (Lang::get("validator.attributes.$val") ?? $val)];
+                        break;
+
+                    case 'unique':
+                        $db = new DB(@$parameters['db']);
+                        if (!$db->table($val)->where(($parameters['cl'] ?? $dataKey), '=', $dataValue)->count()) $ok = true;
                         break;
                 }
 
                 if ($ok) {
-                    $statics[$dataKey]['value'] = $value;
-                    $statics[$dataKey]['length'] = $length;
-                    $statics[$dataKey]['type'] = $type;
+                    $statics[$dataKey] = $dataValue;
+                    // $statics[$dataKey]['value'] = $dataValue;
+                    // $statics[$dataKey]['length'] = $length;
+                    // $statics[$dataKey]['type'] = $type;
                 } else {
-                    $errors[$dataKey][] = $key;
+                    $errors[$dataKey][] = (Lang::get("validator.attributes.$dataKey") ?? $dataKey) . " " . Lang::get("validator.errors.$key", $errorData ?? []);
                     unset($data[$dataKey]);
                 }
 
-                $statics[$dataKey]['validate'][$ok ? 'accept' : 'decline'][] = $key;
+                // $statics[$dataKey]['validate'][$ok ? 'accept' : 'decline'][] = $key;
             }
+        }
+
+        if (count($errors)) {
+            if (Http::isAjax()) die(Response::json($errors));
+            foreach ($errors as $key => $error_list) foreach ($error_list as $error) Alerts::danger($error);
+            back();
         }
 
         return $statics;

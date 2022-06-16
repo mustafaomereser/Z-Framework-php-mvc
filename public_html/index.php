@@ -32,8 +32,7 @@ includer('../route', true, true);
 includer('../modules/error_handlers');
 
 // forget alerts
-use Core\Facedas\Alerts;
-Alerts::unset();
+Core\Facedas\Alerts::unset();
 //
 
 @$finish_time = microtime() + 0.003;
