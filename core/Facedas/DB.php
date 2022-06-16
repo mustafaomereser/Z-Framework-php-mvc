@@ -73,13 +73,13 @@ class DB
         $sql_set = rtrim($sql_set, ', ');
 
         $update = self::prepare("UPDATE $this->table SET $sql_set" . $this->getWhere())->rowCount();
-        return $update ? 1 : 0;
+        return $update ? true : false;
     }
 
     public function delete()
     {
         $delete = self::prepare("DELETE FROM $this->table" . $this->getWhere())->rowCount();
-        return $delete ? 1 : 0;
+        return $delete ? true : false;
     }
 
     // SELECT METHODS
