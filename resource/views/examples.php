@@ -37,13 +37,13 @@
 
 <fieldset>
     <legend>Paginate Examples</legend>
-    <small style="margin-bottom: 15px;">Users diffrent paginations</small>
+    <div style="margin-bottom: 15px;">
+        <small>Users diffrent paginations</small>
+    </div>
 
     <div>
         <?php
-
-        use Core\Facedas\Str;
-
+        echo "Users List (shown " . str_replace("/", "of", $users['shown']) . ")";
         foreach ($users['items'] as $user) : ?>
             <div>
                 <b><?= $users['start']++ ?>.)</b> <?= $user['username'] ?>
@@ -72,16 +72,16 @@
     <div style="margin: 15px 20px;">`<?= $str ?>`</div>
 
     <h5>and i wanna put a limit for chracter: (You can see how it work on file)</h5>
-    <div style="margin: 15px 20px;"><?= Str::limit($str, 50, '... <a href="#">Read Continue.</a>') ?></div>
+    <div style="margin: 15px 20px;"><?= Core\Facedas\Str::limit($str, 50, '... <a href="#">Read Continue.</a>') ?></div>
 
     <h5>And so how i can create a slug? VOALA</h5>
-    <div style="margin: 15px 20px;"><?= Str::slug('slug text here') ?></div>
+    <div style="margin: 15px 20px;"><?= Core\Facedas\Str::slug('slug text here') ?></div>
 
     <h5>How i create a random string and what i want length?</h5>
-    <div style="margin: 15px 20px;"><?= Str::rand(10) ?> <b>That's it!</b></div>
+    <div style="margin: 15px 20px;"><?= Core\Facedas\Str::rand(10) ?> <b>That's it!</b></div>
 
     <h5>But you need a unique random string? Just add a true parameter and TADA</h5>
-    <div style="margin: 15px 20px;"><?= Str::rand(10, true) ?> <b>That's it!</b></div>
+    <div style="margin: 15px 20px;"><?= Core\Facedas\Str::rand(10, true) ?> <b>That's it!</b></div>
 </fieldset>
 
 <fieldset>

@@ -6,7 +6,6 @@ use App\Models\User;
 use Core\Crypter;
 use Core\Facedas\Str;
 use Core\Validator;
-use Core\View;
 
 class ExamplesController
 {
@@ -24,7 +23,7 @@ class ExamplesController
         $user = new User;
 
         return view('examples', [
-            'users' => $user->paginate(1),
+            'users' => $user->paginate(20),
             'users2' => $user->paginate(2, 'page_2'),
             'createdUser' => $createdUser
         ]);
