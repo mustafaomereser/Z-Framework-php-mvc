@@ -200,9 +200,17 @@ ALSO you can normal query like /1?test=true
     // Limit example args: 10(startCount), 10(rowCount)
     $user->limit(5, 10)->get();
 
+    // paginate example               for return class or array
+    $user->paginate(20, 'request_id', true|false);
+
     // Joins example
     $user->join('LEFT|RIGHT|OUTER|FULL|NULL', 'table_name', ['table_name.id', '=', 'this_table.id'])->get();
 
+
+    // retrn class output
+    $...->get(true);
+    $...->first(true);
+    $...->paginate(..., ..., true);
 ```
 
 ### 2.1. User
