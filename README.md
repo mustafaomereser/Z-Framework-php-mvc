@@ -205,6 +205,8 @@ ALSO you can normal query like /1?test=true
 
     // Joins example
     $user->join('LEFT|RIGHT|OUTER|FULL|NULL', 'table_name', ['table_name.id', '=', 'this_table.id'])->get();
+                                                // You also set name
+    $user->join('LEFT|RIGHT|OUTER|FULL|NULL', 'table_name as name', ['name.id', '=', 'this_table.id'])->get();
 
 
     // retrn class output
