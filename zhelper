@@ -2,7 +2,7 @@
 blank();
 // error_reporting(0);
 include('database/connections.php');
-foreach ($databases as $key => $val) $databases[$key] = new PDO($val[0], $val[1], $val[2]);
+foreach ($databases as $key => $val) $databases[$key] = new PDO($val[0], $val[1], $val[2] ?? null);
 
 unset($argv[0]);
 $argv = array_values($argv);
