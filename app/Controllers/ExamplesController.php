@@ -24,7 +24,7 @@ class ExamplesController
 
         return view('examples', [
             'users' => $user->paginate(20),
-            'users2' => $user->paginate(2, 'page_2'),
+            'users2' => $user->paginate(10, 'page_2'),
             'createdUser' => $createdUser
         ]);
     }

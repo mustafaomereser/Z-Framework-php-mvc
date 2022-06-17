@@ -54,7 +54,10 @@
     </div>
 
     <div>
-        <?php foreach ($users2['items'] as $user) : ?>
+        <?php
+        echo "Users_2 List (shown " . str_replace("/", "of", $users2['shown']) . ")";
+
+        foreach ($users2['items'] as $user) : ?>
             <div>
                 <b><?= $users2['start']++ ?>.)</b> <?= $user['username'] ?>
             </div>
