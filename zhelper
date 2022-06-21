@@ -180,7 +180,7 @@ class Db
                             break;
 
                         case 'default':
-                            $data['default'] = " DEFAULT" . (@$switch[1] ? "(`" . $switch[1] . "`)" : ' NULL') . " ";
+                            $data['default'] = " DEFAULT" . (@$switch[1] ? "(" . (is_numeric($switch[1]) ? $switch[1] : '`' . $switch[1] . '`') . ")" : ' NULL') . " ";
                             break;
 
                         case 'charset':
