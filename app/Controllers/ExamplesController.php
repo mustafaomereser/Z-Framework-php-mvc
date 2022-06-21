@@ -20,11 +20,9 @@ class ExamplesController
      */
     public function index($createdUser = [])
     {
-        $user = new User;
-
         return view('examples', [
-            'users' => $user->paginate(20),
-            'users2' => $user->paginate(10, 'page_2'),
+            'users' => $this->user->paginate(20),
+            'users2' => $this->user->paginate(10, 'page_2'),
             'createdUser' => $createdUser
         ]);
     }
