@@ -14,13 +14,14 @@
 - [5. zhelper](#5-zhelper)
 - [6. Csrf](#6-csrf)
 - [7. Language](#7-language)
-- [8. Alerts](#8-alerts)
-- [9. Validator](#9-validator)
-- [10. Middleware](#10-middleware)
-- [11. API](#11-api)
-- [12. Development](#12-development)
-- [13. Helper Methods](#13-helper-methods)
-- [14. Run Project](#14-run-project)
+- [8. Config](#8-config)
+- [9. Alerts](#9-alerts)
+- [10. Validator](#10-validator)
+- [11. Middleware](#11-middleware)
+- [12. API](#12-api)
+- [13. Development](#13-development)
+- [14. Helper Methods](#14-helper-methods)
+- [15. Run Project](#15-run-project)
 
 ## 1. Route
 ```php
@@ -370,8 +371,16 @@ ALSO you can normal query like /1?test=true
     // get lang list
     print_r(Lang::list());
 ```
+## 8. Config
+```php
+    Config::get('app'); // return all config
+    Config::get('app.title'); // return in app config title index's element
+    Config::set('app', [
+        'title' => 'test'
+    ]); // update config
+```
 
-## 8. Alerts
+## 9. Alerts
 ```php
     // Alerts is show just one time, when you refresh your page Alerts is gone.
 
@@ -400,7 +409,7 @@ ALSO you can normal query like /1?test=true
     <?php endforeach; ?>
 ```
 
-## 9. Validator
+## 10. Validator
 ```php
     // In array validate values.
     // Current: type, required, max, min, same, email, unique.
@@ -415,7 +424,7 @@ ALSO you can normal query like /1?test=true
         'test2' => ['same:test1'],
     ]);
 ```
-##  10. Middleware
+##  11. Middleware
 ```php
     # App\Middlewares\Auth.php
     # Validate first and go on.
@@ -446,7 +455,7 @@ ALSO you can normal query like /1?test=true
         // if you are not logged in # output: Array ('Auth::class')
 ```
 
-## 11. API
+## 12. API
 ```php
     # route/api.php
     Route::get('/test', function () {
@@ -455,7 +464,7 @@ ALSO you can normal query like /1?test=true
     // example: http://localhost/api/test?user_token=12345678 (user logged in.)
 ```
 
-## 12. Development
+## 13. Development
 ```php
     // Database connections
     # Folder: database/connections.php
@@ -475,7 +484,7 @@ ALSO you can normal query like /1?test=true
     // result database two connection.
 ```
 
-## 13. Helper Methods
+## 14. Helper Methods
 ```php
     // main base path
     base_path("optional url add");
@@ -535,7 +544,7 @@ ALSO you can normal query like /1?test=true
     File::resizeImage('file_path', 50, 50);
 ```
 
-## 14. Run Project
+## 15. Run Project
 ```php
     ....
     C:\Users\...\Desktop\Project>php run (press enter)
