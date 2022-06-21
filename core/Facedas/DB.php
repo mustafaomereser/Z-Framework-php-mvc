@@ -157,11 +157,13 @@ class DB
 
     public function where($key, $operator, $value, $prev = "AND")
     {
+        $replaced_key = str_replace(".", "_", $key);
+
         if (strlen(@$this->buildQuery['where']) == 0) $trim = true;
-        @$this->buildQuery['where'] .= " $prev $key $operator :$key";
+        @$this->buildQuery['where'] .= " $prev $key $operator :$replaced_key";
         if (@$trim) @$this->buildQuery['where'] = ltrim($this->buildQuery['where'], " $prev");
 
-        $this->buildQuery['data'][$key] = $value;
+        $this->buildQuery['data'][$replaced_key] = $value;
         return $this;
     }
 
