@@ -134,7 +134,9 @@ class Db
 
             if ($args['firstCommand'] == 'fresh') {
                 $initColumnName = "table_initilazing";
-                $db->exec("DROP TABLE $table");
+                try {
+                    $db->exec("DROP TABLE $table");
+                } catch (\PDOException $e){}
                 $db->exec("CREATE TABLE $table ($initColumnName int DEFAULT 1 NOT NULL)");
             }
 
@@ -146,7 +148,9 @@ class Db
                 $data = [
                     'type' => 'INT'
                 ];
-                $db->exec("ALTER TABLE $table DROP index $name;");
+                try {
+                    $db->exec("ALTER TABLE $table DROP index $name;");
+                } catch (\PDOException $e){}
 
                 foreach ($val as $switch) {
                     $switch = explode(':', $switch);
