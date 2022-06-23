@@ -11,6 +11,7 @@ class Route
     static $called = false;
     static $preURL = null;
 
+    static $calledInformations = [];
 
     private static function parser($data, $method, $options)
     {
@@ -77,7 +78,8 @@ class Route
                 abort();
         }
 
-        echo call_user_func_array($callback, $parameters);
+        self::$calledInformations = [$callback, $parameters];
+        // echo call_user_func_array($callback, $parameters);
     }
 
     public static function name($name, $data = [])
@@ -128,16 +130,33 @@ class Route
 
     public static function resource($url, $callback, $options = [])
     {
+        $name = rtrim(ltrim(str_replace('/', '.', self::$preURL . $url), '.'), '.');
+
+        $options['name'] = "$name.index";
         self::get($url, [$callback, 'index'], $options);
+
+        $options['name'] = "$name.store";
         self::post($url, [$callback, 'store'], $options);
 
+        $options['name'] = "$name.create";
         self::get("$url/create", [$callback, 'create'], $options);
+
+        $options['name'] = "$name.show";
         self::get("$url/{id}", [$callback, 'show'], $options);
+
+        $options['name'] = "$name.edit";
         self::get("$url/{id}/edit", [$callback, 'edit'], $options);
 
+        $options['name'] = "$name.update";
         self::patch("$url/{id}", [$callback, 'update'], $options);
         self::put("$url/{id}", [$callback, 'update'], $options);
 
+        $options['name'] = "$name.delete";
         self::delete("$url/{id}", [$callback, 'delete'], $options);
+    }
+
+    public static function run()
+    {
+        return call_user_func_array(self::$calledInformations[0], self::$calledInformations[1]);
     }
 }

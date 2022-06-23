@@ -1,4 +1,7 @@
 <?php
+
+use Core\Route;
+
 $start_time = microtime();
 session_start();
 
@@ -30,6 +33,7 @@ includer('../core');
 includer('../app');
 includer('../route', true, true);
 includer('../modules/error_handlers');
+echo Route::run();
 
 // forget alerts
 Core\Facedas\Alerts::unset();
