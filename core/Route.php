@@ -86,7 +86,7 @@ class Route
 
         $url = self::$routes[$name]['url'];
         foreach ($data as $key => $val) $url = str_replace("{" . $key . "}", $val, $url);
-        return $url;
+        return host() . $url;
     }
 
     public static function redirect($url, $to)
