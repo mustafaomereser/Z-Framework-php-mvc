@@ -122,7 +122,7 @@ class Route
         $parameters = [];
         foreach ($uri as $key => $val) {
             $urlVal = @$url[$key];
-            if ((!$urlVal || !$val) || !preg_match('/[^a-zA-Z0-9]+/i', $urlVal)) continue;
+            if (((!$urlVal || !$val) || !preg_match('/[^a-zA-Z0-9]+/i', $urlVal))) continue;
 
             $url[$key] = $val;
             $parameters[str_replace(['{', '}'], '', $urlVal)] = $val;
@@ -137,32 +137,27 @@ class Route
         $options = $data[2] ?? [];
         extract(self::parser($data, $method, $options));
 
-        //
-        if (($url != $uri || ($method && $method != method())) || self::$called == true) return;
-        if (!Csrf::check(@$options['no-csrf'])) abort(400, Lang::get('errors.csrf.no-verify'));
+        // Middlewares
+        Middleware::middleware($options['middlewares'] ?? []);
         //
 
-        //
-        Middleware::middleware($options['middlewares'] ?? []);
+        // Verify
+        if (($url != $uri || ($method && $method != method())) || self::$called == true) return;
+        if (!Csrf::check(@$options['no-csrf'])) abort(400, Lang::get('errors.csrf.no-verify'));
         //
 
         self::$called = true;
         self::$calledRoute = $data[0];
 
-        switch (gettype($callback)) {
-            case 'object':
-                break;
+        if (!in_array(gettype($callback), ['object', 'array'])) abort();
 
+        switch (gettype($callback)) {
             case 'array':
                 $callback = [new $callback[0](), $callback[1]];
                 break;
-
-            default:
-                abort();
         }
 
         self::$calledInformations = [$callback, $parameters];
-        // echo call_user_func_array($callback, $parameters);
     }
 
     private static function nameTrim($val)
