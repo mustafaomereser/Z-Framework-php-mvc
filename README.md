@@ -72,6 +72,28 @@
     | /{id}      | PUT/PATCH | update($id)       | home.update   |
     | /{id}      | DELETE    | delete($id)       | home.delete   |
     |--------------------------------------------|---------------|
+
+
+    # if you wanna simple use route names for resource
+    Route::resource('/test', ResourceController::class);
+    # result:
+    test.index
+    test.store
+    test.show
+    test.edit
+    test.create
+    test.update
+    test.delete
+
+    // two example for select name.
+    Route::name('test.index'); // output: www.host.com/test
+    Route::name('test.edit', ['id' => 1]); // output: www.host.com/test/1/edit
+
+    // for preURL usage:
+    Route::$preURL = '/admin';
+    Route::resource('/', ResourceController::class, ['name' => 'home']);
+    Route::name('admin.home.index'); // output www.host.com/admin
+
 ```
 ### 1.1. Form examples
 

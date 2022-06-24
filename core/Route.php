@@ -128,7 +128,7 @@ class Route
 
     public static function resource($url, $callback, $options = [])
     {
-        $name = !isset($options['name']) ? rtrim(ltrim(str_replace('/', '.', self::$preURL . $url), '.'), '.') : $options['name'];
+        $name = !isset($options['name']) ? rtrim(ltrim(str_replace('/', '.', self::$preURL . $url), '.'), '.') : rtrim(ltrim(str_replace('/', '.', self::$preURL . $options['name']), '.'), '.');
 
         $options['name'] = "$name.index";
         self::get($url, [$callback, 'index'], $options);
@@ -155,6 +155,7 @@ class Route
 
     public static function run()
     {
+        if (count(self::$calledInformations) != 2) die('Route can not run.');
         return call_user_func_array(self::$calledInformations[0], self::$calledInformations[1]);
     }
 }
