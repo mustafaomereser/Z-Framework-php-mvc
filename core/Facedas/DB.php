@@ -57,8 +57,8 @@ class DB
     public function findSlug($slug)
     {
         $find = $this->find($slug, true, 'slug');
-        if (@$find->id) return $slug .= rand(0, 100);
-        return self::findSlug($slug);
+        if (@$find->id) $slug .= rand(0, 100);
+        return $slug;
     }
 
     // Query methods
