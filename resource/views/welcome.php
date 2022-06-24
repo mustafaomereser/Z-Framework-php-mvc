@@ -1,6 +1,8 @@
 <?php
 
 use Core\Facedas\Lang;
+use Core\Route;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

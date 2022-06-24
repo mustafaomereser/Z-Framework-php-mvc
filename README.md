@@ -56,22 +56,22 @@
    });
    
    // if you create resource controller it's like that simple
-   Route::resource('/', TestController::class);
+   Route::resource('/', TestController::class, ['name' => 'home']);
    
    
     Resource Route list:
    
-    |--------------------------------------------|
-    | URL        | METHOD    | Callback Function |
-    |------------|-----------|-------------------|
-    | /          | GET       | index()           |
-    | /          | POST      | store()           |
-    | /{id}      | GET       | show($id)         |
-    | /{id}/edit | GET       | edit($id)         |
-    | /create    | GET       | create()          |
-    | /{id}      | PUT/PATCH | update($id)       |
-    | /{id}      | DELETE    | delete($id)       |
-    |--------------------------------------------|
+    |------------------------------------------------------------|
+    | URL        | METHOD    | Callback Function | Route Name    |
+    |------------|-----------|-----------------------------------|
+    | /          | GET       | index()           | home.index    |
+    | /          | POST      | store()           | home.store    |
+    | /{id}      | GET       | show($id)         | home.show     |
+    | /{id}/edit | GET       | edit($id)         | home.edit     |
+    | /create    | GET       | create()          | home.create   |
+    | /{id}      | PUT/PATCH | update($id)       | home.update   |
+    | /{id}      | DELETE    | delete($id)       | home.delete   |
+    |--------------------------------------------|---------------|
 ```
 ### 1.1. Form examples
 

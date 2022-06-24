@@ -7,10 +7,10 @@ use Core\Facedas\Lang;
 class Route
 {
     static $routes = [];
-    static $calledRoute = null;
-    static $called = false;
     static $preURL = null;
 
+    static $called = false;
+    static $calledRoute = null;
     static $calledInformations = [];
 
     private static function parser($data, $method, $options)
@@ -22,10 +22,8 @@ class Route
 
         //
         $inf = ['url' => $_url, 'method' => $method];
-        if (@$options['name'])
-            self::$routes[$options['name']] = $inf;
-        else
-            self::$routes[] = $inf;
+        if (@$options['name']) self::$routes[$options['name']] = $inf;
+        else self::$routes[] = $inf;
         //
 
         //
@@ -45,7 +43,6 @@ class Route
             $parameters[str_replace(['{', '}'], '', $urlVal)] = $val;
         }
 
-
         return compact('parameters', 'uri', 'url');
     }
 
@@ -59,9 +56,10 @@ class Route
         Middleware::middleware($options['middlewares'] ?? []);
         //
 
+        //
         if (($url != $uri || ($method && $method != method())) || self::$called == true) return;
         if (!Csrf::check(@$options['no-csrf'])) abort(400, Lang::get('errors.csrf.no-verify'));
-
+        //
 
         self::$called = true;
         self::$calledRoute = $data[0];
@@ -130,7 +128,7 @@ class Route
 
     public static function resource($url, $callback, $options = [])
     {
-        $name = rtrim(ltrim(str_replace('/', '.', self::$preURL . $url), '.'), '.');
+        if (!isset($options['name'])) $name = rtrim(ltrim(str_replace('/', '.', self::$preURL . $url), '.'), '.');
 
         $options['name'] = "$name.index";
         self::get($url, [$callback, 'index'], $options);
