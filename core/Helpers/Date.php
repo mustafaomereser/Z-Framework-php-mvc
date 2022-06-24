@@ -19,9 +19,9 @@ class Date
         return date($format, (is_string($date) ? strtotime($date) : $date));
     }
 
-    public static function now()
+    public static function now($format = 'd.m.Y H:i')
     {
-        return date('d.m.Y H:i');
+        return date($format);
     }
 
     public static function timestamp()

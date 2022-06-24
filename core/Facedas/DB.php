@@ -49,6 +49,11 @@ class DB
         return $this;
     }
 
+    public function find($find, $class = false)
+    {
+        return $this->resetBuild()->where($this->attributes[0], '=', $find)->first($class);
+    }
+
     // Query methods
     public function insert(array $data)
     {
@@ -238,18 +243,25 @@ class DB
         return @$this->buildQuery['groupBy'] ? " GROUP BY " . $this->buildQuery['groupBy'] : null;
     }
 
-    public function buildSQL()
+    private function buildSQL()
     {
         $select = $this->buildQuery['select'] ?? '*';
         $sql = trim(str_replace(['  '], [' '], "SELECT $select FROM $this->table" . $this->getJoins() . $this->getWhere() . $this->getOrderBy() . $this->getGroupBy() . $this->getLimit()));
         return $sql;
     }
 
+    private function resetBuild()
+    {
+        $this->cache['buildQuery'] = $this->buildQuery;
+        $this->buildQuery = []; // reset buildQuery
+
+        return $this;
+    }
+
     private function run()
     {
         $r = self::prepare(self::buildSQL());
-        $this->cache['buildQuery'] = $this->buildQuery;
-        $this->buildQuery = []; // reset buildQuery
+        $this->resetBuild();
         return $r;
     }
 }
