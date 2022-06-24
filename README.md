@@ -91,8 +91,8 @@
 
     // for preURL usage:
     Route::$preURL = '/admin';
-    Route::resource('/', ResourceController::class, ['name' => 'home']);
-    Route::name('admin.home.index'); // output www.host.com/admin
+    Route::resource('/', ResourceController::class);
+    Route::name('admin.index'); // output www.host.com/admin
 
 ```
 ### 1.1. Form examples
