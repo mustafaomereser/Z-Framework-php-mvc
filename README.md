@@ -9,19 +9,20 @@
 - [2. Model](#2-model)
   - [2.1. User](#21-user)
   - [2.2. Database Migrate](#22-database-migrate)
-- [3. Controller](#3-controller)
-- [4. View](#4-view)
-- [5. zhelper](#5-zhelper)
-- [6. Csrf](#6-csrf)
-- [7. Language](#7-language)
-- [8. Config](#8-config)
-- [9. Alerts](#9-alerts)
-- [10. Validator](#10-validator)
-- [11. Middleware](#11-middleware)
-- [12. API](#12-api)
-- [13. Development](#13-development)
-- [14. Helper Methods](#14-helper-methods)
-- [15. Run Project](#15-run-project)
+- [3. Mail](#3-mail)
+- [4. Controller](#4-controller)
+- [5. View](#5-view)
+- [6. zhelper](#6-zhelper)
+- [7. Csrf](#7-csrf)
+- [8. Language](#8-language)
+- [9. Config](#9-config)
+- [10. Alerts](#10-alerts)
+- [11. Validator](#11-validator)
+- [12. Middleware](#12-middleware)
+- [13. API](#13-api)
+- [14. Development](#14-development)
+- [15. Helper Methods](#15-helper-methods)
+- [16. Run Project](#16-run-project)
 
 ## 1. Route
 ```php
@@ -299,7 +300,23 @@ ALSO you can normal query like /1?test=true
 
 ```
 
-## 3. Controller
+## 3. Mail
+```php
+    // Usage
+    
+    $mail = new Mail;
+    $mail->send('mustafaomereser@gmail.com', [
+        'subject' => 'test',
+        'message' => 'test mesaj',
+        'altbody' => 'Alt body',
+        'attachements' => [
+            'uploads/1.png',
+            'uploads/2.png'
+        ]
+    ]);
+```
+
+## 4. Controller
 ```php
     class ... {
         public function __construct() {
@@ -319,7 +336,7 @@ ALSO you can normal query like /1?test=true
         }
     }
 ```
-## 4. View
+## 5. View
 ```php
     // Use That
     view('home.index', ['hi' => 'hey'], 'main');
@@ -335,7 +352,7 @@ ALSO you can normal query like /1?test=true
         <?= View::view('home.list', $view_parameters); ?> // Output: echo $hi; = hey // RESULT
     </div>
 ```
-## 5. zhelper
+## 6. zhelper
 ```php
     ....
     C:\Users\...\Desktop\Project>php zhelper
@@ -360,7 +377,7 @@ ALSO you can normal query like /1?test=true
 
     // Note: if you create first time tables you must do use fresh option.
 ```
-## 6. Csrf
+## 7. Csrf
 ```php
     // Usage:
     Csrf::csrf(); // Output: ready csrf input
@@ -369,7 +386,7 @@ ALSO you can normal query like /1?test=true
     Csrf::unset(); // Destroy csrf token
     Csrf::remainTimeOut(); // How much seconds left for change csrf token
 ```
-## 7. Language
+## 8. Language
 ```php
     // Usage:
     
@@ -396,7 +413,7 @@ ALSO you can normal query like /1?test=true
     // get lang list
     print_r(Lang::list());
 ```
-## 8. Config
+## 9. Config
 ```php
     Config::get('app'); // return all config
     Config::get('app.title'); // return in app config title index's element
@@ -405,7 +422,7 @@ ALSO you can normal query like /1?test=true
     ]); // update config
 ```
 
-## 9. Alerts
+## 10. Alerts
 ```php
     // Alerts is show just one time, when you refresh your page Alerts is gone.
 
@@ -434,7 +451,7 @@ ALSO you can normal query like /1?test=true
     <?php endforeach; ?>
 ```
 
-## 10. Validator
+## 11. Validator
 ```php
     // In array validate values.
     // Current: type, required, max, min, same, email, unique.
@@ -449,7 +466,7 @@ ALSO you can normal query like /1?test=true
         'test2' => ['same:test1'],
     ]);
 ```
-##  11. Middleware
+##  12. Middleware
 ```php
     # App\Middlewares\Auth.php
     # Validate first and go on.
@@ -480,7 +497,7 @@ ALSO you can normal query like /1?test=true
         // if you are not logged in # output: Array ('Auth::class')
 ```
 
-## 12. API
+## 13. API
 ```php
     # route/api.php
     Route::get('/test', function () {
@@ -489,7 +506,7 @@ ALSO you can normal query like /1?test=true
     // example: http://localhost/api/test?user_token=12345678 (user logged in.)
 ```
 
-## 13. Development
+## 14. Development
 ```php
     // Database connections
     # Folder: database/connections.php
@@ -509,7 +526,7 @@ ALSO you can normal query like /1?test=true
     // result database two connection.
 ```
 
-## 14. Helper Methods
+## 15. Helper Methods
 ```php
     // main base path
     base_path("optional url add");
@@ -569,7 +586,7 @@ ALSO you can normal query like /1?test=true
     File::resizeImage('file_path', 50, 50);
 ```
 
-## 15. Run Project
+## 16. Run Project
 ```php
     ....
     C:\Users\...\Desktop\Project>php run (press enter)

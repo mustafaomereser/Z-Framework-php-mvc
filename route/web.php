@@ -2,6 +2,7 @@
 
 use App\Controllers\ExamplesController;
 use Core\Facedas\Lang;
+use Core\Facedas\Mail;
 use Core\Route;
 use Core\View;
 
