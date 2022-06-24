@@ -64,7 +64,11 @@ class DB
     // Query methods
     public function insert(array $data)
     {
+        if ($this->attributes[array_search('created_at', $this->attributes)]) $data['created_at'] = time();
+        if ($this->attributes[array_search('updated_at', $this->attributes)]) $data['updated_at'] = time();
+
         $keys = array_keys($data);
+
         $insert = $this->prepare("INSERT INTO $this->table(" . implode(', ', $keys) . ") VALUES (:" . implode(', :', $keys) . ")", $data)->rowCount();
 
         if ($insert) {
