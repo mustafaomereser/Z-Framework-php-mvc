@@ -217,7 +217,7 @@ ALSO you can normal query like /1?test=true
     $user->where('id', '=', 1)->where('email', '=', 'test@mail.com', 'OR')->get();
     
     // Find example that is for first key my users table's first key is id
-    $user->find(1);
+    $user->find(1, true|false);
 
     // Select example
     $user->select('id, username')->get();

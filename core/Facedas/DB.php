@@ -49,9 +49,16 @@ class DB
         return $this;
     }
 
-    public function find($find, $class = false)
+    public function find($find, $class = false, $column_name = null)
     {
-        return $this->resetBuild()->where($this->attributes[0], '=', $find)->first($class);
+        return $this->resetBuild()->where($column_name ?? $this->attributes[0], '=', $find)->first($class);
+    }
+
+    public function findSlug($slug)
+    {
+        $find = $this->find($slug, true, 'slug');
+        if (@$find->id) return $slug .= rand(0, 100);
+        return self::findSlug($slug);
     }
 
     // Query methods
