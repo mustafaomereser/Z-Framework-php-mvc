@@ -138,12 +138,12 @@ class Route
         extract(self::parser($data, $method, $options));
 
         //
-        Middleware::middleware($options['middlewares'] ?? []);
+        if (($url != $uri || ($method && $method != method())) || self::$called == true) return;
+        if (!Csrf::check(@$options['no-csrf'])) abort(400, Lang::get('errors.csrf.no-verify'));
         //
 
         //
-        if (($url != $uri || ($method && $method != method())) || self::$called == true) return;
-        if (!Csrf::check(@$options['no-csrf'])) abort(400, Lang::get('errors.csrf.no-verify'));
+        Middleware::middleware($options['middlewares'] ?? []);
         //
 
         self::$called = true;

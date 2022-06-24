@@ -9,7 +9,7 @@ Route::any('/', function () {
     return View::view('welcome');
 });
 
-Route::get('/language/{lang}', function ($lang) {
+Route::get('/language/{!lang}', function ($lang) {
     Lang::locale($lang);
     back();
 });

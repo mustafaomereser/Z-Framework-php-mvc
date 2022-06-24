@@ -307,7 +307,7 @@ ALSO you can normal query like /1?test=true
     $mail = new Mail;
     $mail->send('mustafaomereser@gmail.com', [
         'subject' => 'test',
-        'message' => 'test mesaj',
+        'message' => 'test mesaj', // you can also use view('view_name', ['hash' => Str::rand()]) method and set veriables;
         'altbody' => 'Alt body',
         'attachements' => [
             'uploads/1.png',

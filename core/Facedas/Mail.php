@@ -13,6 +13,7 @@ class Mail
 
         $this->mail = new PHPMailer;
         $this->mail->isSMTP();
+        $this->mail->CharSet = 'utf-8'; 
 
         if (@$mailConfig['debug'] == true) $this->mail->SMTPDebug = SMTP::DEBUG_SERVER;
 
