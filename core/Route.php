@@ -134,26 +134,26 @@ class Route
         $name = rtrim(ltrim($name, '.'), '.');
         //
 
-        $options['name'] = "$name.index";
+        $options['name'] = rtrim(ltrim("$name.index", '.'), '.');
         self::get($url, [$callback, 'index'], $options);
 
-        $options['name'] = "$name.store";
+        $options['name'] = rtrim(ltrim("$name.store", '.'), '.');
         self::post($url, [$callback, 'store'], $options);
 
-        $options['name'] = "$name.create";
+        $options['name'] = rtrim(ltrim("$name.create", '.'), '.');
         self::get("$url/create", [$callback, 'create'], $options);
 
-        $options['name'] = "$name.show";
+        $options['name'] = rtrim(ltrim("$name.show", '.'), '.');
         self::get("$url/{id}", [$callback, 'show'], $options);
 
-        $options['name'] = "$name.edit";
+        $options['name'] = rtrim(ltrim("$name.edit", '.'), '.');
         self::get("$url/{id}/edit", [$callback, 'edit'], $options);
 
-        $options['name'] = "$name.update";
+        $options['name'] = rtrim(ltrim("$name.update", '.'), '.');
         self::patch("$url/{id}", [$callback, 'update'], $options);
         self::put("$url/{id}", [$callback, 'update'], $options);
 
-        $options['name'] = "$name.delete";
+        $options['name'] = rtrim(ltrim("$name.delete", '.'), '.');
         self::delete("$url/{id}", [$callback, 'delete'], $options);
     }
 
