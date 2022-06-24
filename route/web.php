@@ -16,5 +16,5 @@ Route::get('/language/{lang}', function ($lang) {
 
 Route::resource('/', ExamplesController::class);
 
-
+echo "<pre>";
 print_r(Route::$routes);

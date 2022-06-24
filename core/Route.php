@@ -128,7 +128,11 @@ class Route
 
     public static function resource($url, $callback, $options = [])
     {
-        $name = !isset($options['name']) ? rtrim(ltrim(str_replace('/', '.', self::$preURL . $url), '.'), '.') : rtrim(ltrim(str_replace('/', '.', self::$preURL . $options['name']), '.'), '.');
+
+        // Name
+        $name = !isset($options['name']) ? str_replace('/', '.', self::$preURL . $url) : str_replace('/', '.', self::$preURL . $options['name']);
+        $name = rtrim(ltrim($name, '.'), '.');
+        //
 
         $options['name'] = "$name.index";
         self::get($url, [$callback, 'index'], $options);
