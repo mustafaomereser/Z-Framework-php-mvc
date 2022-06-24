@@ -81,6 +81,8 @@ class DB
 
     public function update(array $sets)
     {
+        if ($this->attributes[array_search('updated_at', $this->attributes)]) $sets['updated_at'] = time();
+
         $sql_set = '';
         foreach ($sets as $key => $_) {
             $sql_set .= "$key = :$key, ";
