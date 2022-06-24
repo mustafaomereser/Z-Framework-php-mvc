@@ -21,7 +21,7 @@ class ExamplesController
     public function index($createdUser = [])
     {
         return view('examples', [
-            'users' => $this->user->paginate(20),
+            'users' => $this->user->select('*, COUNT(username) as usernameCount')->groupBy('username')->paginate(20),
             'users2' => $this->user->paginate(10, 'page_2'),
             'createdUser' => $createdUser
         ]);

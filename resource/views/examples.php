@@ -38,7 +38,7 @@
 <fieldset>
     <legend>Paginate Examples</legend>
     <div style="margin-bottom: 15px;">
-        <small>Users diffrent paginations</small>
+        <small>Users diffrent paginations With groupBy for username.</small>
     </div>
 
     <div>
@@ -46,7 +46,7 @@
         echo "Users List (shown " . str_replace("/", "of", $users['shown']) . ")";
         foreach ($users['items'] as $user) : ?>
             <div>
-                <b><?= $users['start']++ ?>.)</b> <?= $user['username'] ?>
+                <b><?= $users['start']++ ?>.)</b> <?= $user['username'] ?> (<?= $user['usernameCount'] ?>)
             </div>
         <?php endforeach; ?>
 

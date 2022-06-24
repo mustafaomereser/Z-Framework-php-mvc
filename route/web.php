@@ -14,4 +14,4 @@ Route::get('/language/{lang}', function ($lang) {
     back();
 });
 
-Route::resource('/', ExamplesController::class);
+Route::resource('/examples', ExamplesController::class);

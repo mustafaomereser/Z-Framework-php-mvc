@@ -227,10 +227,21 @@ class DB
         return null;
     }
 
+    public function groupBy($column)
+    {
+        $this->buildQuery['groupBy'] = $column;
+        return $this;
+    }
+
+    private function getGroupBy()
+    {
+        return @$this->buildQuery['groupBy'] ? " GROUP BY " . $this->buildQuery['groupBy'] : null;
+    }
+
     public function buildSQL()
     {
         $select = $this->buildQuery['select'] ?? '*';
-        $sql = trim(str_replace(['  '], [' '], "SELECT $select FROM $this->table" . $this->getJoins() . $this->getWhere() . $this->getOrderBy() . $this->getLimit()));
+        $sql = trim(str_replace(['  '], [' '], "SELECT $select FROM $this->table" . $this->getJoins() . $this->getWhere() . $this->getOrderBy() . $this->getGroupBy() . $this->getLimit()));
         return $sql;
     }
 

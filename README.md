@@ -219,6 +219,9 @@ ALSO you can normal query like /1?test=true
 
     // OrderBy example
     $user->orderBy(['id' => 'ASC', 'username' => 'DESC'])->get();
+
+    // GroupBy example
+    $user->groupBy('username');
     
     // Limit example args: 10(startCount), 10(rowCount)
     $user->limit(5, 10)->get();
