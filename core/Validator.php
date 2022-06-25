@@ -54,19 +54,6 @@ class Validator
                     }
                 }
 
-                // echo "<br><br>";
-                // echo "Name: $dataKey";
-                // echo "<br>";
-                // echo "val: $val";
-                // echo "<br>";
-                // echo "length: $length";
-                // echo "<br>";
-                // echo "Type: $type";
-                // echo "<br>";
-                // echo "Data value: ";
-                // print_r($dataValue);
-                // echo "<br><br>";
-
                 $ok = false;
                 switch ($key) {
                     case 'type':
