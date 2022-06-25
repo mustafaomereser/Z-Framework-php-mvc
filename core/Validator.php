@@ -19,9 +19,9 @@ class Validator
             $dataValue = @$data[$dataKey];
 
             $length = -1;
-            if (empty($dataValue)) {
+            if (empty($dataValue) && $dataValue != 0) {
                 $type  = 'null';
-            } elseif (is_numeric($dataValue)) {
+            } elseif (is_numeric($dataValue) || $dataValue == 0) {
                 $type = 'integer';
                 $length = $dataValue;
             } elseif (is_string($dataValue)) {
@@ -54,6 +54,19 @@ class Validator
                     }
                 }
 
+                // echo "<br><br>";
+                // echo "Name: $dataKey";
+                // echo "<br>";
+                // echo "val: $val";
+                // echo "<br>";
+                // echo "length: $length";
+                // echo "<br>";
+                // echo "Type: $type";
+                // echo "<br>";
+                // echo "Data value: ";
+                // print_r($dataValue);
+                // echo "<br><br>";
+
                 $ok = false;
                 switch ($key) {
                     case 'type':
@@ -66,7 +79,7 @@ class Validator
                         break;
 
                     case 'required':
-                        if (!empty($dataValue)) $ok = true;
+                        if ($length >= 0) $ok = true;
                         break;
 
                     case 'max':
