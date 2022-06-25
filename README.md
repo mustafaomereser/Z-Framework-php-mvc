@@ -590,10 +590,17 @@ ALSO you can normal query like /1?test=true
     # Usage:
     File::save('/uploads', 'http://images.com/image.jpg'); // uploads/**********.jpg
 
+    // For one
     File::upload('/uploads', $_FILES['file'], [ // settings is optional
         'accept' => ['jpg', 'jpeg', 'png'],
         'size' => 300000 # byte
     ]); // return /uploads/image.ext
+
+    // For multip
+    File::upload('/uploads', $_FILES['files'], [ // settings is optional
+        'accept' => ['jpg', 'jpeg', 'png'],
+        'size' => 300000 # byte
+    ]); // return array('/uploads/image.ext', '/uploads/image.ext');
 
                                 # width, height
     File::resizeImage('file_path', 50, 50);
