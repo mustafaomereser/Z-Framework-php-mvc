@@ -64,8 +64,8 @@ class DB
     // Query methods
     public function insert(array $data)
     {
-        if ($this->attributes[array_search('created_at', $this->attributes)]) $data['created_at'] = time();
-        if ($this->attributes[array_search('updated_at', $this->attributes)]) $data['updated_at'] = time();
+        if (array_search('created_at', $this->attributes)) $data['created_at'] = time();
+        if (array_search('updated_at', $this->attributes)) $data['updated_at'] = time();
 
         $keys = array_keys($data);
 
@@ -81,7 +81,7 @@ class DB
 
     public function update(array $sets)
     {
-        if ($this->attributes[array_search('updated_at', $this->attributes)]) $sets['updated_at'] = time();
+        if (array_search('updated_at', $this->attributes)) $sets['updated_at'] = time();
 
         $sql_set = '';
         foreach ($sets as $key => $_) {
