@@ -34,29 +34,37 @@ class File
 
     public static function upload($path, $file, $options = [])
     {
-        $path = self::path($path);
-        $name = $file['name'];
-        $error = 0;
+        $files = [];
 
-        if (isset($options['accept'])) {
-            $ext = @end(explode('.', $name));
-            if (!in_array($ext, $options['accept'])) {
-                $error++;
-                Alerts::danger(Lang::get('errors.file.type', ['file_types' => implode(', ', $options['accept'])]));
+        if (gettype($file['name']) === 'string') foreach ($file as $key => $val) $file[$key] = [$val];
+
+        foreach ($file['name'] as $key => $name) {
+            $path = self::path($path);
+            $name = $file['name'][$key];
+            $error = 0;
+
+            if (isset($options['accept'])) {
+                $ext = @end(explode('.', $name));
+                if (!in_array($ext, $options['accept'])) {
+                    $error++;
+                    Alerts::danger(Lang::get('errors.file.type', ['file_types' => implode(', ', $options['accept'])]));
+                }
             }
+
+            if (isset($options['size']) && is_numeric($options['size']))
+                if ($file['size'][$key] > $options['size']) {
+                    $error++;
+                    Alerts::danger(Lang::get('errors.file.size', ['current-size' => human_filesize($file['size'][$key]), 'accept-size' => human_filesize($options['size'])]));
+                }
+
+            if ($error) continue;
+
+            $uploadName = "$path/" . self::createName($name);
+            if (move_uploaded_file($file['tmp_name'][$key], $uploadName)) $files[] = self::removePublic($uploadName);
         }
 
-        if (isset($options['size']) && is_numeric($options['size']))
-            if ($file['size'] > $options['size']) {
-                $error++;
-                Alerts::danger(Lang::get('errors.file.size', ['current-size' => human_filesize($file['size']), 'accept-size' => human_filesize($options['size'])]));
-            }
-
-        if ($error) return false;
-
-        $uploadName = "$path/" . self::createName($name);
-        if (move_uploaded_file($file['tmp_name'], $uploadName)) return self::removePublic($uploadName);
-        return false;
+        if (!count($files)) return false;
+        return count($files) > 1 ? $files : $files[0];
     }
 
     public static function resizeImage($file, $width = 50, $height = 50)
