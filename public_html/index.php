@@ -13,9 +13,7 @@ function includer($_path, $include_in_folder = true, $reverse_include = false, $
 {
     if (is_file($_path)) return include($_path);
 
-    $path = scandir($_path);
-    unset($path[array_search('.', $path)], $path[array_search('..', $path)]);
-    $path = array_values($path);
+    $path = array_values(array_diff(scandir($_path), ['.', '..']));
 
     if ($reverse_include) $path = array_reverse($path);
 
