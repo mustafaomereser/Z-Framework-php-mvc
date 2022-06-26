@@ -16,14 +16,15 @@
 - [7. zhelper](#7-zhelper)
 - [8. Csrf](#8-csrf)
 - [9. Language](#9-language)
-- [10. Config](#10-config)
-- [11. Alerts](#11-alerts)
-- [12. Validator](#12-validator)
-- [13. Middleware](#13-middleware)
-- [14. API](#14-api)
-- [15. Development](#15-development)
-- [16. Helper Methods](#16-helper-methods)
-- [17. Run Project](#17-run-project)
+- [10. Crypter](#10-crypter)
+- [11. Config](#11-config)
+- [12. Alerts](#12-alerts)
+- [13. Validator](#13-validator)
+- [14. Middleware](#14-middleware)
+- [15. API](#15-api)
+- [16. Development](#16-development)
+- [17. Helper Methods](#17-helper-methods)
+- [18. Run Project](#18-run-project)
 
 ## 1. Route
 ```php
@@ -426,7 +427,20 @@ ALSO you can normal query like /1?test=true
     // get lang list
     print_r(Lang::list());
 ```
-## 10. Config
+
+## 10. Crypter
+```php
+    # Usage:
+
+    $encode = Crypter::encode('test'); // result: {test_hashed_code}
+    $decode = Crypter::decode($encode); // result: test
+
+    $encodeArray = Crypter::encodeArray(['test', 'test2']);
+    $decodeArray = Crypter::decodeArray($encodeArray);
+```
+
+
+## 11. Config
 ```php
     Config::get('app'); // return all config
     Config::get('app.title'); // return in app config title index's element
@@ -435,7 +449,7 @@ ALSO you can normal query like /1?test=true
     ]); // update config
 ```
 
-## 11. Alerts
+## 12. Alerts
 ```php
     // Alerts is show just one time, when you refresh your page Alerts is gone.
 
@@ -464,7 +478,7 @@ ALSO you can normal query like /1?test=true
     <?php endforeach; ?>
 ```
 
-## 12. Validator
+## 13. Validator
 ```php
     // In array validate values.
     // Current: type, required, max, min, same, email, unique.
@@ -479,7 +493,7 @@ ALSO you can normal query like /1?test=true
         'test2' => ['same:test1'],
     ]);
 ```
-##  13. Middleware
+##  14. Middleware
 ```php
     # App\Middlewares\Auth.php
     # Validate first and go on.
@@ -510,7 +524,7 @@ ALSO you can normal query like /1?test=true
         // if you are not logged in # output: Array ('Auth::class')
 ```
 
-## 14. API
+## 15. API
 ```php
     # route/api.php
     Route::get('/test', function () {
@@ -519,13 +533,12 @@ ALSO you can normal query like /1?test=true
     // example: http://localhost/api/test?user_token=12345678 (user logged in.)
 ```
 
-## 15. Development
+## 16. Development
 ```php
     // Database connections
     # Folder: database/connections.php
-    <?php
     
-    // before
+    # before
     $databases = [
         'local' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123'],
     ];
@@ -536,10 +549,23 @@ ALSO you can normal query like /1?test=true
         'custom_db_name' => ['mysql:host=localhost;dbname=test_2;charset=utf8mb4', 'root', '123123'],
     ];
 
-    // result database two connection.
+    # result database two connection.
+
+
+    // Usage Crypter
+    # Folder config/app.php
+    'key' => 'cryptkey',
+    'salt' => 'ThisSaltIsSecret',
+
+    # if you change that your hash encode's will change, and all hash need be unique for security.
+    # example
+    'key' => '82FDFE2976AC2C8B8EBD5A5737118',
+    'salt' => '4ljd5AyZc9',
+
+    # it is so secure. crypter make passwords or etc.
 ```
 
-## 16. Helper Methods
+## 17. Helper Methods
 ```php
     // main base path
     base_path("optional url add");
@@ -606,7 +632,7 @@ ALSO you can normal query like /1?test=true
     File::resizeImage('file_path', 50, 50);
 ```
 
-## 17. Run Project
+## 18. Run Project
 ```php
     ....
     C:\Users\...\Desktop\Project>php run (press enter)
