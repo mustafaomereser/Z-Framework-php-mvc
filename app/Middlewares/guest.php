@@ -2,11 +2,14 @@
 
 namespace App\Middlewares;
 
+use Core\Facedas\Auth;
+
 class Guest
 {
     public function __construct()
     {
-        if (!@$_SESSION['user_id']) return true;
+        if (!Auth::check()) return true;
+        return false;
     }
 
     public function error()
