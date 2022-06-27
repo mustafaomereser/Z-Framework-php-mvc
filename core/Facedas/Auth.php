@@ -4,7 +4,6 @@ namespace Core\Facedas;
 
 use App\Models\User;
 use Core\Crypter;
-use Core\Validator;
 
 class Auth
 {
@@ -12,8 +11,12 @@ class Auth
 
     public static function login($user)
     {
-        $_SESSION['user_id'] = $user['id'];
-        return true;
+        if (isset($user['id'])) {
+            $_SESSION['user_id'] = $user['id'];
+            return true;
+        }
+
+        return false;
     }
 
     public static function api_login($token)
@@ -32,18 +35,20 @@ class Auth
 
     public static function check()
     {
-        if (@$_SESSION['user_id']) return true;
+        print_r(self::user());
+        if (isset(self::user()['id'])) return true;
         return false;
     }
 
     public static function user()
     {
-        if (!self::check()) return false;
+        if (!isset($_SESSION['user_id'])) return false;
 
         if (self::$user == null) {
             $user = new User;
             self::$user = $user->where('id', '=', $_SESSION['user_id'])->first(); // ->where('api_token', '=', 'test', 'OR')
         }
+        if (!@self::$user['id']) return self::logout();
 
         return self::$user;
     }
