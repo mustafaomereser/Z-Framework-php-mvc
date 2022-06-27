@@ -35,7 +35,6 @@ class Auth
 
     public static function check()
     {
-        print_r(self::user());
         if (isset(self::user()['id'])) return true;
         return false;
     }
