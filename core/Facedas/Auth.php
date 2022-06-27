@@ -48,7 +48,7 @@ class Auth
         return self::$user;
     }
 
-    public static function attempt($fields = [])
+    public static function attempt($fields = [], $getUser = false)
     {
         if (self::check()) return false;
 
@@ -62,7 +62,7 @@ class Auth
 
         if (@$user['id']) {
             $_SESSION['user_id'] = $user['id'];
-            return true;
+            return $getUser ? $user : true;
         }
 
         return false;
