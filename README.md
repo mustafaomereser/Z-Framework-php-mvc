@@ -611,6 +611,12 @@ ALSO you can normal query like /1?test=true
     // Call view method easy way, it's same View::view() 
     view(...., ....., ....);
 
+    // shortcut for Lang::get()
+    _l(...);
+
+    // shortcut for Config::get()
+    config(...);
+
     // File
     
     # Usage:

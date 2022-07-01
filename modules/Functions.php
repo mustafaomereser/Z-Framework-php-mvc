@@ -72,6 +72,16 @@ function request($name = null, $val = NULL)
     return $_REQUEST[$name] = $val;
 }
 
+function config()
+{
+    return call_user_func_array([Core\Facedas\Config::class, 'get'], func_get_args());
+}
+
+function _l()
+{
+    return call_user_func_array([Core\Facedas\Lang::class, 'get'], func_get_args());
+}
+
 function human_filesize($bytes, $decimals = 2)
 {
     $size = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
