@@ -16,7 +16,7 @@ class Lang
 
     public static function list()
     {
-        return array_diff(scandir(base_path() . "\\resource\lang"), ['.', '..']);
+        return array_values(array_diff(scandir(base_path() . "\\resource\lang"), ['.', '..']));
     }
 
     public static function locale($lang = null, $syncSession = true)
