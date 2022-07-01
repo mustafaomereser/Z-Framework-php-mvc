@@ -136,7 +136,8 @@ class Db
                 $initColumnName = "table_initilazing";
                 try {
                     $db->exec("DROP TABLE $table");
-                } catch (\PDOException $e){}
+                } catch (\PDOException $e) {
+                }
                 $db->exec("CREATE TABLE $table ($initColumnName int DEFAULT 1 NOT NULL)");
             }
 
@@ -150,7 +151,8 @@ class Db
                 ];
                 try {
                     $db->exec("ALTER TABLE $table DROP index $name;");
-                } catch (\PDOException $e){}
+                } catch (\PDOException $e) {
+                }
 
                 foreach ($val as $switch) {
                     $switch = explode(':', $switch);
@@ -184,7 +186,7 @@ class Db
                             break;
 
                         case 'default':
-                            $data['default'] = " DEFAULT" . (@$switch[1] ? "(" . (is_numeric($switch[1]) ? $switch[1] : '`' . $switch[1] . '`') . ")" : ' NULL') . " ";
+                            $data['default'] = " DEFAULT" . (@$switch[1] ? "(" . (is_numeric($switch[1]) ? $switch[1] : "'" . addslashes($switch[1]) . "'") . ")" : ' NULL') . " ";
                             break;
 
                         case 'charset':
