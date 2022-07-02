@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'sending' => false,
+    'sending' => true,
 
     'debug' => false,
     'SMTPAuth' => true,
