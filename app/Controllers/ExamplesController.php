@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\User;
 use Core\Crypter;
+use Core\Facedas\DB;
 use Core\Facedas\Str;
 use Core\Validator;
 
@@ -13,6 +14,7 @@ class ExamplesController
     public function __construct()
     {
         $this->user = new User;
+        $this->db = new DB;
     }
 
     /** Index page | GET: /
@@ -20,7 +22,12 @@ class ExamplesController
      */
     public function index($createdUser = [])
     {
-        // print_r($this->user->where('id', '=', 3)->delete());
+        $this->delete_user = new User;
+        $this->delete_user->where('id', '=', 1)->delete();
+
+        echo "<pre>";
+        print_r($this->db->table('users')->get());
+        echo "</pre>";
 
         return view('examples', [
             'users' => $this->user->select('*, COUNT(username) as usernameCount')->groupBy('username')->paginate(20),

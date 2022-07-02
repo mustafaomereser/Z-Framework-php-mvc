@@ -45,6 +45,10 @@ class DB
         $this->attrCount = count($this->attributes);
         //
 
+        // init search for softDelete
+        $this->isSoftDelete(null, function () {
+            if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where($this->deleted_at, 'IS NULL');
+        });
         return $this;
     }
 
@@ -95,8 +99,8 @@ class DB
     // Is it soft delete?
     private function isSoftDelete($falseCallback = null, $trueCallback = null)
     {
-        if (!isset($this->softDelete) || !$this->softDelete) return $falseCallback() ?? null;
-        elseif (array_search($this->deleted_at, $this->attributes)) return $trueCallback() ?? null;
+        if (!isset($this->softDelete) || !@$this->softDelete) return $falseCallback ? $falseCallback() : null;
+        elseif (array_search($this->deleted_at, $this->attributes)) return $trueCallback ? $trueCallback() : null;
         else abort(500, "Model haven't <b>$this->deleted_at</b> attribute.");
     }
 
@@ -294,10 +298,6 @@ class DB
 
     private function run()
     {
-        $this->isSoftDelete(null, function () {
-            if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where($this->deleted_at, 'IS NULL');
-        });
-
         $r = self::prepare(self::buildSQL());
         $this->resetBuild();
         return $r;
