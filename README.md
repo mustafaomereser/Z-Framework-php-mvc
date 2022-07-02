@@ -316,8 +316,11 @@ ALSO you can normal query like /1?test=true
 
 ## 4. Mail
 ```php
+    // Config
+    // edit: config/mail.php
+    // if you wanna mail send you must be true sending parameter
+
     // Usage
-    
     $mail = new Mail;
     $mail->send('mustafaomereser@gmail.com', [
         'subject' => 'test',
