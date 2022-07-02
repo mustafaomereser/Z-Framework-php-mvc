@@ -1,6 +1,8 @@
 <?php
 
 return [
+    'sending' => false,
+
     'debug' => false,
     'SMTPAuth' => true,
 

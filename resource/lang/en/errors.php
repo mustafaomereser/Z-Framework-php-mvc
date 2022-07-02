@@ -8,5 +8,7 @@ return [
     'file' => [
         'type' => 'Just {file_types} type(s) accept.',
         'size' => 'You file {current-size}, max {accept-size} size accept.'
-    ]
+    ],
+
+    'mail-sending-is-false' => 'Mail Sending is deactive.'
 ];

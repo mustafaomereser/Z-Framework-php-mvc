@@ -10,10 +10,11 @@ class Mail
     public function __construct()
     {
         $mailConfig = Config::get('mail');
+        if (!$mailConfig['sending']) return abort(400, _l('errors.mail-sending-is-false'));
 
         $this->mail = new PHPMailer;
         $this->mail->isSMTP();
-        $this->mail->CharSet = 'utf-8'; 
+        $this->mail->CharSet = 'utf-8';
 
         if (@$mailConfig['debug'] == true) $this->mail->SMTPDebug = SMTP::DEBUG_SERVER;
 

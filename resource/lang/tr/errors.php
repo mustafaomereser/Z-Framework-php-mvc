@@ -8,5 +8,7 @@ return [
     'file' => [
         'type' => 'Sadece {file_types} tip(ler) kabul edilebilir.',
         'size' => 'Yüklediğin dosya {current-size} boyutunda, En fazla {accept-size} boyut kabul edilebilir.'
-    ]
+    ],
+
+    'mail-sending-is-false' => 'Mail Gönderimi Kapalı.'
 ];
