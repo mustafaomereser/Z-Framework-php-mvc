@@ -10,5 +10,5 @@ return [
         'size' => 'Yüklediğin dosya {current-size} boyutunda, En fazla {accept-size} boyut kabul edilebilir.'
     ],
 
-    'mail-sending-is-false' => 'Mail Gönderimi Kapalı.'
+    'mail-sending-is-false' => 'Mail gönderimi kapalı.',
 ];

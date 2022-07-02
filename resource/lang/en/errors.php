@@ -10,5 +10,5 @@ return [
         'size' => 'You file {current-size}, max {accept-size} size accept.'
     ],
 
-    'mail-sending-is-false' => 'Mail Sending is deactive.'
+    'mail-sending-is-false' => 'Mail sending is close.',
 ];
