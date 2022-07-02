@@ -105,7 +105,10 @@ class Validator
         }
 
         if (count($errors)) {
-            if (Http::isAjax()) die(Response::json($errors));
+            if (Http::isAjax()) {
+                echo Response::json($errors);
+                abort(400);
+            }
             foreach ($errors as $key => $error_list) foreach ($error_list as $error) Alerts::danger($error);
             back();
         }
