@@ -644,5 +644,9 @@ ALSO you can normal query like /1?test=true
 ## 18. Run Project
 ```php
     ....
+    // Default run host's ip and 1000 port
     C:\Users\...\Desktop\Project>php run (press enter)
+    
+    // with custom ip and port
+    C:\Users\...\Desktop\Project>php run 127.0.0.1 2000 (press enter)
 ```

@@ -61,8 +61,9 @@ function ip()
 
 function abort($code = 418, $message = null)
 {
-    if ($message) echo $message;
-    die(http_response_code($code));
+    http_response_code($code);
+    $view = @view("errors.$code", ['message' => $message]);
+    die(($view && !Core\Helpers\Http::isAjax()) ? $view : $message);
 }
 
 function request($name = null, $val = NULL)
