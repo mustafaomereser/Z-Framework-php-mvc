@@ -143,7 +143,7 @@ class Route
 
         // Verify
         if (($url != $uri || ($method && $method != method())) || self::$called == true) return;
-        if (!Csrf::check(@$options['no-csrf'])) abort(400, Lang::get('errors.csrf.no-verify'));
+        if (!Csrf::check(@$options['no-csrf'])) abort(406, Lang::get('errors.csrf.no-verify'));
         //
 
         self::$called = true;
