@@ -66,7 +66,7 @@ class Validator
                         break;
 
                     case 'required':
-                        if ($length > 0) $ok = true;
+                        if (strlen($dataValue) > 0) $ok = true;
                         break;
 
                     case 'max':
