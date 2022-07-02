@@ -188,8 +188,15 @@ ALSO you can normal query like /1?test=true
 ## 2. Model
 ```php
     class User extends Model {
+        use softDelete; // (optional) if you are need soft delete a table's row use this. that mean delete you can not seen but not delete in db.
+
         public $table = "users";
         public $db = "local"; // (optional) if you do not write that it's connect your first connection.
+    
+        public $primary = "name" // (optional) select table primary key it's default = id
+        public $updated_at = "custom_updated_at_name" // (optional) if you use updated_at attribute it's default = updated_at
+        public $created_at = "custom_created_at_name" // (optional) if you use created_at attribute it's default = created_at
+        public $deleted_at = "custom_deleted_at_name" // (optional) if you use deleted_at attribute it's default = deleted_at
     }
     
     // Usage:
@@ -200,6 +207,7 @@ ALSO you can normal query like /1?test=true
     print_r([
         "get" => $user->get(),
         "first" => $user->where('id', '=', 1)->first(),
+        "firstOrFail" => $user->where('id', '=', 1)->firstOrFail(), // If can not find a row abort 404
         "count" => $user->count(),
         "insert" => $user->insert([
             'username' => 'username',

@@ -96,7 +96,7 @@ class Validator
                     // $statics[$dataKey]['length'] = $length;
                     // $statics[$dataKey]['type'] = $type;
                 } else {
-                    $errors[$dataKey][] = (Lang::get("validator.attributes.$dataKey") ?? $dataKey) . " " . Lang::get("validator.errors.$key", $errorData ?? []);
+                    $errors[$dataKey][] = (Lang::get("validator.attributes.$dataKey") ?? ($attributeNames[$dataKey] ?? $dataKey)) . " " . Lang::get("validator.errors.$key", $errorData ?? []);
                     unset($data[$dataKey]);
                 }
 

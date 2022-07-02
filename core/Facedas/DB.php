@@ -15,10 +15,8 @@ class DB
     public function __construct($db = null)
     {
         global $databases;
-        if ($db && isset($databases[$db]))
-            $this->db = $db;
-        else
-            $this->db = array_keys($databases)[0];
+        if ($db && isset($databases[$db])) $this->db = $db;
+        else $this->db = array_keys($databases)[0];
     }
 
     private function db()
@@ -46,6 +44,7 @@ class DB
         $this->attributes = $this->prepare("DESCRIBE $this->table")->fetchAll(\PDO::FETCH_COLUMN);
         $this->attrCount = count($this->attributes);
         //
+
         return $this;
     }
 
@@ -90,20 +89,38 @@ class DB
         }
         $sql_set = rtrim($sql_set, ', ');
 
-        $update = self::prepare("UPDATE $this->table SET $sql_set" . $this->getWhere())->rowCount();
-        return $update ? true : false;
+        return self::prepare("UPDATE $this->table SET $sql_set" . $this->getWhere())->rowCount() ? true : false;
+    }
+
+    // Is it soft delete?
+    private function isSoftDelete($falseCallback = null, $trueCallback = null)
+    {
+        if (!isset($this->softDelete) || !$this->softDelete) return $falseCallback() ?? null;
+        elseif (array_search($this->deleted_at, $this->attributes)) return $trueCallback() ?? null;
+        else abort(500, "Model haven't <b>$this->deleted_at</b> attribute.");
     }
 
     public function delete()
     {
-        $delete = self::prepare("DELETE FROM $this->table" . $this->getWhere())->rowCount();
-        return $delete ? true : false;
+        return $this->isSoftDelete(function () {
+            return self::prepare("DELETE FROM $this->table" . $this->getWhere())->rowCount() ? true : false;
+        }, function () {
+            return $this->update([$this->deleted_at => time()]);
+        });
     }
+    //
 
     // SELECT METHODS
     public function first($class = false)
     {
         return self::limit(1)->get($class)[0] ?? null;
+    }
+
+    public function firstOrFail()
+    {
+        $row = call_user_func_array([$this, 'first'], func_get_args()) ?? [];
+        if (count((array) $row)) return $row;
+        abort(404);
     }
 
     public function get($class = false)
@@ -119,33 +136,37 @@ class DB
         return self::run()->rowCount();
     }
 
+    public function againSameQuery()
+    {
+        if (isset($this->cache['buildQuery'])) $this->buildQuery = $this->cache['buildQuery'];
+        return $this;
+    }
+
     public function paginate($per_page_count = 20, $page_request_name = 'page', $class = false)
     {
-        $uniqueID = uniqid();
-
-        $current_page = (request($page_request_name) ?? 1);
         $row_count = self::count();
+
+        $uniqueID = uniqid();
+        $current_page = (request($page_request_name) ?? 1);
         $max_page_count = ceil($row_count / $per_page_count);
 
-        if ($current_page > $max_page_count)
-            $current_page = $max_page_count;
-        elseif ($current_page <= 0)
-            $current_page = 1;
+        if ($current_page > $max_page_count) $current_page = $max_page_count;
+        elseif ($current_page <= 0) $current_page = 1;
 
 
         // Again reload same query
-        $this->buildQuery = $this->cache['buildQuery'];
+        $this->againSameQuery();
         //
 
         $start_count = ($per_page_count * ($current_page - 1));
+        if (!$row_count) $start_count = -1;
 
         parse_str(@$_SERVER['QUERY_STRING'], $queryString);
         $queryString[$page_request_name] = "{change_page_$uniqueID}";
         $url = "?" . http_build_query($queryString);
 
-
         $return = [
-            'items' => self::limit($start_count, $per_page_count)->get($class),
+            'items' => $row_count ? self::limit($start_count, $per_page_count)->get($class) : [],
             'item_count' => $row_count,
             'shown' => ($start_count + 1) . " / " . (($per_page_count * $current_page) >= $row_count ? $row_count : ($per_page_count * $current_page)),
             'start' => ($start_count + 1),
@@ -173,15 +194,15 @@ class DB
         return $this;
     }
 
-    public function where($key, $operator, $value, $prev = "AND")
+    public function where($key, $operator, $value = null, $prev = "AND")
     {
         $replaced_key = str_replace(".", "_", $key);
 
         if (strlen(@$this->buildQuery['where']) == 0) $trim = true;
-        @$this->buildQuery['where'] .= " $prev $key $operator :$replaced_key";
+        @$this->buildQuery['where'] .= " $prev $key $operator " . ($value ? ":$replaced_key" : null);
         if (@$trim) @$this->buildQuery['where'] = ltrim($this->buildQuery['where'], " $prev");
 
-        $this->buildQuery['data'][$replaced_key] = $value;
+        if (!empty($value)) $this->buildQuery['data'][$replaced_key] = $value;
         return $this;
     }
 
@@ -273,6 +294,10 @@ class DB
 
     private function run()
     {
+        $this->isSoftDelete(null, function () {
+            if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where($this->deleted_at, 'IS NULL');
+        });
+
         $r = self::prepare(self::buildSQL());
         $this->resetBuild();
         return $r;

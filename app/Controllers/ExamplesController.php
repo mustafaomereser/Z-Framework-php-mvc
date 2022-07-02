@@ -20,6 +20,8 @@ class ExamplesController
      */
     public function index($createdUser = [])
     {
+        // print_r($this->user->where('id', '=', 3)->delete());
+
         return view('examples', [
             'users' => $this->user->select('*, COUNT(username) as usernameCount')->groupBy('username')->paginate(20),
             'users2' => $this->user->paginate(10, 'page_2'),

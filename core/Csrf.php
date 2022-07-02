@@ -15,7 +15,7 @@ class Csrf
 
     public static function get()
     {
-        if (!@$_SESSION['csrf_token'] || time() > @$_SESSION['csrf_token_timeout']) self::set();
+        if ((!@$_SESSION['csrf_token'] || time() > @$_SESSION['csrf_token_timeout']) || ($_SESSION['csrf_token_timeout'] - time()) < 120) self::set();
         return $_SESSION['csrf_token'];
     }
 

@@ -19,10 +19,8 @@ function includer($_path, $include_in_folder = true, $reverse_include = false, $
 
     foreach ($path as $inc) {
         $inc = "$_path/$inc";
-        if ((is_dir($inc) && $include_in_folder))
-            includer($inc);
-        elseif (file_exists($inc) && strstr($inc, $ext))
-            include($inc);
+        if ((is_dir($inc) && $include_in_folder)) includer($inc);
+        elseif (file_exists($inc) && strstr($inc, $ext)) include($inc);
     }
 }
 include('../database/connections.php'); #db connections strings
