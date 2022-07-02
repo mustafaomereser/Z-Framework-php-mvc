@@ -199,6 +199,10 @@ ALSO you can normal query like /1?test=true
         public $deleted_at = "custom_deleted_at_name" // (optional) if you use deleted_at attribute it's default = deleted_at
     }
     
+    // if you wanna see your deleted_at items
+    $users = new DB;
+    $users = $users->table('users')->get(); // return with deleted_at items.
+
     // Usage:
     
     use App\Models\User;
