@@ -99,7 +99,7 @@ function getBrowser()
     elseif (preg_match('/macintosh|mac os x/i', $u_agent)) $platform = 'mac';
     elseif (preg_match('/windows|win32/i', $u_agent)) $platform = 'windows';
 
-    if (preg_match('/MSIE/i', $u_agent) && !preg_match('/Opera/i', $u_agent)) {
+    if (preg_match('/MSIE/i', $u_agent) && !preg_match('/OPR/i', $u_agent)) {
         $bname = 'Internet Explorer';
         $ub = "MSIE";
     } elseif (preg_match('/Firefox/i', $u_agent)) {
@@ -117,10 +117,10 @@ function getBrowser()
     } elseif (preg_match('/Trident/i', $u_agent)) {
         $bname = 'Internet Explorer';
         $ub = "MSIE";
-    } elseif (preg_match('/Chrome/i', $u_agent) && !preg_match('/Edge/i', $u_agent)) {
+    } elseif (preg_match('/Chrome/i', $u_agent) && !preg_match('/Edg/i', $u_agent)) {
         $bname = 'Google Chrome';
         $ub = "Chrome";
-    } elseif (preg_match('/Safari/i', $u_agent) && !preg_match('/Edge/i', $u_agent)) {
+    } elseif (preg_match('/Safari/i', $u_agent) && !preg_match('/Edg/i', $u_agent)) {
         $bname = 'Apple Safari';
         $ub = "Safari";
     }
@@ -142,8 +142,9 @@ function getBrowser()
     return [
         'userAgent' => $u_agent,
         'name'      => $bname,
+        'ub'        => $ub,
         'version'   => $version ?? '?',
         'platform'  => $platform,
-        'pattern'    => $pattern
+        'pattern'   => $pattern
     ];
 }
