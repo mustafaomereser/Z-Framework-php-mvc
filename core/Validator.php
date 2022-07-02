@@ -21,7 +21,7 @@ class Validator
             $length = -1;
             if (empty($dataValue) && $dataValue != 0) {
                 $type  = 'null';
-            } elseif (is_numeric($dataValue) || $dataValue == 0) {
+            } elseif (is_numeric($dataValue) || $dataValue == "0") {
                 $type = 'integer';
                 $length = $dataValue;
             } elseif (is_string($dataValue)) {
@@ -66,7 +66,7 @@ class Validator
                         break;
 
                     case 'required':
-                        if ($length > -1) $ok = true;
+                        if ($length > 0) $ok = true;
                         break;
 
                     case 'max':
