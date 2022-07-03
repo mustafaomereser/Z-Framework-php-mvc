@@ -25,7 +25,7 @@ class ExamplesController
         $this->delete_user = new User;
         $this->delete_user->where('id', '=', 1)->delete();
 
-        echo "<pre>";
+        echo "<pre>User List with Deleteds: ";
         print_r($this->db->table('users')->get());
         echo "</pre>";
 

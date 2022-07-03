@@ -59,7 +59,7 @@
 
         foreach ($users2['items'] as $user) : ?>
             <div>
-                <b><?= $users2['start']++ ?>.)</b> <?= $user['username'] . ' ' . $user['id'] ?>
+                <b><?= $users2['start']++ ?>.)</b> <?= $user['username'] ?>
             </div>
         <?php endforeach; ?>
 
