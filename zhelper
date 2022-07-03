@@ -170,6 +170,8 @@ class Db
             $tableAttributes = $db->query("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
             foreach ($tableAttributes as $val) if (!isset($columns[$val])) $dropColumns[] = $val;
 
+
+            $lastColumn = null;
             foreach ($columns as $name => $val) {
                 $data = [
                     'type' => 'INT'
@@ -266,7 +268,7 @@ class Db
                     }
                 }
 
-                $buildSQL = str_replace(['  ', ' ;'], [' ', ';'], ("ALTER TABLE $table ADD $name " . (@$data['type'] . @$data['charset'] . @$data['nullstatus'] . @$data['default'] . @$data['index']) . (isset($data['extras']) ? ", " . implode(', ', $data['extras']) : null) . ";"));
+                $buildSQL = str_replace(['  ', ' ;'], [' ', ';'], ("ALTER TABLE $table ADD $name " . (@$data['type'] . @$data['charset'] . @$data['nullstatus'] . @$data['default'] . @$data['index']) . ($lastColumn ? " AFTER $lastColumn " : ' FIRST ') . (isset($data['extras']) ? ", " . implode(', ', $data['extras']) : null) . ";"));
                 try {
                     $db->exec($buildSQL);
                 } catch (\PDOException $tryAddEx) {
@@ -277,6 +279,9 @@ class Db
                             $tryModify = $db->exec($buildSQL);
                         } catch (\PDOException $tryModifyEx) {
                             if ($tryModifyEx->errorInfo[1] == 1068) {
+
+                                $lastColumn = $name;
+
                                 unset($tryModify);
                                 text("(Already Primary Key) $name", 36);
                                 continue;
@@ -287,6 +292,8 @@ class Db
 
                 text("(" . (isset($tryModify) ? 'Modified' : 'Added') . " Success) $name ", 32);
                 unset($tryModify);
+
+                $lastColumn = $name;
             }
 
             foreach ($dropColumns as $drop) {
