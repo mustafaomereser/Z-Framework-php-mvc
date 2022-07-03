@@ -10,8 +10,10 @@ use Core\Helpers\Http;
 
 class Validator
 {
-    public static function validate(array $data = [], array $validate = [], array $attributeNames = [])
+    public static function validate(array $data = null, array $validate = [], array $attributeNames = [])
     {
+        if (!$data) $data = $_REQUEST;
+
         $errors = [];
         $statics = [];
 
@@ -69,6 +71,10 @@ class Validator
                         if ($length > 0 || strlen((string) $dataValue) > 0) $ok = true;
                         break;
 
+                    case 'nullable':
+                        $ok = true;
+                        break;
+
                     case 'max':
                         if ($val >= $length) $ok = true;
                         else $errorData = ['now-val' => $length, 'max-val' => $val];
@@ -84,14 +90,26 @@ class Validator
                         else $errorData = ['attribute-name' => (Lang::get("validator.attributes.$val") ?? $val)];
                         break;
 
+                    case 'exists':
+                        $db = new DB(@$parameters['db']);
+                        $exists = $db->table($val)->where(($parameters['cl'] ?? $dataKey), '=', $dataValue)->first() ?? [];
+                        if (count($exists)) {
+                            $dataValue = $exists;
+                            $ok = true;
+                        }
+                        break;
+
                     case 'unique':
                         $db = new DB(@$parameters['db']);
                         if (!$db->table($val)->where(($parameters['cl'] ?? $dataKey), '=', $dataValue)->count()) $ok = true;
                         break;
+
+                    default:
+                        $ok = true;
                 }
 
                 if ($ok) {
-                    $statics[$dataKey] = $dataValue;
+                    if ($dataValue) $statics[$dataKey] = $dataValue;
                     // $statics[$dataKey]['value'] = $dataValue;
                     // $statics[$dataKey]['length'] = $length;
                     // $statics[$dataKey]['type'] = $type;

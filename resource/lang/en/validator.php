@@ -9,7 +9,8 @@ return [
         'max' => 'your value is {now-val} but you must max submit {max-val} value.',
         'min' => 'your value is {now-val} but you must min submit {min-val} value.',
         'same' => 'value is not match {attribute-name}',
-        'unique' => 'already using.'
+        'unique' => 'already using.',
+        'exists' => 'not exists that data.',
     ],
 
     'attributes' => [

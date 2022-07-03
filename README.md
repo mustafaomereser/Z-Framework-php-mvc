@@ -295,7 +295,9 @@ ALSO you can normal query like /1?test=true
                 'username' => ['varchar:50', 'charset:utf8:general_ci'],
                 'password' => ['varchar:50', 'charset:utf8:general_ci'],
                 'email' => ['varchar:50', 'charset:utf8:general_ci', 'unique'],
-                'api_token' => ['varchar:60', 'required', 'charset:utf8:general_ci']
+                'api_token' => ['varchar:60', 'required', 'charset:utf8:general_ci'],
+                'timestamps', // create updated_at, created_at columns
+                'softDelete' // Use soft delete column
             ];
         }
     }
@@ -305,12 +307,22 @@ ALSO you can normal query like /1?test=true
         'primary',
         'unique', 
         'text',
+        'bigint', 
         'int', 
-        'varchar', 
-        'varchar:(length)', 
+        'smallint', 
+        'tinyint', 
+        'decimal', 
+        'float', 
+        'varchar', // default 255
+        'char', // default 50
+        'char:numeric_length', 
+        'varchar:numeric_length', 
+        'date',
+        'datetime',
+        'time',
         'required', 
         'nullable', 
-        'default', 
+        'default', // default NULL 
         'default:default value', 
         'charset:utf8mb4:general_ci'
     ]
@@ -496,12 +508,15 @@ ALSO you can normal query like /1?test=true
 ## 13. Validator
 ```php
     // In array validate values.
-    // Current: type, required, max, min, same, email, unique.
+    // Current: type, required, max, min, same, email, unique, exists.
     
     // Unique ussage: 
     # unique:table_name cl=column_name,db=database // cl and db parameters is optional, if you not add cl parameter get request key name, if you not add db parameter get first in array connection.
+
+    # exists:table_name cl=column_name,db=database // cl and db parameters is optional, if you not add cl parameter get request key name, if you not add db parameter get first in array connection.
     
     // Unique Example: 'email' => ["unique:users cl=email,db=local"]
+    // Exists Example: 'email' => ["exists:users cl=email,db=local"]
 
     Validator::validate($_REQUEST, [
         'test1' => ['type:string', 'required', 'max:10', 'min:5', 'same:test2'],

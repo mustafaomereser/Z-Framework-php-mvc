@@ -116,15 +116,34 @@ class Db
     {
         global $databases;
         $args = func_get_args()[0];
-
         $migrations = glob('database/migrations/*.php');
+
         foreach ($migrations as $inc) {
+            $create_penetration = false;
+
             $class = include($inc);
             $class = ucfirst(strtok(@end(explode('/', $inc)), '.php'));
             if (!class_exists($class)) die(text('There are not migrate class.', 31));
 
             // settings
             $columns = $class::columns();
+
+            // Setting up 
+            if (strlen($key = array_search('timestamps', $columns))) {
+                unset($columns[$key]);
+                $columns = array_merge($columns, [
+                    'updated_at' => ['required', 'int'],
+                    'created_at' => ['required', 'int'],
+                ]);
+            }
+            if (strlen($key = array_search('softDelete', $columns))) {
+                unset($columns[$key]);
+                $columns = array_merge($columns, [
+                    'deleted_at' => ['required', 'int'],
+                ]);
+            }
+            //
+
             $table = $class::$table;
             $db = $databases[$class::$db];
             //
@@ -132,7 +151,13 @@ class Db
 
             $dropColumns = [];
 
-            if ($args['firstCommand'] == 'fresh') {
+            try {
+                $db->query("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
+            } catch (\PDOException  $ex) {
+                $create_penetration = true;
+            }
+
+            if ($args['firstCommand'] == 'fresh' || $create_penetration) {
                 $initColumnName = "table_initilazing";
                 try {
                     $db->exec("DROP TABLE $table");
@@ -143,7 +168,6 @@ class Db
 
             $tableAttributes = $db->query("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
             foreach ($tableAttributes as $val) if (!isset($columns[$val])) $dropColumns[] = $val;
-
 
             foreach ($columns as $name => $val) {
                 $data = [
@@ -173,17 +197,63 @@ class Db
                             $data['extras'][] = " ADD UNIQUE (`$name`) ";
                             break;
 
+
+                            # String: start
                         case 'text':
                             $data['type'] = " TEXT ";
+                            break;
+
+
+                        case 'varchar':
+                            $data['type'] = " VARCHAR(" . ($switch[1] ?? 255) . ") ";
+                            break;
+
+                        case 'char':
+                            $data['type'] = " CHAR(" . ($switch[1] ?? 50) . ") ";
+                            break;
+                            # String: end
+
+
+                            # INT: start
+                        case 'bigint':
+                            $data['type'] = " BIGINT ";
                             break;
 
                         case 'int':
                             $data['type'] = " INT ";
                             break;
 
-                        case 'varchar':
-                            $data['type'] = " VARCHAR(" . ($switch[1] ?? 255) . ") ";
+                        case 'smallint':
+                            $data['type'] = " SMALLINT ";
                             break;
+
+                        case 'tinyint':
+                            $data['type'] = " TINYINT ";
+                            break;
+
+                        case 'decimal':
+                            $data['type'] = " DECIMAL ";
+                            break;
+
+                        case 'float':
+                            $data['type'] = " FLOAT ";
+                            break;
+
+                            # INT: end
+
+                            # Date: start
+                        case 'date':
+                            $data['type'] = " DATE ";
+                            break;
+
+                        case 'datetime':
+                            $data['type'] = " DATETIME ";
+                            break;
+
+                        case 'time':
+                            $data['type'] = " TIME ";
+                            break;
+                            # Date: end
 
                         case 'default':
                             $data['default'] = " DEFAULT" . (@$switch[1] ? "(" . (is_numeric($switch[1]) ? $switch[1] : "'" . addslashes($switch[1]) . "'") . ")" : ' NULL') . " ";
@@ -196,25 +266,30 @@ class Db
                 }
 
                 $buildSQL = str_replace(['  ', ' ;'], [' ', ';'], ("ALTER TABLE $table ADD $name " . (@$data['type'] . @$data['charset'] . @$data['nullstatus'] . @$data['default'] . @$data['index']) . (isset($data['extras']) ? ", " . implode(', ', $data['extras']) : null) . ";"));
-                $query = $db->exec($buildSQL);
+                try {
+                    $db->exec($buildSQL);
+                } catch (\PDOException $tryAddEx) {
+                    if ($tryAddEx->errorInfo[1] == 1060) {
+                        $buildSQL = str_replace("$table ADD", "$table MODIFY", $buildSQL);
 
-                if (!is_numeric($query)) {
-                    $buildSQL = str_replace("$table ADD", "$table MODIFY", $buildSQL);
-                    $tryModify = $db->exec($buildSQL);
-
-                    if (!is_numeric($tryModify)) {
-                        unset($tryModify);
-                        text("(Maybe everything same) (Failure) $name | SQL: $buildSQL", 31);
-                        continue;
+                        try {
+                            $tryModify = $db->exec($buildSQL);
+                        } catch (\PDOException $tryModifyEx) {
+                            if ($tryModifyEx->errorInfo[1] == 1068) {
+                                unset($tryModify);
+                                text("(Already Primary Key) $name", 36);
+                                continue;
+                            }
+                        }
                     }
                 }
 
-                text("(" . (isset($tryModify) && is_numeric($tryModify) ? 'Modified' : 'Added') . " Success) $name ", 32);
+                text("(" . (isset($tryModify) ? 'Modified' : 'Added') . " Success) $name ", 32);
                 unset($tryModify);
             }
 
             foreach ($dropColumns as $drop) {
-                $query = $db->exec("ALTER TABLE $table DROP COLUMN $drop");
+                $db->exec("ALTER TABLE $table DROP COLUMN $drop");
                 text("Dropped column: $drop", 33);
             }
             text("\nMigrate finish.", 32);

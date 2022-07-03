@@ -9,7 +9,8 @@ return [
         'max' => 'girdiğiniz veri {now-val}, ama en fazla {max-val} olabilir.',
         'min' => 'girdiğiniz veri {now-val}, ama en az {min-val} olabilir.',
         'same' => 'değer {attribute-name} ile aynı değil.',
-        'unique' => 'zaten kullanımda.'
+        'unique' => 'zaten kullanımda.',
+        'exists' => 'böyle bir veri yok.',
     ],
 
     'attributes' => [
