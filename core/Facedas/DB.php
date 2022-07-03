@@ -45,10 +45,6 @@ class DB
         $this->attrCount = count($this->attributes);
         //
 
-        // init search for softDelete
-        $this->isSoftDelete(null, function () {
-            if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where($this->deleted_at, 'IS NULL');
-        });
         return $this;
     }
 
@@ -76,7 +72,8 @@ class DB
 
         if ($insert) {
             $this->lastID = $this->db()->lastInsertId();
-            return $this->prepare("SELECT * FROM $this->table WHERE id = " . $this->lastID)->fetch(\PDO::FETCH_ASSOC);
+            return $this->where('id', '=', $this->lastID)->first();
+            // return $this->prepare("SELECT * FROM $this->table WHERE id = " . $this->lastID)->fetch(\PDO::FETCH_ASSOC);
         }
 
         abort(500);
@@ -91,9 +88,9 @@ class DB
             $sql_set .= "$key = :$key, ";
             $this->buildQuery['data'][$key] = $_;
         }
-        $sql_set = rtrim($sql_set, ', ');
+        $this->buildQuery['sets'] = " SET " . rtrim($sql_set, ', ') . " ";
 
-        return self::prepare("UPDATE $this->table SET $sql_set" . $this->getWhere())->rowCount() ? true : false;
+        return $this->run('update')->rowCount() ? true : false;
     }
 
     // Is it soft delete?
@@ -107,7 +104,7 @@ class DB
     public function delete()
     {
         return $this->isSoftDelete(function () {
-            return self::prepare("DELETE FROM $this->table" . $this->getWhere())->rowCount() ? true : false;
+            return $this->run('delete') ? true : false;
         }, function () {
             return $this->update([$this->deleted_at => time()]);
         });
@@ -281,10 +278,28 @@ class DB
         return @$this->buildQuery['groupBy'] ? " GROUP BY " . $this->buildQuery['groupBy'] : null;
     }
 
-    private function buildSQL()
+    private function buildSQL($type = "select")
     {
-        $select = $this->buildQuery['select'] ?? '*';
-        $sql = trim(str_replace(['  '], [' '], "SELECT $select FROM $this->table" . $this->getJoins() . $this->getWhere() . $this->getOrderBy() . $this->getGroupBy() . $this->getLimit()));
+        switch ($type) {
+            case 'select':
+                $select = $this->buildQuery['select'] ?? '*';
+                $type = "SELECT $select FROM";
+                break;
+            case 'delete':
+                $type = "DELETE FROM";
+                break;
+
+            case 'update':
+                $type = "UPDATE";
+                $sets = $this->buildQuery['sets'];
+                break;
+
+            default:
+                abort(400, 'something wrong, buildSQL invalid type.');
+        }
+
+        $sql = trim(str_replace(['  '], [' '], "$type $this->table" . @$sets . $this->getJoins() . $this->getWhere() . $this->getOrderBy() . $this->getGroupBy() . $this->getLimit()));
+        // echo "$sql <br>";
         return $sql;
     }
 
@@ -292,13 +307,17 @@ class DB
     {
         $this->cache['buildQuery'] = $this->buildQuery;
         $this->buildQuery = []; // reset buildQuery
-
         return $this;
     }
 
-    private function run()
+    private function run($type = "select")
     {
-        $r = self::prepare(self::buildSQL());
+        // init search for softDelete
+        $this->isSoftDelete(null, function () {
+            if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where($this->deleted_at, 'IS NULL');
+        });
+
+        $r = self::prepare(self::buildSQL($type));
         $this->resetBuild();
         return $r;
     }
