@@ -1,4 +1,6 @@
-### 0.1. Z Framework (V1.2.1)
+You can select version on branch list.
+
+### 0.1. Z Framework (V2.0.0)
 ### 0.2. Easiest, fastest PHP framework. (Simple)
 
 ### 0.3. Document
