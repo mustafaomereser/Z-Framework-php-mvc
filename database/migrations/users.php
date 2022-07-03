@@ -1,6 +1,7 @@
 <?php
 class Users
 {
+    static $charset = "utf8mb4_general_ci";
     static $table = "users";
     static $db = 'local';
 
@@ -8,10 +9,10 @@ class Users
     {
         return [
             'id' => ['primary'],
-            'username' => ['varchar:50', 'charset:utf8:general_ci'],
-            'password' => ['varchar:50', 'charset:utf8:general_ci'],
-            'email' => ['varchar:50', 'charset:utf8:general_ci', 'unique'],
-            'api_token' => ['varchar:60', 'required', 'charset:utf8:general_ci'],
+            'username' => ['varchar:50'],
+            'password' => ['varchar:50'],
+            'email' => ['varchar:50', 'unique'],
+            'api_token' => ['varchar:60', 'required'],
             'timestamps',
             'softDelete',
         ];

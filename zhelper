@@ -144,6 +144,7 @@ class Db
             }
             //
 
+            $charset = $class::$charset ?? null;
             $table = $class::$table;
             $db = $databases[$class::$db];
             //
@@ -163,7 +164,7 @@ class Db
                     $db->exec("DROP TABLE $table");
                 } catch (\PDOException $e) {
                 }
-                $db->exec("CREATE TABLE $table ($initColumnName int DEFAULT 1 NOT NULL)");
+                $db->exec("CREATE TABLE $table ($initColumnName int DEFAULT 1 NOT NULL)" . ($charset ? " CHARACTER SET " . strtok($charset, '_') . " COLLATE $charset" : null));
             }
 
             $tableAttributes = $db->query("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
@@ -260,7 +261,7 @@ class Db
                             break;
 
                         case 'charset':
-                            $data['charset'] =  " CHARACTER SET " . $switch[1] . " COLLATE " . $switch[1] . "_" . $switch[2] . " ";
+                            $data['charset'] =  " CHARACTER SET " . strtok($switch[1], '_') . " COLLATE " . $switch[1] . " ";
                             break;
                     }
                 }

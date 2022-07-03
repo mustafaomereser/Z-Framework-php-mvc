@@ -292,10 +292,10 @@ ALSO you can normal query like /1?test=true
         {
             return [
                 'id' => ['primary'],
-                'username' => ['varchar:50', 'charset:utf8:general_ci'],
-                'password' => ['varchar:50', 'charset:utf8:general_ci'],
-                'email' => ['varchar:50', 'charset:utf8:general_ci', 'unique'],
-                'api_token' => ['varchar:60', 'required', 'charset:utf8:general_ci'],
+                'username' => ['varchar:50', 'charset:utf8_general_ci'],
+                'password' => ['varchar:50', 'charset:utf8_general_ci'],
+                'email' => ['varchar:50', 'charset:utf8_general_ci', 'unique'],
+                'api_token' => ['varchar:60', 'required', 'charset:utf8_general_ci'],
                 'timestamps', // create updated_at, created_at columns
                 'softDelete' // Use soft delete column
             ];
@@ -324,7 +324,7 @@ ALSO you can normal query like /1?test=true
         'nullable', 
         'default', // default NULL 
         'default:default value', 
-        'charset:utf8mb4:general_ci'
+        'charset:utf8mb4_general_ci'
     ]
 
 ```
