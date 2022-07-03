@@ -202,7 +202,7 @@ class DB
     {
         $replaced_key = str_replace(".", "_", $key);
 
-        if (strlen(@$this->buildQuery['where']) == 0) $trim = true;
+        if (strlen((string) @$this->buildQuery['where']) == 0) $trim = true;
         @$this->buildQuery['where'] .= " $prev $key $operator " . ($value ? ":$replaced_key" : null);
         if (@$trim) @$this->buildQuery['where'] = ltrim($this->buildQuery['where'], " $prev");
 

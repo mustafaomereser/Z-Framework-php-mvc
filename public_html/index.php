@@ -31,6 +31,7 @@ includer('../core');
 includer('../app');
 includer('../route', true, true);
 includer('../modules/error_handlers');
+includer('../modules/error_http');
 echo Route::run();
 
 // forget alerts
