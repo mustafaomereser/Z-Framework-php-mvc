@@ -13,7 +13,7 @@ class Route
     static $calledRoute = null;
     static $calledInformations = [];
 
-    public static function name($name, $data = [])
+    public static function findRoute($name, $data = [])
     {
         if (!isset(self::$routes[$name])) return;
 
@@ -27,66 +27,58 @@ class Route
         self::call([$url, function () use ($to) {
             return redirect($to);
         }]);
+        return new self();
     }
 
     public static function any()
     {
         self::call(func_get_args());
+        return new self();
     }
 
     public static function get()
     {
         self::call(func_get_args(), __FUNCTION__);
+        return new self();
     }
 
     public static function post()
     {
         self::call(func_get_args(), __FUNCTION__);
+        return new self();
     }
 
     public static function patch()
     {
         self::call(func_get_args(), __FUNCTION__);
+        return new self();
     }
 
     public static function put()
     {
         self::call(func_get_args(), __FUNCTION__);
+        return new self();
     }
 
     public static function delete()
     {
         self::call(func_get_args(), __FUNCTION__);
+        return new self();
     }
 
     public static function resource($url, $callback, $options = [])
     {
-        // Name
-        $name = !isset($options['name']) ? str_replace('/', '.', self::$preURL . $url) : str_replace('/', '.', self::$preURL . $options['name']);
-        $name = self::nameTrim($name);
-        //
 
-        $options['name'] = self::nameTrim("$name.index");
-        self::get($url, [$callback, 'index'], $options);
+        self::get($url, [$callback, 'index'], $options)->name("$url.index");
+        self::post($url, [$callback, 'store'], $options)->name("$url.store");
+        self::get("$url/create", [$callback, 'create'], $options)->name("$url.create");
+        self::get("$url/{id}", [$callback, 'show'], $options)->name("$url.show");
+        self::get("$url/{id}/edit", [$callback, 'edit'], $options)->name("$url.edit");
+        self::patch("$url/{id}", [$callback, 'update'], $options)->name("$url.update");
+        self::put("$url/{id}", [$callback, 'update'], $options)->name("$url.update");
+        self::delete("$url/{id}", [$callback, 'delete'], $options)->name("$url.delete");
 
-        $options['name'] = self::nameTrim("$name.store");
-        self::post($url, [$callback, 'store'], $options);
-
-        $options['name'] = self::nameTrim("$name.create");
-        self::get("$url/create", [$callback, 'create'], $options);
-
-        $options['name'] = self::nameTrim("$name.show");
-        self::get("$url/{id}", [$callback, 'show'], $options);
-
-        $options['name'] = self::nameTrim("$name.edit");
-        self::get("$url/{id}/edit", [$callback, 'edit'], $options);
-
-        $options['name'] = self::nameTrim("$name.update");
-        self::patch("$url/{id}", [$callback, 'update'], $options);
-        self::put("$url/{id}", [$callback, 'update'], $options);
-
-        $options['name'] = self::nameTrim("$name.delete");
-        self::delete("$url/{id}", [$callback, 'delete'], $options);
+        return new self();
     }
 
     public static function run()
@@ -127,10 +119,6 @@ class Route
             $parameters[str_replace(['{', '}'], '', $urlVal)] = $val;
         }
 
-        echo "<pre>";
-        print_r(compact('parameters', 'uri', 'url'));
-        echo "</pre>";
-
         return compact('parameters', 'uri', 'url');
     }
 
@@ -145,7 +133,7 @@ class Route
         //
 
         // Verify
-        if (($url != $uri || ($method && $method != method())) || self::$called == true) return;
+        if (self::$called == true || ($url != $uri || ($method && $method != method()))) return;
         if (!Csrf::check(@$options['no-csrf'])) abort(406, Lang::get('errors.csrf.no-verify'));
         //
 
@@ -163,8 +151,20 @@ class Route
         self::$calledInformations = [$callback, $parameters];
     }
 
-    private static function nameTrim($val)
+    public function name($name)
     {
-        return rtrim(ltrim($val, '.'), '.');
+        $name = self::nameOrganize(self::$preURL . "/$name");
+
+        $key = array_key_last(self::$routes);
+        $route = self::$routes[$key];
+        unset(self::$routes[$key]);
+        self::$routes[$name] = $route;
+
+        return new self();
+    }
+
+    private static function nameOrganize($val)
+    {
+        return str_replace("..", ".", rtrim(ltrim(str_replace('/', '.', $val), '.'), '.'));
     }
 }

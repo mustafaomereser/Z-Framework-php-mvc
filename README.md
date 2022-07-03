@@ -89,14 +89,16 @@
     test.delete
 
     // two example for select name.
-    Route::name('test.index'); // output: www.host.com/test
-    Route::name('test.edit', ['id' => 1]); // output: www.host.com/test/1/edit
+    Route::findRoute('test.index'); // output: www.host.com/test
+    Route::findRoute('test.edit', ['id' => 1]); // output: www.host.com/test/1/edit
 
     // for preURL usage:
     Route::$preURL = '/admin';
     Route::resource('/', ResourceController::class);
-    Route::name('admin.index'); // output www.host.com/admin
+    Route::findRoute('admin.index'); // output www.host.com/admin
 
+    // And you can use for findRoute
+    route('admin.index') // output www.host.com/admin
 ```
 ### 1.1. Form examples
 
@@ -171,6 +173,10 @@ ALSO you can normal query like /1?test=true
         ]);
     });
 
+    // if you want set name equivalent you can use ->name()
+    Route::get('/about', function(){...})->name('about');
+    // you can find that
+    Route::findRoute('about'); // output: www.host.com/about
 ```
 ### 1.3. Find Route's Url
 ```php
@@ -182,7 +188,7 @@ ALSO you can normal query like /1?test=true
     ]);
 
     // Usage:
-    echo Route::name('test', ['id' => 1, 'username' => 'Admin']); // output: /test/1/Admin
+    echo Route::findRoute('test', ['id' => 1, 'username' => 'Admin']); // output: /test/1/Admin
 ```
 
 ## 2. Model

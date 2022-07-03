@@ -44,6 +44,7 @@ function inputMethod($method = "GET")
     echo '<input type="hidden" name="_method" value="' . strtoupper($method) . '" />';
 }
 
+// Helper methods: start
 function csrf()
 {
     return Core\Csrf::csrf();
@@ -53,6 +54,22 @@ function view()
 {
     return call_user_func_array([Core\View::class, 'view'], func_get_args());
 }
+
+function route()
+{
+    return call_user_func_array([Core\Route::class, 'findRoute'], func_get_args());
+}
+
+function config()
+{
+    return call_user_func_array([Core\Facedas\Config::class, 'get'], func_get_args());
+}
+
+function _l()
+{
+    return call_user_func_array([Core\Facedas\Lang::class, 'get'], func_get_args());
+}
+// Helper methods: end
 
 function ip()
 {
@@ -70,16 +87,6 @@ function request($name = null, $val = NULL)
 {
     if ($val === NULL) return $name ? ($_REQUEST[$name] ?? false) : $_REQUEST;
     return $_REQUEST[$name] = $val;
-}
-
-function config()
-{
-    return call_user_func_array([Core\Facedas\Config::class, 'get'], func_get_args());
-}
-
-function _l()
-{
-    return call_user_func_array([Core\Facedas\Lang::class, 'get'], func_get_args());
 }
 
 function human_filesize($bytes, $decimals = 2)
