@@ -15,3 +15,8 @@ Route::get('/language/{lang}', function ($lang) {
 });
 
 Route::resource('/examples', ExamplesController::class);
+
+
+Route::any('/test-test/{id}', function ($id) {
+    echo "test $id";
+});

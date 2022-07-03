@@ -95,9 +95,7 @@ class Route
         return call_user_func_array(self::$calledInformations[0], self::$calledInformations[1]);
     }
 
-
     // Private Methods
-
     private static function parser($data, $method, $options)
     {
         if (self::$preURL && $data[0] == '/') $data[0] = null;
@@ -120,13 +118,18 @@ class Route
         //
 
         $parameters = [];
+
         foreach ($uri as $key => $val) {
             $urlVal = @$url[$key];
-            if (((!$urlVal || !$val) || !preg_match('/[^a-zA-Z0-9]+/i', $urlVal))) continue;
+            if ((!$val || !$urlVal) || (!strstr($urlVal, '{') || !strstr($urlVal, '}'))) continue;
 
             $url[$key] = $val;
             $parameters[str_replace(['{', '}'], '', $urlVal)] = $val;
         }
+
+        echo "<pre>";
+        print_r(compact('parameters', 'uri', 'url'));
+        echo "</pre>";
 
         return compact('parameters', 'uri', 'url');
     }
