@@ -2,7 +2,7 @@
 
 namespace App\Middlewares;
 
-use Core\Facedas\Auth;
+use zFramework\Core\Facedas\Auth;
 
 class Guest
 {

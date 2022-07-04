@@ -78,7 +78,7 @@ function text($text, $color = "39")
 class Make
 {
     public $toPath = "app";
-    public $makeAssets = "zhelper_assets/make";
+    public $makeAssets = "zFramework/zhelper/make";
 
     public function controller()
     {

@@ -1,9 +1,10 @@
 <?php
 
 use App\Controllers\ExamplesController;
-use Core\Facedas\Lang;
-use Core\Route;
-use Core\View;
+use zFramework\Core\Facedas\Lang;
+use zFramework\Core\Route;
+use zFramework\Core\View;
+Route::$preURL = null;
 
 Route::any('/', function () {
     return View::view('welcome');

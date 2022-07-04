@@ -2,7 +2,7 @@
 
 namespace App\Middlewares;
 
-use Core\Facedas\Auth as FacedasAuth;
+use zFramework\Core\Facedas\Auth as FacedasAuth;
 
 class Auth
 {

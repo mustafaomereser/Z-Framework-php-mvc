@@ -1,16 +1,13 @@
 <?php
 
-namespace App\Models;
+namespace App\Models{namespace};
 
 use zFramework\Core\Abstracts\Model;
-use zFramework\Core\Traits\softDelete;
 
-class User extends Model
+class {name} extends Model
 {
-    use softDelete;
-
-    public $table = "users";
-
+    public $table = "{table}";
+    
     public function getAttributes()
     {
         return [$this->attributes, $this->attrCount];

@@ -1,6 +1,6 @@
 <?php
 
-use Core\Middleware;
+use zFramework\Core\Middleware;
 
 $list = [
     App\Middlewares\Language::class

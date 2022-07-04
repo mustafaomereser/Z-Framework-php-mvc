@@ -3,10 +3,10 @@
 namespace App\Controllers;
 
 use App\Models\User;
-use Core\Crypter;
-use Core\Facedas\DB;
-use Core\Facedas\Str;
-use Core\Validator;
+use zFramework\Core\Crypter;
+use zFramework\Core\Facedas\DB;
+use zFramework\Core\Facedas\Str;
+use zFramework\Core\Validator;
 
 class ExamplesController
 {

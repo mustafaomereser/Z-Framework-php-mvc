@@ -24,7 +24,7 @@
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
-<?php if ($alerts = Core\Facedas\Alerts::get()) : ?>
+<?php if ($alerts = zFramework\Core\Facedas\Alerts::get()) : ?>
     <div style="margin-bottom: 20px;">
         Alerts:
         <?php foreach ($alerts as $alert) : ?>
@@ -75,16 +75,16 @@
     <div style="margin: 15px 20px;">`<?= $str ?>`</div>
 
     <h5>and i wanna put a limit for chracter: (You can see how it work on file)</h5>
-    <div style="margin: 15px 20px;"><?= Core\Facedas\Str::limit($str, 50, '... <a href="#">Read Continue.</a>') ?></div>
+    <div style="margin: 15px 20px;"><?= zFramework\Core\Facedas\Str::limit($str, 50, '... <a href="#">Read Continue.</a>') ?></div>
 
     <h5>And so how i can create a slug? VOALA</h5>
-    <div style="margin: 15px 20px;"><?= Core\Facedas\Str::slug('slug text here') ?></div>
+    <div style="margin: 15px 20px;"><?= zFramework\Core\Facedas\Str::slug('slug text here') ?></div>
 
     <h5>How i create a random string and what i want length?</h5>
-    <div style="margin: 15px 20px;"><?= Core\Facedas\Str::rand(10) ?> <b>That's it!</b></div>
+    <div style="margin: 15px 20px;"><?= zFramework\Core\Facedas\Str::rand(10) ?> <b>That's it!</b></div>
 
     <h5>But you need a unique random string? Just add a true parameter and TADA</h5>
-    <div style="margin: 15px 20px;"><?= Core\Facedas\Str::rand(10, true) ?> <b>That's it!</b></div>
+    <div style="margin: 15px 20px;"><?= zFramework\Core\Facedas\Str::rand(10, true) ?> <b>That's it!</b></div>
 </fieldset>
 
 <fieldset>

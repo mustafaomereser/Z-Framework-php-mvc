@@ -1,4 +1,9 @@
 {
+    
+    "config": { 
+        "vendor-dir": "zFramework/vendor/" 
+    },
+      
     "require": {
         "phpmailer/phpmailer": "^6.6"
     }

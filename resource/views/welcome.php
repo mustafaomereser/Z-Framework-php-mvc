@@ -1,8 +1,6 @@
 <?php
 
-use Core\Facedas\Lang;
-use Core\Route;
-
+use zFramework\Core\Facedas\Lang;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -61,10 +59,10 @@ use Core\Route;
 
         <div class="box">
             <div style="text-align: center;">
-                <?= Lang::get('lang.welcome') ?>
+                <?= _l('lang.welcome') ?>
             </div>
             <div>
-                <?= Lang::get('lang.languages') ?>: (<?= Lang::get('lang.current') ?>: <?= Lang::currentLocale() ?>)
+                <?= _l('lang.languages') ?>: (<?= _l('lang.current') ?>: <?= Lang::currentLocale() ?>)
                 <ul>
                     <?php foreach (Lang::list() as $lang) : ?>
                         <li>

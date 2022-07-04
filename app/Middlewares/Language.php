@@ -2,7 +2,7 @@
 
 namespace App\Middlewares;
 
-use Core\Facedas\Lang;
+use zFramework\Core\Facedas\Lang;
 
 class Language
 {
