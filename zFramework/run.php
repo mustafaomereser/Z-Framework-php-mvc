@@ -28,11 +28,12 @@ class Run
 
         // includes
         self::includer('../zFramework/modules', false);
-        
+
         // Automatic include from zFramework/initalize.php
         // self::includer('../zFramework/core');
         // self::includer('../app');
 
+        self::includer('../app/Middlewares/autoload.php');
         self::includer('../route');
         self::includer('../zFramework/modules/error_handlers');
         self::includer('../zFramework/modules/error_http');

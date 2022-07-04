@@ -28,7 +28,13 @@ class Lang
         return array_values(array_diff(scandir(base_path("resource/lang")), ['.', '..']));
     }
 
-    public static function locale($lang = null, $syncSession = true)
+    /**
+     * Set Locale
+     * @param string $lang
+     * @param bool $syncSession
+     * @return bool|self
+     */
+    public static function locale(string $lang = null, bool $syncSession = true): bool
     {
         $lang = ($lang ?? substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
         if (!$path = self::canSelect($lang)) return self::locale(Config::get('app.lang') ?? self::list()[0]);
