@@ -4,11 +4,20 @@ namespace Core\Facedas;
 
 class Response
 {
+    /**
+     * Response type list
+     */
     const list = [
         'json' => 'application/json'
     ];
 
-    private static function do($type, $data = [])
+    /**
+     * Result Method
+     * @param string $type
+     * @param array $data
+     * @return string|mixed
+     */
+    private static function do(string $type, array $data = [])
     {
         header("Content-Type: " . self::list[$type]);
 
@@ -21,7 +30,12 @@ class Response
         return $data;
     }
 
-    public static function json($data)
+    /**
+     * Type Json
+     * @param array $data
+     * @return self
+     */
+    public static function json(array $data): self
     {
         return self::do(__FUNCTION__, $data);
     }

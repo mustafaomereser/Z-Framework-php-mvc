@@ -7,32 +7,58 @@ use Core\Facedas\Lang;
 
 class File
 {
-    private static function path($path)
+    /**
+     * Get path, if not exists create and get path.
+     * @param string $path
+     * @return string
+     */
+    private static function path(string $path): string
     {
         $path = public_path($path);
         @mkdir($path, 0777, true);
         return $path;
     }
-
-    private static function createName($name)
+    /**
+     * Create unique file name
+     * @param string $name
+     * @return string
+     */
+    private static function createName(string $name): string
     {
         $ext = @end(explode(".", $name));
         return uniqid('file-', true) . ".$ext";
     }
 
-    private static function removePublic($name)
+    /**
+     * Remove public_path string
+     * @return string
+     */
+    private static function removePublic(string $name): string
     {
         return str_replace(public_path(), '', $name);
     }
 
-    public static function save($path, $file)
+    /**
+     * Save a file
+     * @param string $path
+     * @param string $file
+     * @return string
+     */
+    public static function save(string $path, string $file): string
     {
         $uploadName = self::path($path) . "/" . self::createName(end(explode('/', $file)));
         file_put_contents($uploadName, file_get_contents($file));
         return self::removePublic($uploadName);
     }
 
-    public static function upload($path, $file, $options = [])
+    /**
+     * Upload files
+     * @param string $path
+     * @param array $file
+     * @param array $options
+     * @return bool|array
+     */
+    public static function upload(string $path, array $file, array $options = [])
     {
         $files = [];
 
@@ -67,7 +93,14 @@ class File
         return count($files) > 1 ? $files : $files[0];
     }
 
-    public static function resizeImage($file, $width = 50, $height = 50)
+    /**
+     * Resize a image
+     * @param string $file
+     * @param int $width
+     * @param int $height
+     * @return string
+     */
+    public static function resizeImage(string $file, int $width = 50, int $height = 50): string
     {
         $file = public_path($file);
         if (!is_file($file)) return false;

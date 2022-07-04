@@ -4,7 +4,13 @@ namespace Core;
 
 class Middleware
 {
-    public static function middleware($middlewares, $callback = null)
+    /**
+     * Check Middlewares
+     * @param array $middlewares
+     * @param object $callback
+     * @return array|int
+     */
+    public static function middleware(array $middlewares, object $callback = null)
     {
         $declined = [];
 

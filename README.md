@@ -357,7 +357,7 @@ ALSO you can normal query like /1?test=true
 
     // Usage
     $mail = new Mail;
-    $mail->send('mustafaomereser@gmail.com', [
+    $mail->to('mustafaomereser@gmail.com')->send([
         'subject' => 'test',
         'message' => 'test mesaj', // you can also use view('view_name', ['hash' => Str::rand()]) method and set veriables;
         'altbody' => 'Alt body',

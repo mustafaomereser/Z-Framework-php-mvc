@@ -7,10 +7,13 @@ use PHPMailer\PHPMailer\SMTP;
 
 class Mail
 {
+    /**
+     * Initalize settings.
+     */
     public function __construct()
     {
         $mailConfig = Config::get('mail');
-        if (!$mailConfig['sending']) return abort(400, _l('errors.mail-sending-is-false'));
+        if (!$mailConfig['sending']) return abort(400, _l('errors.mail.sending-is-false'));
 
         $this->mail = new PHPMailer;
         $this->mail->isSMTP();
@@ -31,10 +34,28 @@ class Mail
         if (isset($mailConfig['reply'])) $this->mail->addReplyTo($mailConfig['reply'][1], $mailConfig['reply'][0]);
     }
 
-
-    public function send($mail, $data)
+    /**
+     * Select to mail
+     * @param string $toMail
+     * @return self
+     */
+    public function to(string $toMail): self
     {
-        $this->mail->addAddress($mail);
+        if (!filter_var($toMail, FILTER_VALIDATE_EMAIL)) abort(418, _l('errors.mail.not-validate-mail'));
+        $this->toMail = $toMail;
+        return $this;
+    }
+
+    /**
+     * Send Mail
+     * @param array $data
+     * @return bool
+     */
+    public function send(array $data): bool
+    {
+        if (!isset($this->toMail)) abort(418, _l('errors.mail.must-set-a-mail'));
+
+        $this->mail->addAddress($this->toMail);
         $this->mail->Subject = @$data['subject'];
         $this->mail->msgHTML(@$data['message']);
         $this->mail->AltBody = @$data['altbody'];

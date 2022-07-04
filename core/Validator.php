@@ -10,6 +10,13 @@ use Core\Helpers\Http;
 
 class Validator
 {
+    /**
+     * Validate a array
+     * @param array $data
+     * @param array $validate
+     * @param array $attributeNames
+     * @return string|array
+     */
     public static function validate(array $data = null, array $validate = [], array $attributeNames = [])
     {
         if (!$data) $data = $_REQUEST;
@@ -123,10 +130,7 @@ class Validator
         }
 
         if (count($errors)) {
-            if (Http::isAjax()) {
-                echo Response::json($errors);
-                abort(400);
-            }
+            if (Http::isAjax()) abort(400, Response::json($errors));
             foreach ($errors as $key => $error_list) foreach ($error_list as $error) Alerts::danger($error);
             back();
         }

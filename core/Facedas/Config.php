@@ -45,7 +45,7 @@ class Config
      * @param string $config
      * @return string|array|object
      */
-    public static function get(string $config): mixed
+    public static function get(string $config)
     {
         $arr = self::parseUrl($config);
         if (!is_file($arr[0])) return;

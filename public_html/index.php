@@ -1,7 +1,6 @@
 <?php
 include('../vendor/autoload.php');
 date_default_timezone_set('Etc/UTC');
-
 use Core\Route;
 
 $start_time = microtime();

@@ -6,36 +6,64 @@ use Core\Facedas\Str;
 
 class Csrf
 {
+    /**
+     * Csrf will change timeout is when finish
+     */
     static $timeOut = (10 * 60);
 
-    public static function csrf()
+    /**
+     * Show csrf input
+     * @return void
+     */
+    public static function csrf(): void
     {
         echo "<input type='hidden' name='_token' value='" . self::get() . "' />";
     }
 
-    public static function get()
+    /**
+     * Get Csrf Token
+     * @return string
+     */
+    public static function get(): string
     {
-        if ((!@$_SESSION['csrf_token'] || time() > @$_SESSION['csrf_token_timeout']) || ($_SESSION['csrf_token_timeout'] - time()) < 120) self::set();
+        if ((!@$_SESSION['csrf_token'] || time() > @$_SESSION['csrf_token_timeout']) || (self::remainTimeOut() < 120)) self::set();
         return $_SESSION['csrf_token'];
     }
 
-    public static function set()
+    /**
+     * Set Csrf Token randomly
+     * @return void
+     */
+    public static function set(): void
     {
         $_SESSION['csrf_token_timeout'] = time() + self::$timeOut;
         $_SESSION['csrf_token'] = Str::rand(30);
     }
 
+    /**
+     * Unset Csrf Token
+     */
     public static function unset()
     {
         unset($_SESSION['csrf_token']);
     }
 
-    public static function remainTimeOut()
+    /**
+     * Get remain time for timeout
+     * @return int
+     */
+    public static function remainTimeOut(): int
     {
         return @$_SESSION['csrf_token_timeout'] - time();
     }
 
-    public static function check($alwaysTrue = false)
+    /**
+     * Check is a valid Csrf Token
+     * $alwaysTrue parameter: if you wanna do not check it you can use $alwaysTrue = true
+     * @param bool $alwaysTrue
+     * @return bool
+     */
+    public static function check($alwaysTrue = false): bool
     {
         if ((method() != 'get' && request('_token') != self::get()) && $alwaysTrue != true) return false;
         return true;

@@ -7,14 +7,23 @@ class Lang
     static $locale = null;
     static $path = null;
 
-    private static function canSelect($lang)
+    /**
+     * is selectable?
+     * @param string $lang
+     * @return string
+     */
+    private static function canSelect(string $lang): string
     {
         $path = base_path() . "\\resource\lang\\$lang";
         if (!is_dir($path)) return false;
         return $path;
     }
 
-    public static function list()
+    /**
+     * Lang list
+     * @return array
+     */
+    public static function list(): array
     {
         return array_values(array_diff(scandir(base_path() . "\\resource\lang"), ['.', '..']));
     }
@@ -31,12 +40,22 @@ class Lang
         return true;
     }
 
-    public static function currentLocale()
+    /**
+     * Current Locale
+     * @return string
+     */
+    public static function currentLocale(): string
     {
         return self::$locale;
     }
 
-    public static function get($_name, array $data = [])
+    /**
+     * Get Lang string or array
+     * @param string $_name
+     * @param array $data
+     * @return array|string
+     */
+    public static function get(string $_name, array $data = [])
     {
         $name = explode('.', $_name);
         $lang = self::$path . "\\" . $name[0] . ".php";
@@ -46,7 +65,6 @@ class Lang
         unset($name[0]);
 
         foreach ($name as $val) $lang = $lang[$val] ?? null;
-
         foreach ($data as $key => $val) $lang = str_replace("{" . $key . "}", $val, $lang);
 
         return $lang;
