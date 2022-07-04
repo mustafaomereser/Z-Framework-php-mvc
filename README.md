@@ -1,7 +1,7 @@
 You can select version on branch list.
 
 ```php
-> composer install
+cmd> composer install
 ```
 
 ### 0.1. Z Framework (V2.0.0)
