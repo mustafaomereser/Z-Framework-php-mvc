@@ -155,9 +155,10 @@ class Route
     {
         $name = self::nameOrganize(self::$preURL . "/$name");
 
-        $key = array_key_last(self::$routes);
+        $key = @end(array_keys(self::$routes));
         $route = self::$routes[$key];
         unset(self::$routes[$key]);
+
         self::$routes[$name] = $route;
 
         return new self();
