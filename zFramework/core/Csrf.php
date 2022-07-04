@@ -33,7 +33,7 @@ class Csrf
      * Set Csrf Token randomly
      * @return void
      */
-    public static function set(): void
+    public static function set()
     {
         $_SESSION['csrf_token_timeout'] = time() + self::$timeOut;
         $_SESSION['csrf_token'] = Str::rand(30);

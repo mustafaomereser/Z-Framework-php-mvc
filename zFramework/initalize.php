@@ -3,7 +3,9 @@
 date_default_timezone_set('ETC/UTC');
 session_start();
 
-include(BASE_PATH . '/database/connections.php'); #db connections strings
+$connected_databases = [];
+$databases = include(BASE_PATH . '/database/connections.php'); #db connections strings
+
 include(BASE_PATH . '/zFramework/run.php');
 include(BASE_PATH . '/zFramework/vendor/autoload.php');
 
