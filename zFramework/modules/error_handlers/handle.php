@@ -54,14 +54,15 @@ function errorHandler($data)
             if ($file) {
                 while (($line = fgets($file)) !== false) {
                     $line_count++;
+                    if ($line_start > $line_count) continue;
 
                     $str_line_count = $line_count;
                     if (strlen($line_count) < 2) $str_line_count = "0$str_line_count";
 
+                    $caret = strlen($line);
                     $line = "$str_line_count. " . htmlspecialchars($line);
 
-                    if ($line_start > $line_count) continue;
-                    if ($line_count == $val['line']) $code .= "<a href='javascript:goIDE(`" . str_replace("\\", "/", $val['file']) . "`, " . $val['line'] . ");' style='color: red; text-decoration: none;'>$line</a>";
+                    if ($line_count == $val['line']) $code .= "<a href='javascript:goIDE(`" . str_replace("\\", "/", $val['file']) . "`, " . $val['line'] . ", $caret);' style='color: red; text-decoration: none;'>$line</a>";
                     else $code .= $line;
 
                     if ($line_count >= $line_end) break;
