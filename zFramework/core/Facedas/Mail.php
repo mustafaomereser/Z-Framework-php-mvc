@@ -7,31 +7,33 @@ use PHPMailer\PHPMailer\SMTP;
 
 class Mail
 {
+    static $mail;
+    static $toMail;
     /**
      * Initalize settings.
      */
-    public function __construct()
+    public static function init()
     {
         $mailConfig = Config::get('mail');
         if (!$mailConfig['sending']) return abort(400, _l('errors.mail.sending-is-false'));
 
-        $this->mail = new PHPMailer;
-        $this->mail->isSMTP();
-        $this->mail->CharSet = 'utf-8';
+        self::$mail = new PHPMailer;
+        self::$mail->isSMTP();
+        self::$mail->CharSet = 'utf-8';
 
-        if (@$mailConfig['debug'] == true) $this->mail->SMTPDebug = SMTP::DEBUG_SERVER;
+        if (@$mailConfig['debug'] == true) self::$mail->SMTPDebug = SMTP::DEBUG_SERVER;
 
-        $this->mail->Host = $mailConfig['mail'];
-        $this->mail->Port = $mailConfig['port'];
+        self::$mail->Host = $mailConfig['mail'];
+        self::$mail->Port = $mailConfig['port'];
 
-        $this->mail->SMTPAuth = ($mailConfig['SMTPAuth'] ?? false);
+        self::$mail->SMTPAuth = ($mailConfig['SMTPAuth'] ?? false);
         if (@$mailConfig['SMTPAuth'] === true) {
-            $this->mail->Username = @$mailConfig['username'];
-            $this->mail->Password = @$mailConfig['password'];
+            self::$mail->Username = @$mailConfig['username'];
+            self::$mail->Password = @$mailConfig['password'];
         }
 
-        if (isset($mailConfig['from'])) $this->mail->setFrom($mailConfig['from'][1], $mailConfig['from'][0]);
-        if (isset($mailConfig['reply'])) $this->mail->addReplyTo($mailConfig['reply'][1], $mailConfig['reply'][0]);
+        if (isset($mailConfig['from'])) self::$mail->setFrom($mailConfig['from'][1], $mailConfig['from'][0]);
+        if (isset($mailConfig['reply'])) self::$mail->addReplyTo($mailConfig['reply'][1], $mailConfig['reply'][0]);
     }
 
     /**
@@ -39,11 +41,11 @@ class Mail
      * @param string $toMail
      * @return self
      */
-    public function to(string $toMail): self
+    public static function to(string $toMail): self
     {
         if (!filter_var($toMail, FILTER_VALIDATE_EMAIL)) abort(418, _l('errors.mail.not-validate-mail'));
-        $this->toMail = $toMail;
-        return $this;
+        self::$toMail = $toMail;
+        return new self();
     }
 
     /**
@@ -51,17 +53,19 @@ class Mail
      * @param array $data
      * @return bool
      */
-    public function send(array $data): bool
+    public static function send(array $data): bool
     {
-        if (!isset($this->toMail)) abort(418, _l('errors.mail.must-set-a-mail'));
+        if (!isset(self::$toMail)) abort(418, _l('errors.mail.must-set-a-mail'));
 
-        $this->mail->addAddress($this->toMail);
-        $this->mail->Subject = @$data['subject'];
-        $this->mail->msgHTML(@$data['message']);
-        $this->mail->AltBody = @$data['altbody'];
+        self::$mail->addAddress(self::$toMail);
+        self::$mail->Subject = @$data['subject'];
+        self::$mail->msgHTML(@$data['message']);
+        self::$mail->AltBody = @$data['altbody'];
+        foreach ($data['attachements'] ?? [] as $attach) self::$mail->addAttachment($attach);
 
-        foreach ($data['attachements'] ?? [] as $attach) $this->mail->addAttachment($attach);
-        if ($this->mail->send()) return true;
+        self::$toMail = null;
+        if (self::$mail->send()) return true;
         return false;
     }
 }
+Mail::init();

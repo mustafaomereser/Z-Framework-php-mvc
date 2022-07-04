@@ -360,8 +360,7 @@ ALSO you can normal query like /1?test=true
     // if you wanna mail send you must be true sending parameter
 
     // Usage
-    $mail = new Mail;
-    $mail->to('mustafaomereser@gmail.com')->send([
+    Mail::to('mustafaomereser@gmail.com')::send([
         'subject' => 'test',
         'message' => 'test mesaj', // you can also use view('view_name', ['hash' => Str::rand()]) method and set veriables;
         'altbody' => 'Alt body',
