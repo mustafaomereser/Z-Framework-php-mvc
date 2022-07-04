@@ -6,6 +6,8 @@ class Run
 {
     static $loadtime;
 
+    static $included = [];
+
     public static function includer($_path, $include_in_folder = true, $reverse_include = false, $ext = '.php')
     {
         // $_path = "/$_path";
