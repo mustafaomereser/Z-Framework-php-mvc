@@ -25,9 +25,9 @@ class ExamplesController
         $this->delete_user = new User;
         $this->delete_user->where('id', '=', 1)->delete();
 
-        echo "<pre>User List with Deleteds: ";
-        print_r($this->db->table('users')->get());
-        echo "</pre>";
+        // echo "<pre>User List with Deleteds: ";
+        // print_r($this->db->table('users')->get());
+        // echo "</pre>";
 
         return view('examples', [
             'users' => $this->user->select('*, COUNT(username) as usernameCount')->groupBy('username')->paginate(20),

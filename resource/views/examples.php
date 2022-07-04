@@ -66,7 +66,11 @@
         <?= $users2['links']() ?>
     </div>
 </fieldset>
-
+<?php
+zFramework\Core\Facedas\Mail::to('test')->send([
+    'message' => 'test'
+]);
+?>
 <fieldset>
     <legend>String Examples</legend>
     <?php $str = 'Occaecat sit nostrud cillum tempor ipsum do laborum laborum culpa. Excepteur consequat aliquip ut labore mollit sunt qui exercitation velit nisi amet. Reprehenderit labore proident veniam magna esse minim ea id. Exercitation minim ipsum fugiat aute consequat minim ipsum eu laborum aliquip. Incididunt veniam deserunt magna excepteur adipisicing aute adipisicing. Deserunt ad ex ea aliqua reprehenderit sit laboris Lorem id.'; ?>

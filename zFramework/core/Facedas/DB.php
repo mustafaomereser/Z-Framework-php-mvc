@@ -104,7 +104,7 @@ class DB
     {
         if (!isset($this->softDelete) || !@$this->softDelete) return $falseCallback ? $falseCallback() : null;
         elseif (array_search($this->deleted_at, $this->attributes)) return $trueCallback ? $trueCallback() : null;
-        else abort(500, "Model haven't <b>$this->deleted_at</b> attribute.");
+        else throw new \Throwable("Model haven't <b>$this->deleted_at</b> attribute.");
     }
 
     public function delete()
@@ -255,7 +255,7 @@ class DB
     {
         if ($type) $type = strtoupper($type);
 
-        if (!in_array($type, [null, 'LEFT', 'OUTER', 'RIGHT', 'FULL'])) abort(500, 'This not acceptable join type.');
+        if (!in_array($type, [null, 'LEFT', 'OUTER', 'RIGHT', 'FULL'])) throw new \Throwable('This not acceptable join type.');
         $this->buildQuery['joins'][] = ($type ? "$type " : null) . "JOIN $table ON " . $onArray[0] . " " . $onArray[1] . " " . $onArray[2];
         return $this;
     }

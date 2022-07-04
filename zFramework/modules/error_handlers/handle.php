@@ -2,9 +2,11 @@
 
 function errorHandler($data)
 {
+    ob_end_clean();
+
     $message = $data[0];
     $errors = [];
-    foreach ($data[5] as $error) $errors[$error['file']][] = $error;
+    foreach ($data[5] as $error) if (isset($error['file'])) $errors[$error['file']][] = $error;
 
     function getButtons($errors)
     {
@@ -59,7 +61,7 @@ function errorHandler($data)
                     $line = "$str_line_count. " . htmlspecialchars($line);
 
                     if ($line_start > $line_count) continue;
-                    if ($line_count == $val['line']) $code .= "<font color=red>$line</font>";
+                    if ($line_count == $val['line']) $code .= "<a href='javascript:goIDE(`" . str_replace("\\", "/", $val['file']) . "`, " . $val['line'] . ");' style='color: red; text-decoration: none;'>$line</a>";
                     else $code .= $line;
 
                     if ($line_count >= $line_end) break;
@@ -71,7 +73,8 @@ function errorHandler($data)
                 <div style="border-bottom: 3px dotted #ddd; padding: 0 0 15px 0">
                     <?php foreach (['Line' => $val['line'], 'Method' => @$val['class'] . @$val['type'] . @$val['function'], 'Arguments' => var_export($val['args'], true)] as $title => $val) : ?>
                         <div>
-                            <b><?= $title ?>: </b> <?= $val ?>
+                            <b><?= $title ?>: </b>
+                            <pre><code><?= $val ?></code></pre>
                         </div>
                     <?php endforeach; ?>
                 </div>
@@ -134,6 +137,16 @@ function errorHandler($data)
         <div class="box" style="width: 96.6%">
             <div><?= $data[3] ?></div>
             <small style="color: gray;"><?= $message ?></small>
+            <div style="margin-top: 20px;">
+                <div style="margin-bottom: 10px;">
+                    IDE will open when you click on the error.
+                </div>
+                <select name="IDE" onchange="document.cookie = 'IDE=' + this.value + '; expires=Sun, 1 Jan <?= date('Y') + 1 ?> 00:00:00 UTC; path=/'">
+                    <?php foreach (['vscode' => 'Visual Studio Code', 'phpstorm' => 'PHPStorm'] as $val => $title) : ?>
+                        <option value="<?= $val ?>" <?= @$_COOKIE['IDE'] == $val ? ' selected' : null ?>><?= $title ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </div>
         <div style="display: flex; width: 100%">
             <div class="box error-list" style="width: 20%; padding: 0;">
@@ -161,6 +174,23 @@ function errorHandler($data)
         });
 
         selectError(0);
+
+        function goIDE(file, line, caret = 0) {
+            let val = document.querySelector('[name="IDE"]').value,
+                link = '#';
+
+            switch (val) {
+                case 'vscode':
+                    link = `vscode://file/${file}:${line}:${caret}`
+                    break;
+                case 'phpstorm':
+                    link = `phpstorm://open?url=${file}&line=${line}`;
+                    break;
+            }
+            location.href = link;
+        }
     </script>
 <?php
 }
+
+set_exception_handler('errorHandler');

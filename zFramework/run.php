@@ -26,6 +26,7 @@ class Run
 
     public static function begin()
     {
+        ob_start();
         $start = microtime();
         try {
             // includes
@@ -42,9 +43,10 @@ class Run
             self::$loadtime = ((microtime() + 0.003) - $start);
 
             \zFramework\Core\Route::run();
-            // forget alerts
-            \zFramework\Core\Facedas\Alerts::unset();
+            \zFramework\Core\Facedas\Alerts::unset(); // forget alerts
         } catch (\Throwable $errorHandle) {
+            errorHandler(array_values((array) $errorHandle));
+        } catch (\Exception $errorHandle) {
             errorHandler(array_values((array) $errorHandle));
         }
     }

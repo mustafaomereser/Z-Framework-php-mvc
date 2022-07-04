@@ -15,7 +15,7 @@ class Mail
     public static function init()
     {
         $mailConfig = Config::get('mail');
-        if (!$mailConfig['sending']) return abort(400, _l('errors.mail.sending-is-false'));
+        if (!$mailConfig['sending']) throw new \Exception(_l('errors.mail.sending-is-false'));
 
         self::$mail = new PHPMailer;
         self::$mail->isSMTP();
@@ -43,7 +43,7 @@ class Mail
      */
     public static function to(string $toMail): self
     {
-        if (!filter_var($toMail, FILTER_VALIDATE_EMAIL)) abort(418, _l('errors.mail.not-validate-mail'));
+        if (!filter_var($toMail, FILTER_VALIDATE_EMAIL)) throw new \Exception(_l('errors.mail.not-validate-mail'));
         self::$toMail = $toMail;
         return new self();
     }
@@ -55,7 +55,7 @@ class Mail
      */
     public static function send(array $data): bool
     {
-        if (!isset(self::$toMail)) abort(418, _l('errors.mail.must-set-a-mail'));
+        if (!isset(self::$toMail)) throw new \Exception(_l('errors.mail.must-set-a-mail'));
 
         self::$mail->addAddress(self::$toMail);
         self::$mail->Subject = @$data['subject'];

@@ -140,7 +140,7 @@ class Route
         self::$called = true;
         self::$calledRoute = $data[0];
 
-        if (!in_array(gettype($callback), ['object', 'array'])) abort();
+        if (!in_array(gettype($callback), ['object', 'array'])) throw new \Exception('This type not valid.');
 
         switch (gettype($callback)) {
             case 'array':
