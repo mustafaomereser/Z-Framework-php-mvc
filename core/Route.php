@@ -158,7 +158,6 @@ class Route
         $key = @end(array_keys(self::$routes));
         $route = self::$routes[$key];
         unset(self::$routes[$key]);
-
         self::$routes[$name] = $route;
 
         return new self();
