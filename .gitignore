@@ -1,3 +1,2 @@
 push.bat
-./vendor
-./zFramework/vendor
+zFramework/vendor
