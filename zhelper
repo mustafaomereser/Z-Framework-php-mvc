@@ -269,19 +269,23 @@ class Db
                 }
 
                 $buildSQL = str_replace(['  ', ' ;'], [' ', ';'], ("ALTER TABLE $table ADD $name " . (@$data['type'] . @$data['charset'] . @$data['nullstatus'] . @$data['default'] . @$data['index']) . ($lastColumn ? " AFTER $lastColumn " : ' FIRST ') . (isset($data['extras']) ? ", " . implode(', ', $data['extras']) : null) . ";"));
+
+                $executeType = 0;
                 try {
-                    $db->exec($buildSQL);
+                    $tryAdd = $db->exec($buildSQL);
+                    if (strlen($tryAdd)) $executeType = 1;
+                    else throw new \PDOException('TRY MODIFY', 1060);
                 } catch (\PDOException $tryAddEx) {
-                    if ($tryAddEx->errorInfo[1] == 1060) {
+                    if ($tryAddEx->errorInfo[1] == 1060 || array_values((array) $tryAddEx)[2] == 1060) {
                         $buildSQL = str_replace("$table ADD", "$table MODIFY", $buildSQL);
 
                         try {
                             $tryModify = $db->exec($buildSQL);
+                            if (strlen($tryModify)) $executeType = 2;
+                            else throw new \PDOException('MODIFY FAIL MAYBE PRIMARY KEY', 1068);
                         } catch (\PDOException $tryModifyEx) {
-                            if ($tryModifyEx->errorInfo[1] == 1068) {
-
+                            if ($tryModifyEx->errorInfo[1] == 1068 || array_values((array) $tryModifyEx)[2] == 1068) {
                                 $lastColumn = $name;
-
                                 unset($tryModify);
                                 text("(Already Primary Key) $name", 36);
                                 continue;
@@ -290,7 +294,10 @@ class Db
                     }
                 }
 
-                text("(" . (isset($tryModify) ? 'Modified' : 'Added') . " Success) $name ", 32);
+                $types = [['Not Changed', 33], ['Added', 32], ['Modified', 32]];
+                $type = $types[$executeType];
+
+                text("(" . $type[0] . ") $name", ($type[1] ?? 31));
                 unset($tryModify);
 
                 $lastColumn = $name;

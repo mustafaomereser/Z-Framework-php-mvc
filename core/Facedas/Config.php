@@ -4,9 +4,17 @@ namespace Core\Facedas;
 
 class Config
 {
+    /**
+     * Configs path
+     */
     static $path = "../config";
 
-    private static function parseUrl($config, $justConfig = false)
+    /**
+     * @param string $config
+     * @param bool $justConfig
+     * @return array
+     */
+    private static function parseUrl(string $config, bool $justConfig = false): array
     {
         $ex = explode(".", $config);
 
@@ -32,7 +40,12 @@ class Config
         return $return;
     }
 
-    public static function get($config)
+    /**
+     * Get Config
+     * @param string $config
+     * @return string|array|object
+     */
+    public static function get(string $config): mixed
     {
         $arr = self::parseUrl($config);
         if (!is_file($arr[0])) return;
@@ -47,16 +60,18 @@ class Config
         return $config;
     }
 
-    public static function set($config, $sets)
+    /**
+     * Update Config set veriables.
+     * @return void
+     */
+    public static function set(string $config, array $sets): void
     {
         $path = self::parseUrl($config, true)[0];
         $arr = self::get($config);
 
         foreach ($sets as $key => $set)
-            if (!empty($set))
-                $arr[$key] = $set;
-            else
-                unset($arr[$key]);
+            if (!empty($set)) $arr[$key] = $set;
+            else unset($arr[$key]);
 
         file_put_contents(strstr($path, '.php') ? $path : "$path.php", "<?php \nreturn " . var_export($arr, true) . ";");
     }

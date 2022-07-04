@@ -4,6 +4,9 @@ namespace Core\Facedas;
 
 class DB
 {
+    /**
+     * Options parameters
+     */
     private $table;
     private $buildQuery = [];
     private $cache = [];
@@ -12,6 +15,9 @@ class DB
     public $attributes = [];
     public $attrCount = 0;
 
+    /**
+     * Initial, Select Database.
+     */
     public function __construct($db = null)
     {
         global $databases;

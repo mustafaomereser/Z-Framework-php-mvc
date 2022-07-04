@@ -9,7 +9,7 @@ class Users
     {
         return [
             'id' => ['primary'],
-            'username' => ['varchar:50'],
+            'username' => ['varchar:51'],
             'password' => ['varchar:50'],
             'email' => ['varchar:50', 'unique'],
             'api_token' => ['varchar:60', 'required'],

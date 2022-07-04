@@ -7,9 +7,16 @@ use Core\Crypter;
 
 class Auth
 {
+    /**
+     * When you use ::user() method you must fill that and if you again use ::user() get from this parameter.
+     */
     static $user = null;
 
-    public static function login($user)
+    /**
+     * Login from a User model result array.
+     * @param array $user
+     */
+    public static function login(array $user): bool
     {
         if (isset($user['id'])) {
             $_SESSION['user_id'] = $user['id'];
@@ -19,27 +26,43 @@ class Auth
         return false;
     }
 
-    public static function api_login($token)
+    /**
+     * Login with user's api_token
+     * @param string $token
+     */
+    public static function api_login(string $token): void
     {
         $user = new User;
         $user = $user->select('id')->where('api_token', '=', $token)->first();
         if (@$user['id']) self::login($user);
     }
 
-    public static function logout()
+    /**
+     * Logout User
+     * @return bool
+     */
+    public static function logout(): bool
     {
         self::$user = null;
         unset($_SESSION['user_id']);
         return true;
     }
 
-    public static function check()
+    /**
+     * Check User logged in
+     * @return bool
+     */
+    public static function check(): bool
     {
         if (isset(self::user()['id'])) return true;
         return false;
     }
 
-    public static function user()
+    /**
+     * Get current logged user informations
+     * @return array|self
+     */
+    public static function user(): array
     {
         if (!isset($_SESSION['user_id'])) return false;
 
@@ -52,7 +75,13 @@ class Auth
         return self::$user;
     }
 
-    public static function attempt($fields = [], $getUser = false)
+    /**
+     * Attempt for login.
+     * @param array $fields
+     * @param bool $getUser
+     * @return bool
+     */
+    public static function attempt(array $fields = [], bool $getUser = false): bool
     {
         if (self::check()) return false;
 
@@ -72,7 +101,11 @@ class Auth
         return false;
     }
 
-    public static function id()
+    /**
+     * Get Current logged in user's id
+     * @return integer
+     */
+    public static function id(): int
     {
         return self::user()['id'];
     }
