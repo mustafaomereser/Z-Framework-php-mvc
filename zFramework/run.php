@@ -27,23 +27,25 @@ class Run
     public static function begin()
     {
         $start = microtime();
+        try {
+            // includes
+            self::includer('../zFramework/modules/error_handlers');
+            self::includer('../zFramework/modules', false);
 
-        // includes
-        self::includer('../zFramework/modules', false);
+            // Automatic include from zFramework/initalize.php
+            // self::includer('../zFramework/core');
+            // self::includer('../app');
 
-        // Automatic include from zFramework/initalize.php
-        // self::includer('../zFramework/core');
-        // self::includer('../app');
+            self::includer('../app/Middlewares/autoload.php');
+            self::includer('../route');
+            self::includer('../zFramework/modules/error_http');
+            self::$loadtime = ((microtime() + 0.003) - $start);
 
-        self::includer('../app/Middlewares/autoload.php');
-        self::includer('../route');
-        self::includer('../zFramework/modules/error_handlers');
-        self::includer('../zFramework/modules/error_http');
-        self::$loadtime = ((microtime() + 0.003) - $start);
-
-        \zFramework\Core\Route::run();
-
-        // forget alerts
-        \zFramework\Core\Facedas\Alerts::unset();
+            \zFramework\Core\Route::run();
+            // forget alerts
+            \zFramework\Core\Facedas\Alerts::unset();
+        } catch (\Throwable $errorHandle) {
+            errorHandler(array_values((array) $errorHandle));
+        }
     }
 }
