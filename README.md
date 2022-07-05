@@ -99,12 +99,22 @@ cmd> composer install
     Route::findRoute('test.index'); // output: www.host.com/test
     Route::findRoute('test.edit', ['id' => 1]); // output: www.host.com/test/1/edit
 
-    // for preURL usage:
+    // for Group usage:
+    
+    // prefix_URL
     Route::pre('/admin')->group(function() {
         Route::resource('/', ResourceController::class);
     });
-
     Route::findRoute('admin.index'); // output www.host.com/admin
+
+    Route::csrfNoCheck(true)->group(function() {
+        Route::post(..., ...); // that not need a csrf token allow all request like GET method.
+    });
+
+    // merge using
+    Route::pre('/admin')->csrfNoCheck(true)->group(function() {
+        Route::post(..., ...); // that not need a csrf token allow all request like GET method. and have /admin prefix.
+    });
 
     // And you can use for findRoute
     route('admin.index') // output www.host.com/admin

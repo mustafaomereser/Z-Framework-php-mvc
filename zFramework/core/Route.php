@@ -13,8 +13,9 @@ class Route
     static $calledInformations = [];
 
     // Changable Parameters
-    static $preURL = null;
-    static $csrfNoCheck = false;
+    static $prefix_URL = null; // Route's before write url. example: /admin
+    static $csrfNoCheck = false; // if that be true csrf not match return always true 
+    //
 
     public static function findRoute($name, $data = [])
     {
@@ -93,10 +94,10 @@ class Route
     // Private Methods
     private static function parser($data, $method, $options)
     {
-        if (self::$preURL && $data[0] == '/') $data[0] = null;
+        if (self::$prefix_URL && $data[0] == '/') $data[0] = null;
 
         $_uri = strtok(strtok(uri(), '#'), '?');
-        $_url = str_replace("//", "/", (self::$preURL . $data[0]));
+        $_url = str_replace("//", "/", (self::$prefix_URL . $data[0]));
 
         //
         $inf = ['url' => $_url, 'method' => $method];
@@ -160,7 +161,7 @@ class Route
 
     public function name($name)
     {
-        $name = self::nameOrganize(self::$preURL . "/$name");
+        $name = self::nameOrganize(self::$prefix_URL . "/$name");
 
         $key = @end(array_keys(self::$routes));
         $route = self::$routes[$key];
@@ -183,7 +184,7 @@ class Route
     static $groupsReverse = [];
     public static function pre(string $url): self
     {
-        self::$groups['preURL'] = $url;
+        self::$groups['prefix_URL'] = $url;
         return new self();
     }
 
@@ -210,7 +211,7 @@ class Route
     public static function api_user(int $type = 0, $token = '')
     {
         if (!self::$api_logged_in) {
-            if (@explode('/', self::$preURL)[1] != 'api') return;
+            if (@explode('/', self::$prefix_URL)[1] != 'api') return;
             if ($type == 0) {
                 self::$api_logged_in = true;
                 Auth::token_login($token);
