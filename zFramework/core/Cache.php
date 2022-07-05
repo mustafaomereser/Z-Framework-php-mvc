@@ -4,6 +4,8 @@ namespace zFramework\Core;
 
 class Cache
 {
+    private static $path = FRAMEWORK_PATH . "\storage";
+
     /**
      * Cache a data and get it for before timeout.
      * 
@@ -21,4 +23,14 @@ class Cache
 
         return $_SESSION['caching'][$name];
     }
+
+    // public static function cache_view(string $view_name, string $view)
+    // {
+    //     return file_put_contents(self::$path . "\\views\\$view_name.html", $view);
+    // }
+
+    // public static function cache_find_view(string $view_name)
+    // {
+    //     return @file_get_contents(self::$path . "\\views\\$view_name.html");
+    // }
 }

@@ -34,14 +34,19 @@ class View
      */
     public static function view(string $view, array $view_parameters = [], string $template = null): string
     {
-        $view = (self::$path . str_replace('.', '/', $view)) . ".php";
+        $view_name = $view;
+        // $cache_view = (Cache::cache_find_view($view_name) ?? null);
+        // if ($cache_view) return $cache_view;
 
+        $view = (self::$path . str_replace('.', '/', $view)) . ".php";
         ob_start();
         extract($view_parameters);
         include($view);
         $view = ob_get_clean();
 
         $view = self::compile($view, $view_parameters, $template);
+
+        // Cache::cache_view($view_name, $view);
 
         return $view;
     }
