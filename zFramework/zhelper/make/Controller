@@ -1,8 +1,10 @@
 <?php
-
 namespace App\Controllers{namespace};
 
-class {name} {
+use zFramework\Core\Abstracts\Controller;
+
+class {name} extends Controller 
+{
 
     public function __construct()
     {

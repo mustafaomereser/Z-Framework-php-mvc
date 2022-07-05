@@ -2,7 +2,9 @@
 
 namespace App\Controllers;
 
-class HomeController
+use zFramework\Core\Abstracts\Controller;
+
+class HomeController extends Controller
 {
 
     public function __construct()
