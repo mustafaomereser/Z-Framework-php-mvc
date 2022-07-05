@@ -1,10 +1,12 @@
 <?php
-return array(
-  'title' => 'Z Framework Project',
-  'public' => 'public_html',
-  'lang' => 'tr',
-  'crypt' => [
-    'key' => 'cryptkey',
-    'salt' => 'ThisSaltIsSecret'
-  ]
-);
+return [
+    'lang' => 'tr', // if browser haven't language in Languages list automatic choose that default lang.
+
+    'title' => 'Z Framework Project',
+    'public' => 'public_html',
+
+    'crypt' => [
+        'key' => 'cryptkey',
+        'salt' => 'ThisSaltIsSecret'
+    ]
+];

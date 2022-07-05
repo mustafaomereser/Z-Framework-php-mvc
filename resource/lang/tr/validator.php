@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'errors' => [
         'required' => 'gerekli alan.',
         'email' => 'geçerli bir E-Posta adresi olmalıdır.',

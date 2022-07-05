@@ -1,7 +1,6 @@
 <?php
 
 return [
-
     'errors' => [
         'required' => 'is required.',
         'email' => 'must be a email.',

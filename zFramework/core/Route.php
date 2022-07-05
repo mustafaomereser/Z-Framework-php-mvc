@@ -19,8 +19,7 @@ class Route
 
     public static function findRoute($name, $data = [])
     {
-        if (!isset(self::$routes[$name])) return;
-
+        if (!isset(self::$routes[$name])) return $name;
         $url = self::$routes[$name]['url'];
         foreach ($data as $key => $val) $url = str_replace("{" . $key . "}", $val, $url);
         return host() . $url;
