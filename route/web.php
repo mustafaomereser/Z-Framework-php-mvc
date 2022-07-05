@@ -2,7 +2,7 @@
 
 use zFramework\Core\Route;
 
-// Route::get('/', 'HomeController@index'); now testing.
+// Route::get('/', 'HomeController@index');
 
 Route::get('/', function () {
     return view('welcome');
