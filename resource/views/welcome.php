@@ -55,8 +55,6 @@ use zFramework\Core\Facades\Lang;
             </div>
         </h2>
 
-        <a href="/examples">Example page</a>
-
         <div class="box">
             <div style="text-align: center;">
                 <?= _l('lang.welcome') ?>
