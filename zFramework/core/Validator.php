@@ -39,6 +39,9 @@ class Validator
             } elseif (is_array($dataValue)) {
                 $type = 'array';
                 $length = count($dataValue);
+            } elseif (is_object($dataValue)) {
+                $type = 'object';
+                $length = count((array) $dataValue);
             }
 
             foreach ($validateArray as $validate) {
@@ -55,10 +58,8 @@ class Validator
                         foreach ($arr_parameter as $parameter) {
                             $parameter = explode('=', trim($parameter));
 
-                            if (isset($parameter[1]))
-                                $parameters[$parameter[0]] = $parameter[1];
-                            else
-                                $parameters[] = $parameter[0];
+                            if (isset($parameter[1])) $parameters[$parameter[0]] = $parameter[1];
+                            else $parameters[] = $parameter[0];
                         }
                     }
                 }

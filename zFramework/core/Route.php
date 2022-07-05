@@ -2,6 +2,7 @@
 
 namespace zFramework\Core;
 
+use zFramework\Core\Facades\Auth;
 use zFramework\Core\Facades\Lang;
 
 class Route
@@ -68,7 +69,6 @@ class Route
 
     public static function resource($url, $callback, $options = [])
     {
-
         self::get($url, [$callback, 'index'], $options)->name("$url.index");
         self::post($url, [$callback, 'store'], $options)->name("$url.store");
         self::get("$url/create", [$callback, 'create'], $options)->name("$url.create");
@@ -83,8 +83,9 @@ class Route
 
     public static function run()
     {
-        if (count(self::$calledInformations) != 2) die('Route can not run.');
+        if (count(self::$calledInformations) != 2) throw new \Exception('Route can not run.');
         echo call_user_func_array(self::$calledInformations[0], self::$calledInformations[1]);
+        self::api_user(1); // logout if url is api;
     }
 
     // Private Methods
@@ -128,6 +129,7 @@ class Route
         $options = $data[2] ?? [];
         extract(self::parser($data, $method, $options));
 
+
         // Middlewares
         Middleware::middleware($options['middlewares'] ?? []);
         //
@@ -136,6 +138,9 @@ class Route
         if (self::$called == true || ($url != $uri || ($method && $method != method()))) return;
         if (!Csrf::check(@$options['no-csrf'])) abort(406, Lang::get('errors.csrf.no-verify'));
         //
+
+        Route::api_user(0, $_REQUEST['api_token'] ?? ''); // login if url is api
+
 
         self::$called = true;
         self::$calledRoute = $data[0];
@@ -167,5 +172,44 @@ class Route
     private static function nameOrganize($val)
     {
         return str_replace("..", ".", rtrim(ltrim(str_replace('/', '.', $val), '.'), '.'));
+    }
+
+    // Groups: Start
+    static $groups = [];
+    static $groupsReverse = [];
+    public static function pre(string $url): self
+    {
+        self::$groups['preURL'] = $url;
+        return new self();
+    }
+
+    public static function group($callback)
+    {
+        foreach (self::$groups as $key => $setting) {
+            self::$groupsReverse[$key] = self::${$key};
+            self::${$key} = $setting;
+        }
+        $callback = $callback();
+        foreach (self::$groupsReverse as $key => $reverse) self::${$key} = $reverse;
+        return $callback;
+    }
+    // Groups: end
+
+
+    static $api_logged_in = false;
+    public static function api_user(int $type = 0, $token = '')
+    {
+        if (!self::$api_logged_in) {
+            if (@explode('/', self::$preURL)[1] != 'api') return;
+            if ($type == 0) {
+                self::$api_logged_in = true;
+                Auth::token_login($token);
+            }
+        }
+
+        if ($type == 1) {
+            self::$api_logged_in = false;
+            Auth::logout();
+        }
     }
 }

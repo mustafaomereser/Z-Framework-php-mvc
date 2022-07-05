@@ -6,15 +6,9 @@
 use zFramework\Core\Facades\Auth;
 use zFramework\Core\Route;
 
-Route::$preURL = "/api";
-if (@$_REQUEST['user_token']) Auth::api_login($_REQUEST['user_token']);
-//
-
-
-
-
-
-
-// Do not touch
-if (@$_REQUEST['user_token']) Auth::logout();
-//
+Route::pre('/api')->group(function () {
+    Route::any('/', function () {
+        echo "user: ";
+        print_r(Auth::user()['username']);
+    });
+});

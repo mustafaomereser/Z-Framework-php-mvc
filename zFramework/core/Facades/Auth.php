@@ -30,11 +30,11 @@ class Auth
      * Login with user's api_token
      * @param string $token
      */
-    public static function api_login(string $token): void
+    public static function token_login(string $token)
     {
         $user = new User;
-        $user = $user->select('id')->where('api_token', '=', $token)->first();
-        if (@$user['id']) self::login($user);
+        $user = $user->where('api_token', '=', $token)->first();
+        if (isset($user['id'])) self::login($user);
     }
 
     /**
@@ -60,9 +60,9 @@ class Auth
 
     /**
      * Get current logged user informations
-     * @return array|self
+     * @return array|self|bool
      */
-    public static function user(): array
+    public static function user()
     {
         if (!isset($_SESSION['user_id'])) return false;
 

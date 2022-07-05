@@ -5,7 +5,6 @@ namespace zFramework;
 class Run
 {
     static $loadtime;
-
     static $included = [];
 
     public static function includer($_path, $include_in_folder = true, $reverse_include = false, $ext = '.php')
@@ -20,7 +19,10 @@ class Run
         foreach ($path as $inc) {
             $inc = "$_path/$inc";
             if ((is_dir($inc) && $include_in_folder)) self::includer($inc);
-            elseif (file_exists($inc) && strstr($inc, $ext)) include($inc);
+            elseif (file_exists($inc) && strstr($inc, $ext)) {
+                include($inc);
+                self::$included[] = $inc;
+            };
         }
     }
 
@@ -41,6 +43,7 @@ class Run
             self::includer('../route');
             self::includer('../zFramework/modules/error_http');
             self::$loadtime = ((microtime() + 0.003) - $start);
+
 
             \zFramework\Core\Route::run();
             \zFramework\Core\Facades\Alerts::unset(); // forget alerts
