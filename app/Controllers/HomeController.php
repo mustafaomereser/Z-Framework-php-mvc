@@ -15,7 +15,7 @@ class HomeController
      */
     public function index()
     {
-        echo "sa";
+        return view('welcome');
     }
 
     /** Show page | GET: /id
