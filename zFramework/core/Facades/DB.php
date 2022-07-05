@@ -25,6 +25,11 @@ class DB
         else $this->db = array_keys($databases)[0];
     }
 
+    public function __call(string $name, array $args = [])
+    {
+        if (isset($this->observe)) return call_user_func_array([new $this->observe(), 'observer_router'], [$name, $this->buildQuery['data']]);
+    }
+
     private function db()
     {
         global $databases, $connected_databases;
@@ -67,7 +72,7 @@ class DB
     }
 
     // Query methods
-    public function insert(array $data)
+    protected function insert(array $data)
     {
         if (array_search('created_at', $this->attributes)) $data['created_at'] = time();
         if (array_search('updated_at', $this->attributes)) $data['updated_at'] = time();
@@ -85,7 +90,7 @@ class DB
         abort(500);
     }
 
-    public function update(array $sets)
+    protected function update(array $sets)
     {
         if (array_search('updated_at', $this->attributes)) $sets['updated_at'] = time();
 
@@ -104,10 +109,10 @@ class DB
     {
         if (!isset($this->softDelete) || !@$this->softDelete) return $falseCallback ? $falseCallback() : null;
         elseif (array_search($this->deleted_at, $this->attributes)) return $trueCallback ? $trueCallback() : null;
-        else throw new \Throwable("Model haven't <b>$this->deleted_at</b> attribute.");
+        else throw new \Exception("Model haven't <b>$this->deleted_at</b> attribute.");
     }
 
-    public function delete()
+    protected function delete()
     {
         return $this->isSoftDelete(function () {
             return $this->run('delete') ? true : false;

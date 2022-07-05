@@ -14,7 +14,8 @@ cmd> composer install
   - [1.3. Find Route's Url](#13-find-routes-url)
 - [2. Model](#2-model)
   - [2.1. User](#21-user)
-  - [2.2. Database Migrate](#22-database-migrate)
+  - [2.2. Observers](#22-observers)
+  - [2.3. Database Migrate](#23-database-migrate)
 - [3. Date](#3-date)
 - [4. Mail](#4-mail)
 - [5. Controller](#5-controller)
@@ -306,7 +307,47 @@ ALSO you can normal query like /1?test=true
     
 ```
 
-### 2.2. Database Migrate
+### 2.2. Observers
+```php
+    // An example model
+    class User extends Model
+    {
+        use softDelete;
+
+        public $observe = UserObserver::class; // Put here that because we must do select observer.
+        
+        public $table = "users";
+
+        public function getAttributes()
+        {
+            return [$this->attributes, $this->attrCount];
+        }
+    }
+
+    // zhelper
+    > php zhelper make observer UserObserver
+
+    // created a observer like that
+    class UserObserver extends Observer
+    {
+        public function oninsert(array $args)
+        {
+            echo 'inserting a row.';
+        }
+
+        public function onupdate(array $args)
+        {
+            echo 'updating: ' . $args['id'];
+        }
+
+        public function ondelete(array $args)
+        {
+            echo 'deleting: ' . $args['id'];
+        }
+    }
+```
+
+### 2.3. Database Migrate
 ```php
     // Folder path: database/migrations
 

@@ -95,6 +95,13 @@ class Make
         setAsset($asset, $args['firstCommand'], "$this->toPath\Models");
     }
 
+    public function observer()
+    {
+        $args = func_get_args()[0];
+        $asset = "$this->makeAssets/Observer";
+        setAsset($asset, $args['firstCommand'], "$this->toPath\Observers");
+    }
+
     public function middleware()
     {
         $args = func_get_args()[0];
