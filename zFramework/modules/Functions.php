@@ -2,7 +2,7 @@
 
 function base_path($url = null)
 {
-    return BASE_PATH . ($url ? "/$url" : null);
+    return BASE_PATH . ($url ? "\\$url" : null);
 }
 
 function public_path($url = null)
@@ -87,6 +87,24 @@ function request($name = null, $val = NULL)
 {
     if ($val === NULL) return $name ? ($_REQUEST[$name] ?? false) : $_REQUEST;
     return $_REQUEST[$name] = $val;
+}
+
+function findFile($file, $ext = null, $path = null)
+{
+    if ($path) $path .= "\\";
+
+    $dirTree = array_values(array_diff(scandir(base_path($path)), ['.', '..']));
+    $dirs = [];
+    foreach ($dirTree as $name) {
+        $full_path = $path . $name;
+        if (is_file(base_path($full_path)) && strstr($name, "$file.$ext")) return $full_path;
+        else $dirs[] = $full_path;
+    }
+
+    foreach ($dirs as $dir) {
+        $result = findFile($file, $ext, $dir);
+        if (is_string($result)) return $result;
+    }
 }
 
 function human_filesize($bytes, $decimals = 2)

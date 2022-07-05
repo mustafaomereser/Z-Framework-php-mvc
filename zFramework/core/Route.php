@@ -140,10 +140,11 @@ class Route
 
         Route::api_user(0, $_REQUEST['user_token'] ?? ''); // login if url is api
         switch (gettype($callback)) {
-            // case 'string':
-            //     $callback = explode('@', $callback);
-            //     $callback = [new $callback[0](), $callback[1]];
-            //     break;
+            case 'string':
+                $callback = explode('@', $callback);
+                $findController = strtok(findFile($callback[0], 'php', 'App\Controllers'), '.');
+                $callback = [new $findController(), $callback[1]];
+                break;
             case 'array':
                 $callback = [new $callback[0](), $callback[1]];
                 break;

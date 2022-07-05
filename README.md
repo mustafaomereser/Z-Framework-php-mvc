@@ -36,37 +36,41 @@ cmd> composer install
 ## 1. Route
 ```php
     // Any METHOD Route
-   Route::any('/', function() {
-        return 'Method: ' . method();
-   });
-    
+    Route::any('/', function() {
+         return 'Method: ' . method();
+    });
+     
     // Get METHOD Route
-   Route::get('/', function() {
-        return 'Hi 👋';
-   });
-   
+    Route::get('/', function() {
+         return 'Hi 👋';
+    });
+    
     // POST METHOD Route
-   Route::post('/', function() {
-        return 'You verified CSRF Token.';
-   });
-   
-   // PATCH METHOD Route
-   Route::patch('/', function() {
-        return 'patch.';
-   });
-   
+    Route::post('/', function() {
+         return 'You verified CSRF Token.';
+    });
+    
+    // PATCH METHOD Route
+    Route::patch('/', function() {
+         return 'patch.';
+    });
+    
     // PUT METHOD Route
-   Route::put('/', function() {
-        return 'put.';
-   });
-   
-   // DELETE METHOD Route
-   Route::delete('/', function() {
-        return 'delete.';
-   });
-   
-   // if you create resource controller it's like that simple
-   Route::resource('/', TestController::class, ['name' => 'home']);
+    Route::put('/', function() {
+         return 'put.';
+    });
+    
+    // DELETE METHOD Route
+    Route::delete('/', function() {
+         return 'delete.';
+    });
+    
+    // Also you can use like that: (2. Parameter: 'Controller@method')
+    Route::get('/', 'HomeController@index');
+
+
+    // if you create resource controller it's like that simple
+    Route::resource('/', TestController::class, ['name' => 'home']);
    
    
     Resource Route list:
