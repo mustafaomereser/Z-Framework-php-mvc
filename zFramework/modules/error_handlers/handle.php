@@ -72,12 +72,12 @@ function errorHandler($data)
         ?>
             <div class="code-block">
                 <div style="border-bottom: 3px dotted #ddd; padding: 0 0 15px 0">
-                    <?php foreach (['Line' => $val['line'], 'Method' => @$val['class'] . @$val['type'] . @$val['function'], 'Arguments' => var_export($val['args'] ?? [], true)] as $title => $val) : ?>
-                        <div>
-                            <b><?= $title ?>: </b>
-                            <pre><code><?= $val ?></code></pre>
-                        </div>
-                    <?php endforeach; ?>
+                    <?php foreach (['Line' => $val['line'], 'Method' => @$val['class'] . @$val['type'] . @$val['function'], 'Arguments' => (@$val['args'] ? "<pre>" . var_export($val['args'], true) . "</pre>" : null)] as $title => $val) : if ($val) : ?>
+                            <div>
+                                <b><?= $title ?>: </b><code><?= $val ?></code>
+                            </div>
+                    <?php endif;
+                    endforeach; ?>
                 </div>
                 <pre><?= $code ?></pre>
             </div>
