@@ -1,6 +1,6 @@
 <?php
 
-use zFramework\Core\Facedas\Lang;
+use zFramework\Core\Facades\Lang;
 ?>
 <!DOCTYPE html>
 <html lang="en">

@@ -2,13 +2,13 @@
 
 namespace App\Middlewares;
 
-use zFramework\Core\Facedas\Auth as FacedasAuth;
+use zFramework\Core\Facades\Auth as FacadesAuth;
 
 class Auth
 {
     public function __construct()
     {
-        if (FacedasAuth::check()) return true;
+        if (FacadesAuth::check()) return true;
         return false;
     }
 

@@ -2,7 +2,7 @@
 
 namespace zFramework\Core;
 
-use zFramework\Core\Facedas\Str;
+use zFramework\Core\Facades\Str;
 
 class Csrf
 {

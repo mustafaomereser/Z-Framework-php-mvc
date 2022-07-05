@@ -4,8 +4,8 @@ namespace App\Controllers;
 
 use App\Models\User;
 use zFramework\Core\Crypter;
-use zFramework\Core\Facedas\DB;
-use zFramework\Core\Facedas\Str;
+use zFramework\Core\Facades\DB;
+use zFramework\Core\Facades\Str;
 use zFramework\Core\Validator;
 
 class ExamplesController

@@ -73,7 +73,7 @@ function errorHandler($data)
         ?>
             <div class="code-block">
                 <div style="border-bottom: 3px dotted #ddd; padding: 0 0 15px 0">
-                    <?php foreach (['Line' => $val['line'], 'Method' => @$val['class'] . @$val['type'] . @$val['function'], 'Arguments' => var_export($val['args'], true)] as $title => $val) : ?>
+                    <?php foreach (['Line' => $val['line'], 'Method' => @$val['class'] . @$val['type'] . @$val['function'], 'Arguments' => var_export($val['args'] ?? [], true)] as $title => $val) : ?>
                         <div>
                             <b><?= $title ?>: </b>
                             <pre><code><?= $val ?></code></pre>

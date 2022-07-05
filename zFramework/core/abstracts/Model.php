@@ -2,7 +2,7 @@
 
 namespace zFramework\Core\Abstracts;
 
-use zFramework\Core\Facedas\DB;
+use zFramework\Core\Facades\DB;
 
 abstract class Model extends DB
 {

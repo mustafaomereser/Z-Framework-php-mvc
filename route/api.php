@@ -3,7 +3,7 @@
 
 // Do not touch
 
-use zFramework\Core\Facedas\Auth;
+use zFramework\Core\Facades\Auth;
 use zFramework\Core\Route;
 
 Route::$preURL = "/api";

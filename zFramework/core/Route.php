@@ -2,7 +2,7 @@
 
 namespace zFramework\Core;
 
-use zFramework\Core\Facedas\Lang;
+use zFramework\Core\Facades\Lang;
 
 class Route
 {

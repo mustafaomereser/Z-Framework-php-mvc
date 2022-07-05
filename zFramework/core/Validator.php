@@ -2,10 +2,10 @@
 
 namespace zFramework\Core;
 
-use zFramework\Core\Facedas\Alerts;
-use zFramework\Core\Facedas\DB;
-use zFramework\Core\Facedas\Lang;
-use zFramework\Core\Facedas\Response;
+use zFramework\Core\Facades\Alerts;
+use zFramework\Core\Facades\DB;
+use zFramework\Core\Facades\Lang;
+use zFramework\Core\Facades\Response;
 use zFramework\Core\Helpers\Http;
 
 class Validator

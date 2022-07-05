@@ -1,7 +1,7 @@
 <?php
 
 use App\Controllers\ExamplesController;
-use zFramework\Core\Facedas\Lang;
+use zFramework\Core\Facades\Lang;
 use zFramework\Core\Route;
 use zFramework\Core\View;
 Route::$preURL = null;

@@ -7,7 +7,7 @@ function base_path($url = null)
 
 function public_path($url = null)
 {
-    return base_path('\\' . zFramework\Core\Facedas\Config::get('app.public')) . $url;
+    return base_path('\\' . zFramework\Core\Facades\Config::get('app.public')) . $url;
 }
 
 function host()
@@ -62,12 +62,12 @@ function route()
 
 function config()
 {
-    return call_user_func_array([zFramework\Core\Facedas\Config::class, 'get'], func_get_args());
+    return call_user_func_array([zFramework\Core\Facades\Config::class, 'get'], func_get_args());
 }
 
 function _l()
 {
-    return call_user_func_array([zFramework\Core\Facedas\Lang::class, 'get'], func_get_args());
+    return call_user_func_array([zFramework\Core\Facades\Lang::class, 'get'], func_get_args());
 }
 // Helper methods: end
 

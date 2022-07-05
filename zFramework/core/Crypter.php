@@ -2,7 +2,7 @@
 
 namespace zFramework\Core;
 
-use zFramework\Core\Facedas\Config;
+use zFramework\Core\Facades\Config;
 
 class Crypter
 {

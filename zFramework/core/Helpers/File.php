@@ -2,8 +2,8 @@
 
 namespace zFramework\Core\Helpers;
 
-use zFramework\Core\Facedas\Alerts;
-use zFramework\Core\Facedas\Lang;
+use zFramework\Core\Facades\Alerts;
+use zFramework\Core\Facades\Lang;
 
 class File
 {

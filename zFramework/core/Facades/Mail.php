@@ -1,6 +1,6 @@
 <?php
 
-namespace zFramework\Core\Facedas;
+namespace zFramework\Core\Facades;
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\SMTP;

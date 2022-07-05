@@ -43,7 +43,7 @@ class Run
             self::$loadtime = ((microtime() + 0.003) - $start);
 
             \zFramework\Core\Route::run();
-            \zFramework\Core\Facedas\Alerts::unset(); // forget alerts
+            \zFramework\Core\Facades\Alerts::unset(); // forget alerts
         } catch (\Throwable $errorHandle) {
             errorHandler(array_values((array) $errorHandle));
         } catch (\Exception $errorHandle) {
