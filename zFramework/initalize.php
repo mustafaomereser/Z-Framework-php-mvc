@@ -16,4 +16,5 @@ include(BASE_PATH . '/zFramework/vendor/autoload.php');
 
 spl_autoload_register(function ($class) {
     zFramework\Run::includer(BASE_PATH . "/$class.php");
+    if (method_exists($class, 'init')) $class::init();    
 });

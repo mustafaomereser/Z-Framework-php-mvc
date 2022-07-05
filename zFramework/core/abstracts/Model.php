@@ -20,7 +20,7 @@ abstract class Model extends DB
      */
     public function __construct()
     {
-        parent::__construct($this->db ?? null);
+        parent::__construct(@$this->db);
         parent::table($this->table);
     }
 }
