@@ -3,7 +3,7 @@
 function errorHandler($data)
 {
     ob_end_clean();
-
+    $data = array_values((array) $data);
     $message = $data[0];
     $errors = [];
 

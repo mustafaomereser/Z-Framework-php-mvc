@@ -45,9 +45,9 @@ class Run
             \zFramework\Core\Route::run();
             \zFramework\Core\Facades\Alerts::unset(); // forget alerts
         } catch (\Throwable $errorHandle) {
-            errorHandler(array_values((array) $errorHandle));
+            errorHandler($errorHandle);
         } catch (\Exception $errorHandle) {
-            errorHandler(array_values((array) $errorHandle));
+            errorHandler($errorHandle);
         }
     }
 }

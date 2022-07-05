@@ -27,10 +27,11 @@ cmd> composer install
 - [12. Alerts](#12-alerts)
 - [13. Validator](#13-validator)
 - [14. Middleware](#14-middleware)
-- [15. API](#15-api)
-- [16. Development](#16-development)
-- [17. Helper Methods](#17-helper-methods)
-- [18. Run Project](#18-run-project)
+- [15. Cache](#15-cache)
+- [16. API](#16-api)
+- [17. Development](#17-development)
+- [18. Helper Methods](#18-helper-methods)
+- [19. Run Project](#19-run-project)
 
 ## 1. Route
 ```php
@@ -569,7 +570,18 @@ ALSO you can normal query like /1?test=true
         // if you are not logged in # output: Array ('Auth::class')
 ```
 
-## 15. API
+## 15. Cache
+```php
+    // Parameters: cache name, what it storage, seconds type timeout
+    $users = Cache::cache('users', function() {
+        $users = new User;
+        return $users->get();
+    }, (10 * 60));
+
+    print_r($users);
+```
+
+## 16. API
 ```php
     # route/api.php
     Route::get('/test', function () {
@@ -578,7 +590,7 @@ ALSO you can normal query like /1?test=true
     // example: http://localhost/api/test?user_token=12345678 (user logged in.)
 ```
 
-## 16. Development
+## 17. Development
 ```php
     // Database connections
     # Folder: database/connections.php
@@ -610,7 +622,7 @@ ALSO you can normal query like /1?test=true
     # it is so secure. crypter make passwords or etc.
 ```
 
-## 17. Helper Methods
+## 18. Helper Methods
 ```php
     // main base path
     base_path("optional url add");
@@ -683,7 +695,7 @@ ALSO you can normal query like /1?test=true
     File::resizeImage('file_path', 50, 50);
 ```
 
-## 18. Run Project
+## 19. Run Project
 ```php
     ....
     // Default run host's ip and 1000 port
