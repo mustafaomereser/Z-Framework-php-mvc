@@ -6,6 +6,7 @@ function errorHandler($data)
 
     $message = $data[0];
     $errors = [];
+
     foreach ($data[5] as $error) if (isset($error['file'])) $errors[$error['file']][] = $error;
 
     function getButtons($errors)
@@ -136,8 +137,12 @@ function errorHandler($data)
 
     <div class="container">
         <div class="box" style="width: 96.6%">
-            <div><?= $data[3] ?></div>
-            <small style="color: gray;"><?= $message ?></small>
+            <div>
+                <a href='javascript:goIDE(`<?= str_replace("\\", "/", $data[3]) ?>`, <?= $data[4] ?>);' style="color: black;">
+                    <?= $data[3] . ":" . $data[4] ?>
+                </a>
+            </div>
+            <small style=" color: gray;"><?= $message ?></small>
             <div style="margin-top: 20px;">
                 <div style="margin-bottom: 10px;">
                     IDE will open when you click on the error.
