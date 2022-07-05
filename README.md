@@ -222,8 +222,13 @@ ALSO you can normal query like /1?test=true
 
         public $table = "users";
         public $db = "local"; // (optional) if you do not write that it's connect your first connection.
-    
-        public $primary = "name" // (optional) select table primary key it's default = id
+
+
+        // do not show that columns but if you use ->select('guarded_column_name') you can see it
+        public $guard = ['password', 'api_token', 'deleted_at', 'created_at'];
+
+
+        public $primary = "column_name" // (optional) select table primary key it's default = id
         public $updated_at = "custom_updated_at_name" // (optional) if you use updated_at attribute it's default = updated_at
         public $created_at = "custom_created_at_name" // (optional) if you use created_at attribute it's default = created_at
         public $deleted_at = "custom_deleted_at_name" // (optional) if you use deleted_at attribute it's default = deleted_at

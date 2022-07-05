@@ -10,6 +10,7 @@ abstract class Model extends DB
      * Usual Parameters for organize.
      */
     public $primary = "id";
+    public $guard = [];
     public $created_at = 'created_at';
     public $updated_at = 'updated_at';
     public $deleted_at = 'deleted_at';

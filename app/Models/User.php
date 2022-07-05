@@ -10,6 +10,7 @@ class User extends Model
     use softDelete;
 
     public $table = "users";
+    public $guard = ['password', 'api_token', 'deleted_at', 'created_at'];
 
     public function getAttributes()
     {

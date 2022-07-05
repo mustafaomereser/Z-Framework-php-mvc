@@ -139,7 +139,6 @@ class DB
     {
         $fetch = \PDO::FETCH_ASSOC;
         if ($class) $fetch = \PDO::FETCH_CLASS;
-
         return self::run()->fetchAll($fetch);
     }
 
@@ -293,7 +292,7 @@ class DB
     {
         switch ($type) {
             case 'select':
-                $select = $this->buildQuery['select'] ?? '*';
+                $select = $this->buildQuery['select'] ?? implode(', ', array_diff($this->attributes, $this->guard));
                 $type = "SELECT $select FROM";
                 break;
             case 'delete':
