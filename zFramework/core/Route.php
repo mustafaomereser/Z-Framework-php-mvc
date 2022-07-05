@@ -171,7 +171,9 @@ class Route
 
     private static function nameOrganize($val)
     {
-        return str_replace("..", ".", rtrim(ltrim(str_replace('/', '.', $val), '.'), '.'));
+        $name = str_replace("..", ".", rtrim(ltrim(str_replace('/', '.', $val), '.'), '.'));
+        if (strstr($name, '..')) return self::nameOrganize($name);
+        return $name;
     }
 
     // Groups: Start

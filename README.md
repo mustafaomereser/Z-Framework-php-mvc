@@ -100,8 +100,10 @@ cmd> composer install
     Route::findRoute('test.edit', ['id' => 1]); // output: www.host.com/test/1/edit
 
     // for preURL usage:
-    Route::$preURL = '/admin';
-    Route::resource('/', ResourceController::class);
+    Route::pre('/admin')->group(function() {
+        Route::resource('/', ResourceController::class);
+    });
+
     Route::findRoute('admin.index'); // output www.host.com/admin
 
     // And you can use for findRoute
