@@ -480,6 +480,9 @@ ALSO you can normal query like /1?test=true
     # Model                  // what are u want
     > php zhelper make model Test\Test
     
+    # Observer                // what are u want
+    > php zhelper make observer Test\TestObserver
+    
     # Middleware                  // what are u want
     > php zhelper make middleware Test\Test
 
@@ -490,6 +493,9 @@ ALSO you can normal query like /1?test=true
     # Database Migrator:
     php zhelper db migrate // output: just add/modify after changes columns.
     php zhelper db migrate fresh // output: reset table and write all columns.
+
+    # cache delete
+    php zhelper cache clear sessions|caches|views
 ```
 ## 8. Csrf
 ```php
