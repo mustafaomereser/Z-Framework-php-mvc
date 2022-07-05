@@ -5,8 +5,7 @@ function errorHandler($data)
     ob_end_clean();
     $data = array_values((array) $data);
     $message = $data[0];
-    $errors = [];
-
+    $errors = [$data[3] => [['file' => $data[3], 'line' => $data[4]]]];
     foreach ($data[5] as $error) if (isset($error['file'])) $errors[$error['file']][] = $error;
 
     function getButtons($errors)
@@ -119,6 +118,8 @@ function errorHandler($data)
             padding: 25px 10px;
             word-wrap: break-word;
             font-size: 9pt;
+            border: 2px solid #fff;
+            cursor: pointer;
         }
 
         .error-list button:hover,

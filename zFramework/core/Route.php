@@ -83,13 +83,6 @@ class Route
         return new self();
     }
 
-    public static function run()
-    {
-        if (count(self::$calledInformations) != 2) throw new \Exception('Route can not run.');
-        echo call_user_func_array(self::$calledInformations[0], self::$calledInformations[1]);
-        self::api_user(1); // logout if url is api;
-    }
-
     // Private Methods
     private static function parser($data, $method, $options)
     {
@@ -140,22 +133,30 @@ class Route
         if (self::$called == true || ($url != $uri || ($method && $method != method()))) return;
         if (!Csrf::check($options['no-csrf'] ?? self::$csrfNoCheck)) abort(406, Lang::get('errors.csrf.no-verify'));
         //
-
-        Route::api_user(0, $_REQUEST['user_token'] ?? ''); // login if url is api
-
-
         self::$called = true;
         self::$calledRoute = $data[0];
 
-        if (!in_array(gettype($callback), ['object', 'array'])) throw new \Exception('This type not valid.');
+        if (!in_array(gettype($callback), ['object', 'array', 'string'])) throw new \Exception('This type not valid.');
 
+        Route::api_user(0, $_REQUEST['user_token'] ?? ''); // login if url is api
         switch (gettype($callback)) {
+            case 'string':
+                $callback = explode('@', $callback);
+                $callback = [new $callback[0](), $callback[1]];
+                break;
             case 'array':
                 $callback = [new $callback[0](), $callback[1]];
                 break;
         }
 
         self::$calledInformations = [$callback, $parameters];
+    }
+
+    public static function run()
+    {
+        if (count(self::$calledInformations) != 2) throw new \Exception('Route can not run.');
+        echo call_user_func_array(self::$calledInformations[0], self::$calledInformations[1]);
+        self::api_user(1); // logout if url is api;
     }
 
     public function name($name)
