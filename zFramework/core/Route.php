@@ -138,10 +138,10 @@ class Route
 
         // Verify
         if (self::$called == true || ($url != $uri || ($method && $method != method()))) return;
-        if (self::$csrfNoCheck || !Csrf::check(@$options['no-csrf'])) abort(406, Lang::get('errors.csrf.no-verify'));
+        if (!Csrf::check($options['no-csrf'] ?? self::$csrfNoCheck)) abort(406, Lang::get('errors.csrf.no-verify'));
         //
 
-        Route::api_user(0, $_REQUEST['api_token'] ?? ''); // login if url is api
+        Route::api_user(0, $_REQUEST['user_token'] ?? ''); // login if url is api
 
 
         self::$called = true;
