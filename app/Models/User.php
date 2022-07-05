@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-use App\Observers\UserObserver;
-
 use zFramework\Core\Abstracts\Model;
 use zFramework\Core\Traits\softDelete;
 
@@ -11,8 +9,6 @@ class User extends Model
 {
     use softDelete;
 
-    public $observe = UserObserver::class;
-    
     public $table = "users";
 
     public function getAttributes()

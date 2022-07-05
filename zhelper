@@ -1,7 +1,7 @@
 <?php
 blank();
 // error_reporting(0);
-include('database/connections.php');
+$databases = include('database/connections.php');
 foreach ($databases as $key => $val) $databases[$key] = new PDO($val[0], $val[1], $val[2] ?? null);
 
 unset($argv[0]);
@@ -316,6 +316,25 @@ class Db
             }
             text("\nMigrate finish.", 32);
         }
+    }
+}
+
+class Cache
+{
+    static $path = __DIR__ . '/zFramework/storage';
+
+    public function clear()
+    {
+        $option = func_get_args()[0]['firstCommand'];
+
+
+        $list = array_values(array_diff(scandir(self::$path), ['.', '..']));
+        if (!in_array($option, $list)) die(text('Wrong Option!\nOptions: ' . implode(', ', $list) . ".", 31));
+
+        $dir = glob(self::$path . "/$option/*");
+        foreach ($dir as $unlink) unlink($unlink);
+
+        text("$option caches cleared!", 32);
     }
 }
 
