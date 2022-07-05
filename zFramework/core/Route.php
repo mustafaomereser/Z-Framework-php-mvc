@@ -8,11 +8,13 @@ use zFramework\Core\Facades\Lang;
 class Route
 {
     static $routes = [];
-    static $preURL = null;
-
     static $called = false;
     static $calledRoute = null;
     static $calledInformations = [];
+
+    // Changable Parameters
+    static $preURL = null;
+    static $csrfNoCheck = false;
 
     public static function findRoute($name, $data = [])
     {
@@ -136,7 +138,7 @@ class Route
 
         // Verify
         if (self::$called == true || ($url != $uri || ($method && $method != method()))) return;
-        if (!Csrf::check(@$options['no-csrf'])) abort(406, Lang::get('errors.csrf.no-verify'));
+        if (self::$csrfNoCheck || !Csrf::check(@$options['no-csrf'])) abort(406, Lang::get('errors.csrf.no-verify'));
         //
 
         Route::api_user(0, $_REQUEST['api_token'] ?? ''); // login if url is api
@@ -182,6 +184,12 @@ class Route
     public static function pre(string $url): self
     {
         self::$groups['preURL'] = $url;
+        return new self();
+    }
+
+    public static function csrfNoCheck(bool $arg): self
+    {
+        self::$groups['csrfNoCheck'] = $arg;
         return new self();
     }
 
