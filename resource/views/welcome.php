@@ -54,7 +54,9 @@ use zFramework\Core\Facades\Lang;
                 <a href="https://github.com/mustafaomereser/Z-Framework-php-mvc" target="_blank">Github & Docs</a>
             </div>
         </h2>
-
+        <div>
+            <a href="/test">Tests</a>
+        </div>
         <div class="box">
             <div style="text-align: center;">
                 <?= _l('lang.welcome') ?>

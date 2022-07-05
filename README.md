@@ -20,6 +20,7 @@ cmd> composer install
 - [4. Mail](#4-mail)
 - [5. Controller](#5-controller)
 - [6. View](#6-view)
+  - [6.1. ViewProvider](#61-viewprovider)
 - [7. zhelper](#7-zhelper)
 - [8. Csrf](#8-csrf)
 - [9. Language](#9-language)
@@ -473,6 +474,25 @@ ALSO you can normal query like /1?test=true
         <?= View::view('home.list', $view_parameters); ?> // Output: echo $hi; = hey // RESULT
     </div>
 ```
+### 6.1. ViewProvider
+```php
+    // path: App\Providers\ViewProvider.php
+    class ViewProvider
+    {
+        public function __construct()
+        {
+            View::bind('test', function () {
+                $user = new User;
+                return [
+                    'users' => $user->get()
+                ];
+            });
+        }
+    }
+
+    // test view get every time $users parameter.
+```
+
 ## 7. zhelper
 ```php
     ....

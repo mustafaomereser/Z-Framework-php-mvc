@@ -8,6 +8,7 @@ class View
      * Views Path
      */
     static $path = "../resource/views/";
+    private static $binds = [];
 
     /**
      * View Compiler (Not true for now)
@@ -34,7 +35,8 @@ class View
      */
     public static function view(string $view, array $view_parameters = [], string $template = null): string
     {
-        $view_name = $view;
+        if (isset(self::$binds[$view])) $view_parameters = array_merge(self::$binds[$view], $view_parameters);
+        // $view_name = $view;
         // $cache_view = (Cache::cache_find_view($view_name) ?? null);
         // if ($cache_view) return $cache_view;
 
@@ -49,5 +51,16 @@ class View
         // Cache::cache_view($view_name, $view);
 
         return $view;
+    }
+
+    /** 
+     * Bind for ekstra parameters
+     * @param string $view
+     * @param object $callback
+     * @return array;
+     */
+    public static function bind(string $view, $callback)
+    {
+        return self::$binds[$view] = $callback();
     }
 }

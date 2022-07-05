@@ -6,8 +6,7 @@ use zFramework\Core\Route;
 // Route::get('/', 'HomeController@index');
 
 Route::get('/test', function () {
-    $user = new User;
-    print_r($user->get());
+    return view('test');
 });
 
 Route::get('/', function () {

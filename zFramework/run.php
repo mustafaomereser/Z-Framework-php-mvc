@@ -26,6 +26,14 @@ class Run
         }
     }
 
+    public static function initProviders()
+    {
+        foreach (glob(BASE_PATH . "\App\Providers\*.php") as $provider) {
+            $provider = str_replace([BASE_PATH . '\\', '.php'], '', $provider);
+            new $provider();
+        }
+    }
+
     public static function begin()
     {
         ob_start();
@@ -40,6 +48,7 @@ class Run
             // self::includer('../app');
 
             self::includer('../app/Middlewares/autoload.php');
+            self::initProviders();
             self::includer('../route');
             self::includer('../zFramework/modules/error_http');
             self::$loadtime = ((microtime() + 0.003) - $start);
