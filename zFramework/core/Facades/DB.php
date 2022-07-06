@@ -27,8 +27,9 @@ class DB
 
     public function __call(string $name, array $args = [])
     {
-        if (!count($args)) $args = $this->cache['buildQuery'] ?? [];
-        if (isset($this->observe)) return call_user_func_array([new $this->observe(), 'observer_router'], [$name, array_merge(($this->buildQuery['data'] ?? []), $args)]);
+        if (!count($args)) $args = $this->cache['buildQuery']['data'] ?? [];
+        foreach ($this->buildQuery['data'] ?? [] as $key => $val) $args[$key] = $val;
+        if (isset($this->observe)) return call_user_func_array([new $this->observe(), 'observer_router'], [$name, $args]);
     }
 
     private function db()
@@ -126,7 +127,8 @@ class DB
         $delete = $this->isSoftDelete(function () {
             return $this->run('delete') ? true : false;
         }, function () {
-            return $this->update([$this->deleted_at => time()]);
+            $this->buildQuery['data']['current'] = time();
+            return $this->prepare("UPDATE $this->table SET $this->deleted_at = :current" . $this->getWhere())->rowCount();
         });
         $this->__call('deleted');
         return $delete;

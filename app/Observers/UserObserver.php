@@ -27,8 +27,7 @@ class UserObserver extends Observer
     public function onupdated(array $args)
     {
         // Update after run that
-        echo "updated:";
-        print_r($args);
+        echo "updated:" . $args['id'];
     }
 
     public function ondelete(array $args)
@@ -40,7 +39,6 @@ class UserObserver extends Observer
     public function ondeleted(array $args)
     {
         // Delete after run that
-        echo "deleted:";
-        print_r($args);
+        echo "deleted: " . $args['id'];
     }
 }

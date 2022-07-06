@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\User;
-use zFramework\Core\Facades\Str;
 use zFramework\Core\Route;
 
 // Route::get('/', 'HomeController@index');
@@ -9,12 +8,15 @@ use zFramework\Core\Route;
 Route::get('/test', function () {
     $user = new User;
 
-    $user->insert([
-        'username' => 'test2ttt',
-        'password' => 'testtttt',
-        'email' => Str::rand('5') . '@' . Str::rand('4') . '.com',
-        'api_token' => 'testttt',
-    ]);
+    // $user->insert([
+    //     'username' => 'test2ttt',
+    //     'password' => 'testtttt',
+    //     'email' => Str::rand('5') . '@' . Str::rand('4') . '.com',
+    //     'api_token' => 'testttt',
+    // ]);
+
+    $user->where('id', '=', 1)->delete();
+
 
     exit;
     return view('test');
