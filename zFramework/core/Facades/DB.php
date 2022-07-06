@@ -27,7 +27,8 @@ class DB
 
     public function __call(string $name, array $args = [])
     {
-        if (isset($this->observe)) return call_user_func_array([new $this->observe(), 'observer_router'], [$name, $this->buildQuery['data']]);
+        if (!count($args)) $args = $this->cache['buildQuery'];
+        if (isset($this->observe)) return call_user_func_array([new $this->observe(), 'observer_router'], [$name, array_merge($args, $this->buildQuery['data'])]);
     }
 
     private function db()
@@ -83,6 +84,8 @@ class DB
 
         if ($insert) {
             $this->lastID = $this->db()->lastInsertId();
+            $this->__call('inserted', [['id' => $this->lastID]]);
+
             return $this->where('id', '=', $this->lastID)->first();
             // return $this->prepare("SELECT * FROM $this->table WHERE id = " . $this->lastID)->fetch(\PDO::FETCH_ASSOC);
         }
@@ -101,7 +104,10 @@ class DB
         }
         $this->buildQuery['sets'] = " SET " . rtrim($sql_set, ', ') . " ";
 
-        return $this->run('update')->rowCount() ? true : false;
+        $update = $this->run('update')->rowCount() ? true : false;
+        $this->__call('updated');
+
+        return $update;
     }
 
     // Is it soft delete?
@@ -114,11 +120,14 @@ class DB
 
     protected function delete()
     {
-        return $this->isSoftDelete(function () {
+        $delete = $this->isSoftDelete(function () {
             return $this->run('delete') ? true : false;
         }, function () {
             return $this->update([$this->deleted_at => time()]);
         });
+
+        $this->__call('deleted');
+        return $delete;
     }
     //
 

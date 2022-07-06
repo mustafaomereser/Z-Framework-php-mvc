@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\User;
 use zFramework\Core\Route;
 
 // Route::get('/', 'HomeController@index');

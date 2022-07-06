@@ -12,13 +12,7 @@ abstract class Observer
      */
     public function observer_router(string $function, array $args)
     {
-        $call = null;
-        switch ($function) {
-            case 'delete':
-                $call = 'ondelete';
-                break;
-        }
-
-        if ($call) return $this->$call($args);
+        $call = "on$function";
+        if ($call && method_exists($this, $call)) return $this->$call($args);
     }
 }
