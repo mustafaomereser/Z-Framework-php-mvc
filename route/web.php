@@ -1,26 +1,8 @@
 <?php
 
-use App\Models\User;
 use zFramework\Core\Route;
 
-// Route::get('/', 'HomeController@index');
-
-Route::get('/test', function () {
-    $user = new User;
-
-    // $user->insert([
-    //     'username' => 'test2ttt',
-    //     'password' => 'testtttt',
-    //     'email' => Str::rand('5') . '@' . Str::rand('4') . '.com',
-    //     'api_token' => 'testttt',
-    // ]);
-
-    $user->where('id', '=', 1)->delete();
-
-
-    exit;
-    return view('test');
-});
+// Route::get('/', 'HomeController@index')
 
 Route::get('/', function () {
     return view('welcome');

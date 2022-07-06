@@ -108,8 +108,7 @@ class DB
         $this->buildQuery['sets'] = " SET " . rtrim($sql_set, ', ') . " ";
 
         $update = $this->run('update')->rowCount() ? true : false;
-        $this->__call('updated');
-
+        if ($update) $this->__call('updated');
         return $update;
     }
 
@@ -130,7 +129,7 @@ class DB
             $this->buildQuery['data']['current'] = time();
             return $this->prepare("UPDATE $this->table SET $this->deleted_at = :current" . $this->getWhere())->rowCount();
         });
-        $this->__call('deleted');
+        if ($delete) $this->__call('deleted');
         return $delete;
     }
     //
@@ -232,6 +231,11 @@ class DB
 
     private function getWhere()
     {
+        // init search for softDelete
+        $this->isSoftDelete(null, function () {
+            if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where($this->deleted_at, 'IS NULL');
+        });
+
         $where = @$this->buildQuery['where'];
         return $where ? " WHERE $where " : null;
     }
@@ -335,11 +339,6 @@ class DB
 
     private function run($type = "select")
     {
-        // init search for softDelete
-        $this->isSoftDelete(null, function () {
-            if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where($this->deleted_at, 'IS NULL');
-        });
-
         $r = self::prepare(self::buildSQL($type));
         $this->resetBuild();
         return $r;
