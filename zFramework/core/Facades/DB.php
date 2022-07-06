@@ -27,8 +27,8 @@ class DB
 
     public function __call(string $name, array $args = [])
     {
-        if (!count($args)) $args = $this->cache['buildQuery'];
-        if (isset($this->observe)) return call_user_func_array([new $this->observe(), 'observer_router'], [$name, array_merge($args, $this->buildQuery['data'])]);
+        if (!count($args)) $args = $this->cache['buildQuery'] ?? [];
+        if (isset($this->observe)) return call_user_func_array([new $this->observe(), 'observer_router'], [$name, array_merge(($this->buildQuery['data'] ?? []), $args)]);
     }
 
     private function db()
@@ -73,8 +73,9 @@ class DB
     }
 
     // Query methods
-    protected function insert(array $data)
+    public function insert(array $data)
     {
+        $this->__call(__FUNCTION__);
         if (array_search('created_at', $this->attributes)) $data['created_at'] = time();
         if (array_search('updated_at', $this->attributes)) $data['updated_at'] = time();
 
@@ -87,14 +88,15 @@ class DB
             $this->__call('inserted', [['id' => $this->lastID]]);
 
             return $this->where('id', '=', $this->lastID)->first();
-            // return $this->prepare("SELECT * FROM $this->table WHERE id = " . $this->lastID)->fetch(\PDO::FETCH_ASSOC);
         }
 
-        abort(500);
+        throw new \Exception('Can not inserted.');
     }
 
-    protected function update(array $sets)
+    public function update(array $sets)
     {
+        $this->__call(__FUNCTION__);
+
         if (array_search('updated_at', $this->attributes)) $sets['updated_at'] = time();
 
         $sql_set = '';
@@ -118,14 +120,14 @@ class DB
         else throw new \Exception("Model haven't <b>$this->deleted_at</b> attribute.");
     }
 
-    protected function delete()
+    public function delete()
     {
+        $this->__call(__FUNCTION__);
         $delete = $this->isSoftDelete(function () {
             return $this->run('delete') ? true : false;
         }, function () {
             return $this->update([$this->deleted_at => time()]);
         });
-
         $this->__call('deleted');
         return $delete;
     }

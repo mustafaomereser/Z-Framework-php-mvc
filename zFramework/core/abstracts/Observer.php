@@ -13,6 +13,6 @@ abstract class Observer
     public function observer_router(string $function, array $args)
     {
         $call = "on$function";
-        if ($call && method_exists($this, $call)) return $this->$call($args);
+        if ($call && method_exists($this, $call)) return $this->$call(@$args[0]);
     }
 }
