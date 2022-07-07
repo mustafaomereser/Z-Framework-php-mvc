@@ -1,10 +1,14 @@
 <?php
 
+use zFramework\Core\Facades\Config;
+
 function errorHandler($data)
 {
     ob_end_clean();
     $data = array_values((array) $data);
     $message = $data[0];
+    if (!Config::get('app.debug')) abort(500, $message);
+
     $errors = [$data[3] => [['file' => $data[3], 'line' => $data[4]]]];
     foreach ($data[5] as $error) if (isset($error['file'])) $errors[$error['file']][] = $error;
 

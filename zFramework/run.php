@@ -51,8 +51,7 @@ class Run
             self::initProviders();
             self::includer('../route');
             self::includer('../zFramework/modules/error_http');
-            self::$loadtime = ((microtime() + 0.003) - $start);
-
+            @self::$loadtime = ((microtime() + 0.003) - $start);
 
             \zFramework\Core\Route::run();
             \zFramework\Core\Facades\Alerts::unset(); // forget alerts

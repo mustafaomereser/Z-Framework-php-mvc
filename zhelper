@@ -1,12 +1,26 @@
 <?php
-blank();
 // error_reporting(0);
-$databases = include('database/connections.php');
+define('BASE_PATH', __DIR__);
+include('zFramework/modules/Functions.php');
+spl_autoload_register(function ($class) {
+    include("$class.php");
+});
+
+$databases = reloadDatabases();
+$connected_databases = [];
 foreach ($databases as $key => $val) $databases[$key] = new PDO($val[0], $val[1], $val[2] ?? null);
 
 unset($argv[0]);
 $argv = array_values($argv);
 $args = array_merge(commandParser(@$argv[3]), ['firstCommand' => @$argv[2]]);
+blank();
+
+function reloadDatabases()
+{
+    global $connected_databases;
+    $connected_databases = [];
+    return include('database/connections.php');
+}
 
 function commandParser($commands = null)
 {
@@ -110,6 +124,13 @@ class Make
         global $args;
         $asset = "$this->makeAssets/Migration";
         setAsset($asset, $args['firstCommand'], "database\migrations");
+    }
+
+    public function seeder()
+    {
+        global $args;
+        $asset = "$this->makeAssets/Seeder";
+        setAsset($asset, $args['firstCommand'], "database\seeders");
     }
 }
 
@@ -314,6 +335,19 @@ class Db
                 text("Dropped column: $drop", 33);
             }
             text("\nMigrate finish.", 32);
+        }
+    }
+
+    public function seed()
+    {
+        global $databases;
+        $databases = reloadDatabases();
+        $seeders = glob('database/seeders/*.php');
+        foreach ($seeders as $inc) {
+            include($inc);
+            $className = str_replace(['.php', '/'], ['', '\\'], ucfirst($inc));
+            call_user_func_array([new $className(), 'seed'], []);
+            text("$className seeded.", 32);
         }
     }
 }

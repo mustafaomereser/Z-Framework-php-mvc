@@ -39,7 +39,12 @@ class DB
         if (in_array($this->db, $connected_databases)) return $databases[$this->db];
 
         $connected_databases[] = $this->db;
-        return $databases[$this->db] = new \PDO($databases[$this->db][0], $databases[$this->db][1], ($databases[$this->db][2] ?? null));
+        $parameters = $databases[$this->db];
+
+        $databases[$this->db] = new \PDO($parameters[0], $parameters[1], ($parameters[2] ?? null));
+        foreach ($parameters['options'] ?? [] as $option) $databases[$this->db]->setAttribute($option[0], $option[1]);
+
+        return $databases[$this->db];
     }
 
     // Execute
@@ -86,28 +91,29 @@ class DB
     public function insert(array $data)
     {
         $this->__call(__FUNCTION__);
-        if (array_search('created_at', $this->attributes)) $data['created_at'] = time();
-        if (array_search('updated_at', $this->attributes)) $data['updated_at'] = time();
+        if (array_search($this->created_at, $this->attributes)) $data[$this->created_at] = time();
+        if (array_search($this->updated_at, $this->attributes)) $data[$this->updated_at] = time();
 
         $keys = array_keys($data);
+        try {
+            $insert = $this->prepare("INSERT INTO $this->table(" . implode(', ', $keys) . ") VALUES (:" . implode(', :', $keys) . ")", $data)->rowCount();
+            if ($insert) {
+                $this->lastID = $this->db()->lastInsertId();
+                $this->__call('inserted', [['id' => $this->lastID]]);
 
-        $insert = $this->prepare("INSERT INTO $this->table(" . implode(', ', $keys) . ") VALUES (:" . implode(', :', $keys) . ")", $data)->rowCount();
-
-        if ($insert) {
-            $this->lastID = $this->db()->lastInsertId();
-            $this->__call('inserted', [['id' => $this->lastID]]);
-
-            return $this->where('id', '=', $this->lastID)->first();
+                return $this->where('id', '=', $this->lastID)->first();
+            }
+        } catch (\PDOException $e) {
+            throw new \Exception($e->errorInfo[2]);
         }
-
+        
         throw new \Exception('Can not inserted.');
     }
 
     public function update(array $sets)
     {
         $this->__call(__FUNCTION__);
-
-        if (array_search('updated_at', $this->attributes)) $sets['updated_at'] = time();
+        if (array_search($this->updated_at, $this->attributes)) $sets[$this->updated_at] = time();
 
         $sql_set = '';
         foreach ($sets as $key => $_) {

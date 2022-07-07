@@ -16,6 +16,7 @@ cmd> composer install
   - [2.1. User](#21-user)
   - [2.2. Observers](#22-observers)
   - [2.3. Database Migrate](#23-database-migrate)
+  - [2.4. Database Seeders](#24-database-seeders)
 - [3. Date](#3-date)
 - [4. Mail](#4-mail)
 - [5. Controller](#5-controller)
@@ -378,6 +379,8 @@ ALSO you can normal query like /1?test=true
 
 ### 2.3. Database Migrate
 ```php
+    // You can find how create a migration in zhelper section
+
     // Folder path: database/migrations
 
     // Example: (that file is real)
@@ -429,6 +432,33 @@ ALSO you can normal query like /1?test=true
         'softDelete' // Use soft delete column
     ]
 
+```
+### 2.4. Database Seeders
+```php
+    // You can find how create a seeder in zhelper section
+    // Folder path: database/seeders
+
+    // Example: (that file is real)
+    // (Folder path)/Seeder.php
+    class Seeder
+    {
+        public function __construct()
+        {
+            $this->user = new User;
+        }
+
+        public function seed()
+        {
+            $this->user->insert([
+                'username' => 'admin',
+                'password' => Crypter::encode('admin'),
+                'email' => 'admin@localhost.com',
+                'api_token' => Str::rand(60)
+            ]); 
+        }
+    }
+
+    // Like that.
 ```
 
 ## 3. Date
@@ -537,11 +567,17 @@ ALSO you can normal query like /1?test=true
     # Database Migration          // what are u want
     > php zhelper make migration Users
 
+    # Database Seeder          // what are u want
+    > php zhelper make migration UsersSeeder
+
 
     # Database Migrator:
     php zhelper db migrate // output: just add/modify after changes columns.
     php zhelper db migrate fresh // output: reset table and write all columns.
-
+    
+    # Database Seeder:
+    php zhelper db seed // output: seed all seeders.
+    
     # cache delete
     php zhelper cache clear sessions|caches|views
 ```
