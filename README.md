@@ -764,11 +764,12 @@ ALSO you can normal query like /1?test=true
     
     # Folder config/app.php
     # DEBUG MODE
+
     // debug mode is come default is true.
     'debug' => true|false
     // debug mode is for error page to abort
 
-
+    # Folder config/app.php
     // Usage Crypter
     'key' => 'cryptkey',
     'salt' => 'ThisSaltIsSecret',
