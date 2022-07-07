@@ -33,9 +33,8 @@ class Response
     /**
      * Type Json
      * @param array $data
-     * @return self
      */
-    public static function json(array $data): self
+    public static function json(array $data)
     {
         return self::do(__FUNCTION__, $data);
     }
