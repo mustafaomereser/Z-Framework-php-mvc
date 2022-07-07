@@ -150,9 +150,7 @@ class Db
             }
             if (strlen($key = array_search('softDelete', $columns))) {
                 unset($columns[$key]);
-                $columns = array_merge($columns, [
-                    'deleted_at' => ['nullable', 'int', 'default'],
-                ]);
+                $columns = array_merge($columns, ['deleted_at' => ['nullable', 'int', 'default'],);
             }
             //
 
