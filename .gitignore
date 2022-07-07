@@ -1,4 +1,4 @@
 push.bat
 composer.lock
 zFramework/vendor
-zFramework/storage/sessions/*
+zFramework/storage/sessions/sess_*
