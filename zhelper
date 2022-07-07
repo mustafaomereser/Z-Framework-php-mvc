@@ -115,6 +115,16 @@ class Make
 
 class Db
 {
+    private function existsTable($dbname, $findTable)
+    {
+        global $databases;
+
+        $tables = $databases[$dbname]->query("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = '" . $dbname . "'")->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
+        if (in_array($findTable, $tables)) return true;
+        return false;
+    }
+
     public function migrate()
     {
         global $databases, $args;
@@ -124,7 +134,7 @@ class Db
             $create_penetration = false;
 
             $class = include($inc);
-            $class = ucfirst(strtok(@end(explode('/', $inc)), '.php'));
+            $class = str_replace(['.php'], '', ucfirst(@end(explode('/', $inc))));
             if (!class_exists($class)) die(text('There are not migrate class.', 31));
 
             // settings
@@ -154,11 +164,7 @@ class Db
 
             $dropColumns = [];
 
-            try {
-                $db->query("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
-            } catch (\PDOException  $ex) {
-                $create_penetration = true;
-            }
+            if (!$this->existsTable($class::$db, $table)) $create_penetration = true;
 
             if ($args['firstCommand'] == 'fresh' || $create_penetration) {
                 $initColumnName = "table_initilazing";

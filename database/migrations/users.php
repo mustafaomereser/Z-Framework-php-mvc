@@ -3,7 +3,7 @@ class Users
 {
     static $charset = "utf8mb4_general_ci";
     static $table = "users";
-    static $db = 'local';
+    static $db = 'z_framework';
 
     public static function columns()
     {

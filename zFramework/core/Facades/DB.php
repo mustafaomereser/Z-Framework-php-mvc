@@ -50,8 +50,17 @@ class DB
         return $e;
     }
 
+    public function tables()
+    {
+        $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $this->db])->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
+        return $tables;
+    }
+
     public function table($table)
     {
+        if (!in_array($table, $this->tables())) throw new \Exception("$table is not exists in tables list.");
+
         $this->table = $table;
         // Table columns
         $this->attributes = $this->prepare("DESCRIBE $this->table")->fetchAll(\PDO::FETCH_COLUMN);

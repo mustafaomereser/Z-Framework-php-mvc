@@ -1,5 +1,6 @@
 <?php
+// array's indexes must be same with dbname.
 
 return [
-    'local' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', null],
+    'z_framework' => ['mysql:host=localhost;dbname=z_framework;charset=utf8mb4', 'root', null],
 ];
