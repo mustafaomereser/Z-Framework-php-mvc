@@ -309,7 +309,7 @@ class DB
     {
         switch ($type) {
             case 'select':
-                $select = $this->buildQuery['select'] ?? implode(', ', array_diff($this->attributes, $this->guard));
+                $select = $this->buildQuery['select'] ?? implode(', ', array_diff($this->attributes, $this->guard ?? []));
                 $type = "SELECT $select FROM";
                 break;
             case 'delete':
