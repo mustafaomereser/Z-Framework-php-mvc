@@ -744,20 +744,32 @@ ALSO you can normal query like /1?test=true
     
     # before
     $databases = [
-        'local' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123'],
+        'test' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123'],
     ];
 
     # add a database
     $databases = [
-        'local' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123'],
-        'custom_db_name' => ['mysql:host=localhost;dbname=test_2;charset=utf8mb4', 'root', '123123'],
+        'test' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123'],
+        'test_2' => ['mysql:host=localhost;dbname=test_2;charset=utf8mb4', 'root', '123123'],
     ];
 
-    # result database two connection.
+    # use options
+    $databases = [
+        'test' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123',, 'options' => [
+            [\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION] // for try catch PDOException
+        ],
+        'test_2' => ['mysql:host=localhost;dbname=test_2;charset=utf8mb4', 'root', '123123'],
+    ]];
+    
+    
+    # Folder config/app.php
+    # DEBUG MODE
+    // debug mode is come default is true.
+    'debug' => true|false
+    // debug mode is for error page to abort
 
 
     // Usage Crypter
-    # Folder config/app.php
     'key' => 'cryptkey',
     'salt' => 'ThisSaltIsSecret',
 
