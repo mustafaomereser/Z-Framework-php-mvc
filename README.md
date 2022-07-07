@@ -4,6 +4,11 @@ You can select version on branch list.
 cmd> composer install
 ```
 
+PHP VERSION
+```php
+PHP>=7.0.23
+```
+
 ### 0.1. Z Framework (V2.0.0)
 ### 0.2. Easiest, fastest PHP framework. (Simple)
 
