@@ -41,7 +41,7 @@ function method()
 
 function inputMethod($method = "GET")
 {
-    echo '<input type="hidden" name="_method" value="' . strtoupper($method) . '" />';
+    return '<input type="hidden" name="_method" value="' . strtoupper($method) . '" />';
 }
 
 // Helper methods: start
@@ -79,7 +79,7 @@ function ip()
 function abort($code = 418, $message = null)
 {
     http_response_code($code);
-    $view = @view("errors.$code", ['message' => $message]);
+    $view = @view("errors.$code", ['message' => $message], 'errors.main');
     die(($view && !zFramework\Core\Helpers\Http::isAjax()) ? $view : $message);
 }
 
