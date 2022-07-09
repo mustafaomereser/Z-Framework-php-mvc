@@ -1,5 +1,6 @@
 <?php
 
+use App\Controllers\HomeController;
 use App\Models\User;
 use zFramework\Core\Route;
 
@@ -23,3 +24,15 @@ Route::get('/language/{lang}', function ($lang) {
     zFramework\Core\Facades\Lang::locale($lang);
     back();
 });
+
+
+Route::pre('/admin')->group(function () {
+    Route::pre('/test')->group(function () {
+        Route::resource('/deneme', HomeController::class);
+    });
+
+    Route::resource('/deneme', HomeController::class);
+});
+
+echo "<pre>";
+print_r(Route::$routes);
