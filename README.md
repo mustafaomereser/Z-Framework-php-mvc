@@ -119,6 +119,13 @@ PHP>=7.0.23
     });
     Route::findRoute('admin.index'); // output www.host.com/admin
 
+    // url: /admin/user/...
+    Route::pre('/admin')->group(function() {
+        Route::pre('/user')->group(function() {
+            Route::post(..., ...);
+        });
+    });
+
     Route::csrfNoCheck(true)->group(function() {
         Route::post(..., ...); // that not need a csrf token allow all request like GET method.
     });
