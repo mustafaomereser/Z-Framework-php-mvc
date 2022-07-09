@@ -185,7 +185,7 @@ class Route
     static $groupsReverse = [];
     public static function pre(string $url): self
     {
-        self::$groups['prefix_URL'] = (self::$prefix_URL ? self::$prefix_URL . "/" : null) . $url;
+        self::$groups['prefix_URL'] = self::$prefix_URL . $url;
         return new self();
     }
 
