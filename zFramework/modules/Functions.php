@@ -1,15 +1,25 @@
 <?php
 
+// Create new database connection string
+function MySQLcreateDatabase($host = "localhost", $dbname, $user, $pass = null)
+{
+    global $databases;
+    return $databases[$dbname] = ["mysql:host=$host;dbname=$dbname;charset=utfmb4", $user, $pass];
+}
+
+// Get project base path.
 function base_path($url = null)
 {
     return BASE_PATH . ($url ? "\\$url" : null);
 }
 
+// Get project's public path
 function public_path($url = null)
 {
     return base_path('\\' . zFramework\Core\Facades\Config::get('app.public')) . $url;
 }
 
+// Get Run's server's host.
 function host()
 {
     $protocol = (isset($_SERVER['HTTPS']) ? "https" : "http") . "://";
@@ -19,63 +29,75 @@ function host()
     return $protocol . $_SERVER['SERVER_NAME'] . (!empty($port) && !in_array($port, $dont_show_port) ? ":$port" : null);
 }
 
+// Redirect to url what are you want.
 function redirect($url = "/")
 {
     die(header("Location: $url"));
 }
 
+// Back from current to previous page.
 function back($add = null)
 {
     return redirect(($_SERVER['HTTP_REFERER'] ?? '/') . $add);
 }
 
+// Get Current URI
 function uri()
 {
     return @$_SERVER['REQUEST_URI'];
 }
 
+// Get Current Request Method.
 function method()
 {
     return strtolower($_POST['_method'] ?? $_SERVER['REQUEST_METHOD']);
 }
 
+// Show method with ready input
 function inputMethod($method = "GET")
 {
     return '<input type="hidden" name="_method" value="' . strtoupper($method) . '" />';
 }
 
 // Helper methods: start
+// Get Csrf with ready input
 function csrf()
 {
     return zFramework\Core\Csrf::csrf();
 }
 
+// Shortcut view method
 function view()
 {
     return call_user_func_array([zFramework\Core\View::class, 'view'], func_get_args());
 }
 
+// Shortcut Route::findRoute method
 function route()
 {
     return call_user_func_array([zFramework\Core\Route::class, 'findRoute'], func_get_args());
 }
 
+// Shortcut Config::get method
 function config()
 {
     return call_user_func_array([zFramework\Core\Facades\Config::class, 'get'], func_get_args());
 }
 
+// Shortcut Lang::get method
 function _l()
 {
     return call_user_func_array([zFramework\Core\Facades\Lang::class, 'get'], func_get_args());
 }
 // Helper methods: end
 
+// Get Client IP address
 function ip()
 {
     return ($_SERVER['HTTP_CLIENT_IP'] ?? ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR']));
 }
 
+// Abort to http response.
 function abort($code = 418, $message = null)
 {
     http_response_code($code);
@@ -83,12 +105,14 @@ function abort($code = 418, $message = null)
     die(($view && !zFramework\Core\Helpers\Http::isAjax()) ? $view : $message);
 }
 
+// Current Request query.
 function request($name = null, $val = NULL)
 {
     if ($val === NULL) return $name ? ($_REQUEST[$name] ?? false) : $_REQUEST;
     return $_REQUEST[$name] = $val;
 }
 
+// Find file.
 function findFile($file, $ext = null, $path = null)
 {
     if ($path) $path .= "\\";
@@ -107,6 +131,7 @@ function findFile($file, $ext = null, $path = null)
     }
 }
 
+// Show readable filesize.
 function human_filesize($bytes, $decimals = 2)
 {
     $size = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -114,6 +139,7 @@ function human_filesize($bytes, $decimals = 2)
     return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @$size[$factor];
 }
 
+// Get Client's browser details.
 function getBrowser()
 {
     $u_agent = $_SERVER['HTTP_USER_AGENT'];
