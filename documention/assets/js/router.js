@@ -26,7 +26,7 @@ function initRouters() {
 function initPrism() {
     document.querySelectorAll('[data-prism-lang]').forEach(item => {
         let lang = item.getAttribute('data-prism-lang');
-        item.innerHTML = Prism.highlight(item.textContent, Prism.languages[lang], lang);
+        item.innerHTML = Prism.highlightAll(item.textContent, Prism.languages[lang], lang);
     });
 }
 
