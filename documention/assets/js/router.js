@@ -23,21 +23,11 @@ function initRouters() {
     });
 }
 
-function trimAll(text) {
-    let search = '   ';
-    text = text.replaceAll(search, '');
-    if (text.search(search) > -1) return trimAll(text);
-    return text.trim();
-}
-
 function initPrism() {
     document.querySelectorAll('[data-prism-lang]').forEach(item => {
         let lang = item.getAttribute('data-prism-lang');
-        item.innerHTML = `
-            <pre><code class="language-${lang}">${trimAll(item.textContent)}</code></pre>
-        `;
-
-        item.children[0].children[0].innerHTML = Prism.highlightAll(item.textContent, Prism.languages[lang], lang);
+        item.innerHTML = `<code class="language-${lang}">${item.textContent}</code>`;
+        item.innerHTML = Prism.highlightAll(item.textContent, Prism.languages[lang], lang);
     });
 }
 

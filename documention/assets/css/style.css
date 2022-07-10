@@ -135,4 +135,16 @@ body {
 
 .text-center {
   text-align: center;
+}
+
+.seperate {
+  margin-bottom: 25px;
+}
+
+kbd {
+  color: #ff6776;
+}
+
+:focus-visible {
+  outline: none;
 }/*# sourceMappingURL=style.css.map */
