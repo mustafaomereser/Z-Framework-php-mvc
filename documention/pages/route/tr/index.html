@@ -6,7 +6,7 @@
         <div class="seperator">
             <h2># Any Metodu</h2>
             <div class="seperate">
-                Any Metod türü her metodu kabul eder, örneğin bu yönlendiriciyle ister <kbd>GET</kbd> metodu ile istek
+                Any Method türü her metodu kabul eder, örneğin bu yönlendiriciyle ister <kbd>GET</kbd> metodu ile istek
                 atın
                 isterseniz
                 <kbd>POST</kbd> ile atın fark olmayacaktır.
@@ -19,21 +19,21 @@
             <div>
                 <small><b>Not:</b> CSRF token kullanmak zorundasınız.</small>
             </div>
-            <pre data-prism-lang="php">
+
+            <pre data-highlight-lang="php">
 Route::any('/', function() {
-    return 'Metod: ' . method();
-});
-</pre>
+    return 'Method: ' . method();
+}); 
+            </pre>
         </div>
 
         <div class="seperator">
             <h2># GET Metodu</h2>
-
-            <pre data-prism-lang="php">
+            <pre data-highlight-lang="php">
 Route::get('/', function() {
     return 'Merhaba 👋';
-});
-</pre>
+}); 
+            </pre>
         </div>
 
     </div>

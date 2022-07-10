@@ -23,12 +23,11 @@ function initRouters() {
     });
 }
 
-function initPrism() {
-    document.querySelectorAll('[data-prism-lang]').forEach(item => {
-        let lang = item.getAttribute('data-prism-lang');
-        item.innerHTML = `<code class="language-${lang}">${item.textContent}</code>`;
-        item.innerHTML = Prism.highlightAll(item.textContent, Prism.languages[lang], lang);
+function initHighlight() {
+    document.querySelectorAll('[data-highlight-lang]').forEach(item => {
+        item.innerHTML = `<code class="language-${item.getAttribute('data-highlight-lang')}">${item.innerHTML.trim()}</code>`
     });
+    hljs.highlightAll();
 }
 
 function loadModule(page = 'home', section = 'index') {
@@ -38,7 +37,7 @@ function loadModule(page = 'home', section = 'index') {
         currentRoute = `${page}-${section}`;
         window.history.pushState({}, '', `?page=${page}&section=${section}`);
         document.querySelector('#root').innerHTML = this.responseText;
-        initPrism();
+        initHighlight();
         initRouters();
     };
 
