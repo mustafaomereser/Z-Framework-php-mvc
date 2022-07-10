@@ -1,0 +1,158 @@
+body {
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    padding: 0;
+    margin: 0;
+    background-color: #111;
+}
+
+.content {
+    color: #eee;
+
+    .content-title {
+        font-size: xx-large;
+        font-weight: bolder;
+        margin-bottom: 10px;
+    }
+
+    .content-body {
+        background-color: #222;
+        padding: 20px;
+        border-radius: 3px;
+    }
+}
+
+.navbar {
+    // overflow: hidden; its broke dropdowns
+    min-height: 65px;
+    background-color: #333;
+    color: #eee;
+    padding: 20px 35px;
+
+    .title {
+        margin-top: 10px;
+        float: left;
+        font-size: 20pt;
+    }
+
+    .menu {
+        float: right;
+
+        ul {
+            list-style-type: none;
+            display: flex;
+
+            li {
+                margin-right: 10px;
+            }
+        }
+    }
+}
+
+.scroll-spy {
+    position: sticky;
+    top: 20px;
+    color: #ddd;
+
+    ul {
+        list-style-type: none;
+        margin-bottom: 15px;
+
+        li {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 5px;
+
+            span {
+                text-align: center;
+                padding: 10px 25px;
+                background-color: #555;
+                border-radius: 3px;
+
+                &:hover,
+                &.active {
+                    background-color: #444;
+                }
+
+                transition: 200ms background-color ease-in;
+            }
+        }
+    }
+}
+
+[data-route] {
+    user-select: none;
+    cursor: pointer;
+}
+
+.main {
+    display: flex;
+
+    [left] {
+        width: 17%;
+        margin-top: 30px;
+        margin-right: 30px;
+    }
+
+    [right] {
+        width: 83%;
+        margin-top: 30px;
+        padding: 0 0px;
+    }
+}
+
+.dropdown {
+    position: relative;
+
+    * {
+        user-select: none;
+    }
+
+    .dropdown-title {
+        cursor: pointer;
+        background-color: #77777750;
+        padding: 10px 25px;
+        border-radius: 3px;
+    }
+
+    .dropdown-list {
+        position: absolute;
+        top: 110%;
+        width: 100%;
+        padding: 5px 8px;
+        border-radius: 3px;
+        background-color: #555;
+        display: none;
+
+        .dropdown-item {
+            font-size: 10pt;
+            padding: 10px;
+
+            border-radius: 3px;
+            background-color: #444;
+
+            &:hover,
+            &.active {
+                background-color: #333;
+            }
+
+            &:not(:last-child) {
+                margin-bottom: 5px;
+            }
+        }
+    }
+
+    &.show {
+        .dropdown-list {
+            display: block;
+        }
+    }
+
+    &.show .dropdown-title,
+    .dropdown-title:hover {
+        background-color: #555;
+    }
+}
+
+.text-center {
+    text-align: center;
+}
