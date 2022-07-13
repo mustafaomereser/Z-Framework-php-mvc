@@ -1,8 +1,11 @@
 var defaultLang = "en",
     languages = {
         tr: {
+            title: 'Z-Framework Dökümantasyonu',
             name: "Türkçe",
             languages: 'Diller',
+            copy: 'Kopyala',
+            copied: 'Kopyalandı!',
 
             "1_route": 'Yönlendiriciler',
             "1_1_route": 'Form Örnekleri',
@@ -51,8 +54,12 @@ var defaultLang = "en",
             "19_run_project": "Projeyi Çalıştırma"
         },
         en: {
+            title: "Z-Framework Documention",
             name: "English",
             languages: 'Languages',
+            copy: 'Copy',
+            copied: 'Copied!',
+
             "1_route": 'Route',
             "1_1_route": 'Form Examples',
             "1_2_route": 'Route Options',
@@ -146,6 +153,41 @@ function organizeMenu(ul = null) {
 
     initRouters();
 }
+
+function trimSpaces(text) {
+    let split = text.split(''), space_count = 0, finish = 0;
+    split.forEach(_ => {
+        if (finish) return;
+        if (_ != ' ') return finish = 1;
+        space_count++;
+    });
+
+    return text.trim().replaceAll((' '.repeat(space_count)), '');
+}
+
+function initHighlight() {
+    document.querySelectorAll('[data-highlight-lang]').forEach(item => {
+        item.outerHTML = `
+            <div style="position: relative;">
+                <pre><code class="language-${item.getAttribute('data-highlight-lang')}">${trimSpaces(item.innerHTML)}</code></pre>
+                <button class="btn" style="position: absolute; right: 0px; top: 0;" onclick="copy(this, this.previousElementSibling.children[0].textContent);">${languages[getLang()].copy}</button>
+            </div>
+        `;
+    });
+    hljs.highlightAll();
+}
+
+function copy(is, text) {
+    var copyText = document.getElementById("copy-input");
+    copyText.value = text;
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    navigator.clipboard.writeText(copyText.value);
+
+    is.innerHTML = languages[getLang()].copied;
+    setTimeout(() => is.innerHTML = languages[getLang()].copy, 700);
+}
+
 
 window.onload = () => {
     setLangList();

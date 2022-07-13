@@ -26,6 +26,8 @@ Route::get('/language/{lang}', function ($lang) {
 
 // use App\Controllers\HomeController;
 
+// Route::resource('/ev', HomeController::class);
+
 // Route::pre('/admin')->group(function () {
 //     Route::pre('/test')->group(function () {
 //         Route::resource('/deneme', HomeController::class);

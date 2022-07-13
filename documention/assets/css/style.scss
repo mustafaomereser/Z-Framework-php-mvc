@@ -96,6 +96,8 @@ body {
     [right] {
         width: 83%;
         margin-top: 30px;
+        margin-bottom: 50px;
+        margin-right: 20px;
         padding: 0 0px;
     }
 }
@@ -161,8 +163,18 @@ body {
     margin-bottom: 25px;
 }
 
-kbd {
+kbd,
+.btn {
+    cursor: pointer;
     color: #ff6776;
+    background-color: #333;
+    padding: 2px 7px;
+    border: unset;
+    user-select: none;
+
+    &:hover {
+        background-color: #444;
+    }
 }
 
 :focus-visible {
