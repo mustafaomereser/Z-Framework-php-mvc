@@ -177,7 +177,7 @@ function escapeHtml(text) {
 function initHighlight() {
     document.querySelectorAll('[data-highlight-lang]').forEach(item => {
         let lang = item.getAttribute('data-highlight-lang'), text = item.innerHTML;
-        if (lang == "html" || lang == "xml") text = escapeHtml(text);
+        if (lang == "html") text = escapeHtml(text);
 
         item.outerHTML = `
             <div style="position: relative;">

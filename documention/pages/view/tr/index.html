@@ -35,15 +35,94 @@
                 <div><small>Bunu depoladığımız parametre <kbd>$view_parameters</kbd> parametresidir.</small></div>
             </div>
 
-            <pre data-highlight-lang="html">
-                <div>
+            <pre data-highlight-lang="xml">
+                &lt;div&gt;
                     Liste:
-                    <?= view('home.list', $view_parameters); ?>
-                    <?= View::view('home.list', $view_parameters); ?>
-                </div>
+                    &lt;?= view('home.list', $view_parameters) ?&gt;
+                    &lt;?= View::view('home.list', $view_parameters) ?&gt;
+                &lt;/div&gt;
             </pre>
             Şeklinde çağırabiliriz.
         </div>
 
+        <div>
+            <h4># Belirli bir kalbı nasıl sürekli kullanırız?</h4>
+
+            <div>
+                <div class="separate">
+                    Bu biraz detaylı bir konu olduğu için biraz uzun anlatacağım.
+                </div>
+
+                <div>
+                    Yapının ağaç görünümü.
+                    <pre style="color: #788;">resource
+├─── views
+│   ├───<a href="#main-page-content">main.php</a>
+│   └───<a href="#user-page-content">user.php</a></pre>
+                </div>
+            </div>
+
+            <div id="main-page-content">
+                <h4># <kbd>main.php</kbd> arayüzünün içeriği:</h4>
+                <div class="separate">
+                    <small>Kalıp sayfasında kalıbın ortaya yazılacak kısmında kesinlikle ve kesinlikle
+                        <kbd>&lt;!--body--></kbd> yazmak zorundadır.</small>
+                </div>
+                <pre data-highlight-lang="xml">
+                    &lt;!DOCTYPE html&gt;
+                    &lt;html lang="en"&gt;
+                    &lt;head&gt;
+                        &lt;meta charset="UTF-8"&gt;
+                        &lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
+                        &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+                        &lt;title&gt;Kalıp sayfası &lt;?= $title ?&gt;&lt;/title&gt;
+                    &lt;/head&gt;
+                    &lt;body&gt;
+                        &lt;!--body--&gt;
+                    &lt;/body&gt;
+                    &lt;/html&gt;
+                </pre>
+            </div>
+
+            <div id="user-page-content">
+                <h4># <kbd>user.php</kbd> arayüzünün içeriği:</h4>
+                <pre data-highlight-lang="html">
+                    <div>
+                        zFramework!
+                    </div>
+                </pre>
+            </div>
+
+            <div class="separate">
+                <h4># Arayüzümüzü Kalıbıyla birlikte çağıralım</h4>
+                <pre data-highlight-lang="php">
+                    function ...() {
+                        return view('user', ['title' => 'Kullanıcılar Sayfası'], 'main');
+                    }
+                </pre>
+            </div>
+
+            <div>
+                <h5>Ve çıktımız şu şekilde olacaktır:</h5>
+                <pre data-highlight-lang="xml">
+                    &lt;!DOCTYPE html&gt;
+                    &lt;html lang="en"&gt;
+                    &lt;head&gt;
+                        &lt;meta charset="UTF-8"&gt;
+                        &lt;meta http-equiv="X-UA-Compatible" content="IE=edge"&gt;
+                        &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+                        &lt;title&gt;Kalıp sayfası Kullanıcılar Sayfası&lt;/title&gt;
+                    &lt;/head&gt;
+                    &lt;body&gt;
+                        &lt;div&gt;
+                            zFramework!
+                        &lt;/div&gt;
+                    &lt;/body&gt;
+                    &lt;/html&gt;
+                </pre>
+            </div>
+        </div>
+
+        <h5>Ve bu konuyu geçebiliriz.</h5>
     </div>
 </div>

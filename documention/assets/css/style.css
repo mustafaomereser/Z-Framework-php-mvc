@@ -175,6 +175,11 @@ kbd:hover,
   background-color: #444;
 }
 
+a {
+  text-decoration: none;
+  color: #fff;
+}
+
 :focus-visible {
   outline: none;
 }/*# sourceMappingURL=style.css.map */
