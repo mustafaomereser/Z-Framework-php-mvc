@@ -1,0 +1,20 @@
+<div class="content">
+    <div class="content-title">
+        1.3. Yönlendiricinin URL'sini nasıl buluruz?
+    </div>
+    <div class="content-body">
+        <div class="separate">
+            <h4># Bunu sadece bir örnekle anlatabiliriz.</h4>
+            <pre data-highlight-lang="php">
+                Route::get('/test/{id}/{username}', function ($id, $username) {
+                    echo "$id - $username";
+                }, [
+                    'name' => 'test'
+                ]);
+            
+                // Kullanım:
+                echo Route::findRoute('test', ['id' => 1, 'username' => 'Admin']); // Çıktı: /test/1/Admin
+            </pre>
+        </div>
+    </div>
+</div>

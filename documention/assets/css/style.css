@@ -5,6 +5,10 @@ body {
   background-color: #111;
 }
 
+:root {
+  --separate-px: 25px;
+}
+
 .content {
   color: #eee;
 }
@@ -60,8 +64,15 @@ body {
   text-align: center;
   padding: 10px 25px;
   background-color: #555;
-  border-radius: 3px;
   transition: 200ms background-color ease-in;
+}
+.scroll-spy ul li span:first-child {
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+.scroll-spy ul li span:last-child {
+  border-end-end-radius: 3px;
+  border-end-start-radius: 3px;
 }
 .scroll-spy ul li span:hover, .scroll-spy ul li span.active {
   background-color: #444;
@@ -139,8 +150,12 @@ body {
   text-align: center;
 }
 
-.seperate {
-  margin-bottom: 25px;
+.separate {
+  margin-bottom: var(--separate-px);
+}
+
+font[color=red] {
+  margin-right: 5px;
 }
 
 kbd,

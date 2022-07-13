@@ -1,0 +1,37 @@
+<div class="content">
+    <div class="content-title">
+        3.1. Arayüz Destekcisi
+    </div>
+    <div class="content-body">
+        <div class="separate">
+            <h3># Arayüz destekcisi ne işe yarar?</h3>
+            <small>
+                Arayüz destekçileri bir Arayüz'e sürekli vermemiz gereken parametreler yükünden bizi
+                kurtarırlar.
+            </small>
+        </div>
+
+        <div class="separate">
+            <h5>Buna bir örnek verecek olursak:</h5>
+            <pre data-highlight-lang="php">
+# Yol: App\Providers\ViewProvider.php
+
+class ViewProvider
+{
+    public function __construct()
+    {
+        View::bind('ev.kullanicilar', function () {
+            $user = new User;
+            return [
+                'users' => $user->get()
+            ];
+        });
+    }
+}
+
+# `ev.kullanicilar` yolundaki Arayüz sürekli `$users` parametresine sahip olacaktır.
+            </pre>
+        </div>
+
+    </div>
+</div>

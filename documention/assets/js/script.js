@@ -165,11 +165,23 @@ function trimSpaces(text) {
     return text.trim().replaceAll((' '.repeat(space_count)), '');
 }
 
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 function initHighlight() {
     document.querySelectorAll('[data-highlight-lang]').forEach(item => {
+        let lang = item.getAttribute('data-highlight-lang'), text = item.innerHTML;
+        if (lang == "html" || lang == "xml") text = escapeHtml(text);
+
         item.outerHTML = `
             <div style="position: relative;">
-                <pre><code class="language-${item.getAttribute('data-highlight-lang')}">${trimSpaces(item.innerHTML)}</code></pre>
+                <pre><code class="language-${lang}">${trimSpaces(text)}</code></pre>
                 <button class="btn" style="position: absolute; right: 0px; top: 0;" onclick="copy(this, this.previousElementSibling.children[0].textContent);">${languages[getLang()].copy}</button>
             </div>
         `;
@@ -178,6 +190,7 @@ function initHighlight() {
 }
 
 function copy(is, text) {
+    text = text.replaceAll('<!--?=', '<?=').replaceAll('?-->', '?>');
     var copyText = document.getElementById("copy-input");
     copyText.value = text;
     copyText.select();

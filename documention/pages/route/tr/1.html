@@ -3,6 +3,88 @@
         1.1. Form Örnekleri
     </div>
     <div class="content-body">
+        <div class="separate">
+            <h2># Form Örnekleri</h2>
+            <div class="separate">
+                <font color="red">*</font> <kbd>Resource</kbd> bir controllerimizin olduğunu varsayıyorum, bu demek
+                değil ki <kbd>Resource</kbd> olmayan bir yapıda kullanılamaz.
+            </div>
 
+            <div class="separate">
+                <small># Örnek Controller</small>
+                <pre data-highlight-lang="php">
+                    class UserController extends Controller
+                    {
+                        public function index()
+                        {
+                            return "Kullanıcılar liste sayfası";
+                        }
+
+                        public function show($id) { ... }
+
+                        public function create() { ... }
+
+                        public function edit($id) { ... }
+
+                        public function store()
+                        {
+                            return "Kullanıcı Kayıt İşlemleri"
+                        }
+
+                        public function update($id)
+                        {
+                            return "Kullanıcı Güncelleme İşlemleri"
+                        }
+
+                        public function delete($id)
+                        {
+                            return "Kullanıcı Silme İşlemleri"
+                        }
+                    }
+                </pre>
+            </div>
+
+            <div class="separate">
+                <small class="separate">
+                    Bu Form <kbd>Resource Controller</kbd> içindeki <kbd>store()</kbd> methoduna gitmektedir.
+                    formda <kbd>action</kbd> özelliğini kullanmamın amacı daha iyi bir anlatış biçmi içindir.
+                </small>
+                <pre data-highlight-lang="html">
+                    <form action="<?= route('users.store') ?>" method="POST">
+                        <input type="hidden" name="_token" value="<?= Csrf::get() ?>"> (isteğe bağlı olarak direkt input yerine `<?= csrf() ?>` de kullanılabilir.) 
+                        <input type="submit">
+                    </form>
+                </pre>
+            </div>
+
+            <div class="separate">
+                <small class="separate">
+                    Bu Form <kbd>Resource Controller</kbd> içindeki <kbd>update()</kbd> methoduna gitmektedir.
+                    formda <kbd>action</kbd> özelliğini kullanmamın amacı daha iyi bir anlatış biçmi içindir.
+                </small>
+                <pre data-highlight-lang="html">
+                    <form action="<?= route('users.update', ['id' => 1]) ?>" method="POST">
+                        <?= csrf() ?>
+                        <?= inputMethod('PATCH') ?>
+                        <input type="submit">
+                    </form>
+                </pre>
+            </div>
+
+            <div class="separate">
+                <small class="separate">
+                    Bu Form <kbd>Resource Controller</kbd> içindeki <kbd>delete()</kbd> methoduna gitmektedir.
+                    formda <kbd>action</kbd> özelliğini kullanmamın amacı daha iyi bir anlatış biçmi içindir.
+                </small>
+                <pre data-highlight-lang="html">
+                    <form action="<?= route('users.delete', ['id' => 1]) ?>" method="POST">
+                        <?= Csrf::csrf() ?>
+                        <?= inputMethod('DELETE') ?>
+                        <input type="submit">
+                    </form>
+                </pre>
+            </div>
+
+        </div>
     </div>
 </div>

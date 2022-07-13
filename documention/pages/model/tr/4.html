@@ -1,0 +1,41 @@
+<div class="content">
+    <div class="content-title">
+        2.4. Besleyiciler
+    </div>
+    <div class="content-body">
+        <div class="separate" style="--separate-px: 40px;">
+            <b>Açıklama;</b> Besleyicilerin görevi boş/taze bir veritabanına rastgele test verileri girmektir. Veya her
+            veritabanı sıfırlaması sonrasında girmek zorunda olduğunuz verileri bu kısımda tanımlayabilirsiniz.
+        </div>
+
+        <div>
+            Bir Besleyici nasıl oluşturulur ve çalıştırılır öğrenmek için <kbd data-route="zhelper-index">zHelper</kbd>
+            buraya tıklayabilirsiniz.
+        </div>
+
+        <div>
+            <small>
+                <font color="red">*</font> Bir Besleyici Örneği:
+            </small>
+            <pre data-highlight-lang="php">
+                class Seeder
+                {
+                    public function __construct()
+                    {
+                        $this->user = new User;
+                    }
+            
+                    public function seed()
+                    {
+                        $this->user->insert([
+                            'username' => 'admin',
+                            'password' => Crypter::encode('admin'),
+                            'email' => 'admin@localhost.com',
+                            'api_token' => Str::rand(60)
+                        ]); 
+                    }
+                }
+            </pre>
+        </div>
+    </div>
+</div>

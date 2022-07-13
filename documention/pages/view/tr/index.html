@@ -1,0 +1,49 @@
+<div class="content">
+    <div class="content-title">
+        3. Arayüzler
+    </div>
+    <div class="content-body">
+        <div class="separate" style="--separate-px: 40px;">
+            <b># Arayüzler nedir?</b>
+            <div>
+                Arayüzler kullanıcıya yansıtılacak son görünüştür, ve yapımızın en önemli kısmı sayılabilir.
+            </div>
+        </div>
+
+        <div>
+            <h4># Nasıl Kullanılır?</h4>
+            <pre data-highlight-lang="php">
+                # Bunun gibi
+                echo view('home.index', ['hi' => 'hey'], 'main');
+                
+                # Bunun gibi
+                echo zFramework\Core\View::view('home.index', ['hi' => 'hey'], 'main');
+            </pre>
+            Kullanabiliriz.
+        </div>
+
+        <div>
+            <h4># Zaten bir Arayüz içerisindeyken nasıl tekrar içeriye nasıl bir arayüz daha çağırabiliriz?</h4>
+
+            <div class="separate">
+                <div>
+                    <small>
+                        Arayüz içerisinde yeni bir arayüz çağırırken içerisinde olduğumuz arayüzün parametrelerini
+                        diğerine aktarabiliriz.
+                    </small>
+                </div>
+                <div><small>Bunu depoladığımız parametre <kbd>$view_parameters</kbd> parametresidir.</small></div>
+            </div>
+
+            <pre data-highlight-lang="html">
+                <div>
+                    Liste:
+                    <?= view('home.list', $view_parameters); ?>
+                    <?= View::view('home.list', $view_parameters); ?>
+                </div>
+            </pre>
+            Şeklinde çağırabiliriz.
+        </div>
+
+    </div>
+</div>

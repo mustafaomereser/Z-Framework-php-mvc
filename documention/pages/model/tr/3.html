@@ -1,0 +1,68 @@
+<div class="content">
+    <div class="content-title">
+        2.3. Şablonlar
+    </div>
+    <div class="content-body">
+        <div class="separate" style="--separate-px: 40px;">
+            <b>Açıklama;</b> Tablomuz için oluşturduğumuz şablonları <kbd>zHelper</kbd> yardımı ile veritabanımıza
+            yazabiliriz.
+        </div>
+
+        <div class="separate">
+            <div>
+                Bir Şablon nasıl oluşturulur öğrenmek için <kbd data-route="zhelper-index">zHelper</kbd> buraya
+                tıklayabilirsiniz.
+            </div>
+            <pre data-highlight-lang="php">class Users
+{
+    static $table = "users";             # Oluşturulacak tablonun ismi
+    static $charset = "utf8_general_ci"; # Tablonun Karakter şablonu
+    static $db = 'local';                # Veritabanı adı. database/connections.php dosyasından gelmektedir
+    
+    # Şablon Sütunları
+    public static function columns()
+    {
+        return [
+            'id' => ['primary'],
+            'username' => ['varchar:50', 'charset:utf8mb4_general_ci'],
+            'password' => ['varchar:50', 'charset:utf8mb4_general_ci'],
+            'email' => ['varchar:50', 'charset:utf8mb4_general_ci', 'unique'],
+            'api_token' => ['varchar:60', 'required', 'charset:utf8mb4_general_ci'],
+            'timestamps', # `updated_at` ve `created_at` kolonlarını otomatik oluşturur.
+            'softDelete'  # softDelete kullanmak için `deleted_at` kolonunu oluşturur.
+        ];
+    }
+}</pre>
+        </div>
+
+        <div class="separate">
+            <h4># Kullanılabilir Parametreler</h4>
+            <pre data-highlight-lang="php">[
+    'primary',
+    'unique', 
+    'text',
+    'bigint', 
+    'int', 
+    'smallint', 
+    'tinyint', 
+    'decimal', 
+    'float', 
+    'varchar',              # Varsayılan olarak `255` değerini taşır.
+    'char',                 # Varsayılan olarak `50` değerini taşır.
+    'char:numeric_length', 
+    'varchar:numeric_length', 
+    'date',
+    'datetime',
+    'time',
+    'required', 
+    'nullable', 
+    'default',              # Varsayılan olarak `NULL` değerini taşır.
+    'default:default value', 
+    'charset:utf8mb4_general_ci',
+    'timestamps',           # `updated_at` ve `created_at` kolonlarını otomatik oluşturur.
+    'softDelete'            # softDelete kullanmak için `deleted_at` kolonunu oluşturur.
+]
+            </pre>
+        </div>
+    </div>
+</div>

@@ -3,16 +3,16 @@
         1. Yönlendirici
     </div>
     <div class="content-body">
-        <div class="seperate">
+        <div class="separate">
             <h2># Any Metodu</h2>
-            <div class="seperate">
+            <div class="separate">
                 Any Method türü her metodu kabul eder, örneğin bu yönlendiriciyle ister <kbd>GET</kbd> metodu ile istek
                 atın
                 isterseniz
                 <kbd>POST</kbd> ile atın fark olmayacaktır.
             </div>
 
-            <div class="seperate">
+            <div class="separate">
                 Fakat <kbd>GET</kbd> metodu haricinde attığınız metodlarda özellikle belirtmediyseniz
             </div>
 
@@ -27,7 +27,7 @@
             </pre>
         </div>
 
-        <div class="seperate">
+        <div class="separate">
             <h2># GET Metodu</h2>
             <pre data-highlight-lang="php">
                 Route::get('/', function() {
@@ -36,7 +36,7 @@
             </pre>
         </div>
 
-        <div class="seperate">
+        <div class="separate">
             <h2># POST Metodu</h2>
             <pre data-highlight-lang="php">
                 Route::post('/', function() {
@@ -45,7 +45,7 @@
             </pre>
         </div>
 
-        <div class="seperate">
+        <div class="separate">
             <h2># PATCH Metodu</h2>
             <pre data-highlight-lang="php">
                 Route::patch('/', function() {
@@ -54,7 +54,7 @@
             </pre>
         </div>
 
-        <div class="seperate">
+        <div class="separate">
             <h2># PUT Metodu</h2>
             <pre data-highlight-lang="php">
                 Route::put('/', function() {
@@ -63,7 +63,7 @@
             </pre>
         </div>
 
-        <div class="seperate">
+        <div class="separate">
             <h2># DELETE Metodu</h2>
             <pre data-highlight-lang="php">
                 Route::delete('/', function() {
@@ -72,9 +72,9 @@
             </pre>
         </div>
 
-        <div class="seperate">
+        <div class="separate">
             <h2># Yönlendiricileri bu şekilde de tanımlayabileceğinizi biliyor muydunuz?</h2>
-            <div class="seperate">
+            <div class="separate">
                 <div>
                     Eğer Routelerinizi bu şekilde tanımlarsanız Controller'in yolunu tanıtmanıza gerek yoktur.
                 </div>
@@ -86,13 +86,13 @@
             <pre data-highlight-lang="php">Route::get('/', 'HomeController@index');</pre>
         </div>
 
-        <div class="seperate">
+        <div class="separate">
             <h2># Yönlendiricileri hazır şablonlarla da oluşturabilirsiniz</h2>
-            <div class="seperate">
+            <div class="separate">
                 Bunu yapabilmek için Controllerinizi <kbd>resource</kbd> şeklinde oluşturmanız gerekmektedir.
             </div>
             <pre data-highlight-lang="php">Route::resource('/ev', HomeController::class);</pre>
-            <div class="seperate">
+            <div class="separate">
                 <h5>Bu şablonun çıktısı şu şekilde olacaktır.</h5>
                 <table style="width: 100%; text-align: center;">
                     <thead>
@@ -155,7 +155,7 @@
             </div>
         </div>
 
-        <div class="seperate">
+        <div class="separate">
             <h2># Yönlendiricileri basit bir şekilde nasıl buluruz?</h2>
             <pre data-highlight-lang="php">
                 // Basit bir Resource Yönlendirici oluşturuyoruz.
@@ -176,7 +176,7 @@
                 # Bir örnek daha verecek olursak.
                 $edit_url = Route::findRoute('test.edit', ['id' => 1]); // çıktısı: `www.host.com/test/1/edit`
             </pre>
-            <div class="seperate">
+            <div class="separate">
                 <h4># Uzun kullanım yerine daha kısa bir şekilde kullanım var mı?</h4>
                 Bu sorunun cevabı kesinlikle <b>var</b> olacaktır.
                 <pre data-highlight-lang="php">
@@ -189,11 +189,11 @@
             </div>
         </div>
 
-        <div class="seperate">
+        <div class="separate">
             <h2># Gruplar nasıl kullanılır?</h2>
 
-            <div class="seperate">
-                <div class="seperate">
+            <div class="separate">
+                <div class="separate">
                     Prefix bize Yönlendirici'de URL'mizi belirlerken belirlediğimiz URL'nin otomatik olarak öncesine
                     istediğimiz bir <kbd>Ön ek</kbd> koyar.
                 </div>
@@ -221,10 +221,10 @@
                 </div>
             </div>
 
-            <div class="seperate">
-                <div class="seperate">
+            <div class="separate">
+                <div class="separate">
                     <h3><kbd>csrfNoCheck</kbd> Nedir?</h3>
-                    <div class="seperate">
+                    <div class="separate">
                         csrfNoCheck özelliğine sahip bir Grup oluşturursak grubun içinde bulunan Yönlendiriciler için
                         <kbd>CSRF Token</kbd> gerekmeyecektir.
                     </div>
@@ -247,11 +247,11 @@
             </div>
 
             <div>
-                <div class="seperate">
-                    <h3><kbd>csrfNoCheck</kbd> Nedir?</h3>
+                <div class="separate">
+                    <h3># Ufak Örnek</h3>
                 </div>
 
-                <div class="seperate">
+                <div class="separate">
                     <small>Toplu kullanıma bir örnek verelim:</small>
                     <pre data-highlight-lang="php">
                         Route::pre('/admin')->csrfNoCheck(true)->group(function() {
