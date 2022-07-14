@@ -26,6 +26,8 @@ function loadModule(page = 'home', section = 'index') {
     var oReq = new XMLHttpRequest();
 
     oReq.onload = function () {
+        if (oReq.status != 200) return loadModule('a-documention-errors', oReq.status);
+
         currentRoute = `${page}-${section}`;
         lastRouteLang = getLang();
         window.history.pushState({}, '', `?page=${page}&section=${section}`);
@@ -34,7 +36,7 @@ function loadModule(page = 'home', section = 'index') {
         initRouters();
     };
 
-    oReq.open("GET", `/pages/${page}/${(getLang())}/${section}.html`);
+    oReq.open("GET", `/pages/${page}/${getLang()}/${section}.html`);
     oReq.send();
 }
 

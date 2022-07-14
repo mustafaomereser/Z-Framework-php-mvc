@@ -27,7 +27,7 @@ var defaultLang = "en",
 
             "6_mail": 'E-posta',
 
-            "7_zhelper": '(zhelper) Yardımcı',
+            "7_zhelper": '(zHelper) Yardımcı',
 
             "8_csrf": '(CSRF) Siteler Arası İstek Sahteciliği',
 
@@ -80,7 +80,7 @@ var defaultLang = "en",
 
             "6_mail": 'Email',
 
-            "7_zhelper": 'zhelper',
+            "7_zhelper": 'zHelper',
 
             "8_csrf": 'CSRF',
 
@@ -182,7 +182,7 @@ function initHighlight() {
         item.outerHTML = `
             <div style="position: relative;">
                 <pre><code class="language-${lang}">${trimSpaces(text)}</code></pre>
-                <button class="btn" style="position: absolute; right: 0px; top: 0;" onclick="copy(this, this.previousElementSibling.children[0].textContent);">${languages[getLang()].copy}</button>
+                <button class="btn" style="position: absolute; right: 10px; top: 10px; border-radius: 6px;" onclick="copy(this, this.previousElementSibling.children[0].textContent);">${languages[getLang()].copy}</button>
             </div>
         `;
     });
@@ -190,7 +190,7 @@ function initHighlight() {
 }
 
 function copy(is, text) {
-    text = text.replaceAll('<!--?=', '<?=').replaceAll('?-->', '?>');
+    text = text.replaceAll('<!--?=', '<?=').replaceAll('?-->', '?>').replaceAll('||', '//');
     var copyText = document.getElementById("copy-input");
     copyText.value = text;
     copyText.select();

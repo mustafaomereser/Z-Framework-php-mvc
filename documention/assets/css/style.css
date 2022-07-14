@@ -6,7 +6,7 @@ body {
 }
 
 :root {
-  --separate-px: 25px;
+  --separate-px: 50px;
 }
 
 .content {
@@ -150,7 +150,7 @@ body {
   text-align: center;
 }
 
-.separate {
+.separate:not(:last-child) {
   margin-bottom: var(--separate-px);
 }
 
@@ -177,7 +177,14 @@ kbd:hover,
 
 a {
   text-decoration: none;
-  color: #fff;
+  color: #ff6776;
+}
+a:hover {
+  color: #ff4759;
+}
+
+.hljs {
+  border-radius: 6px;
 }
 
 :focus-visible {

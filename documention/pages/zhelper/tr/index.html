@@ -1,0 +1,77 @@
+<div class="content">
+    <div class="content-title">
+        7. zHelper
+    </div>
+    <div class="content-body">
+        <div class="separate">
+            <h2># zHelper Nedir? Ne işe yarar?</h2>
+            Projelerimizi geliştirirken bizim yerimize gerekli işleri yapan bir asistandır, <kbd>Komut İstemi</kbd>
+            üstünde kullanılan bu asistan bizim yerimize şu işleri yapar.
+        </div>
+
+        <div class="separate">
+            <h3># Oluşturabileceğimiz bileşenler</h3>
+
+            <div>
+                Kontrolcü:
+                <pre data-highlight-lang>
+                    > php zhelper make controller Test\TestController          || Varsayılan Kontrolcü
+                    > php zhelper make controller Test\TestController resource || Yönlendiriciler için hazır oluşturulabilir Kontrolcü
+                </pre>
+            </div>
+
+            <div>
+                Model:
+                <pre data-highlight-lang>> php zhelper make model Test\Test</pre>
+            </div>
+
+            <div>
+                Gözlemci:
+                <pre data-highlight-lang>> php zhelper make observer Test\TestObserver</pre>
+            </div>
+
+            <div>
+                Ara katman yazılımı:
+                <pre data-highlight-lang>> php zhelper make middleware Test\Test</pre>
+            </div>
+
+            <div>
+                Veritabanı Şablonu:
+                <pre data-highlight-lang>> php zhelper make migration Users</pre>
+            </div>
+
+            <div>
+                Veritabanı Besleyicisi:
+                <pre data-highlight-lang>> php zhelper make migration UsersSeeder</pre>
+            </div>
+        </div>
+
+        <div class="separate">
+            <h3># Veritabanı Şablonu kullanımı</h3>
+            <div class="separate">
+                <h4># Şablonu veritabanına aktarır</h4>
+                <pre data-highlight-lang="go">> php zhelper db migrate</pre>
+                Kolon yoksa kolonu ekler varsa da kolonu günceller. (eğer özelliklerini değiştirdiyseniz güncellemeden
+                sonra gözükür)
+            </div>
+
+            <div>
+                <h4># Şablonu olan bütün tabloları siler ve baştan yazar</h4>
+                <pre data-highlight-lang="go">> php zhelper db migrate fresh</pre>
+                Taze bir veritabanı.
+            </div>
+        </div>
+
+        <div class="separate">
+            <h3># Veritabanı Besleyici kullanımı</h3>
+            Veritabanını beslemek için kullanılır, bunun anlamı (Sahte / Sürekli doldurulması gereken) verileri otomatik
+            yazar.
+            <pre data-highlight-lang="go">> php zhelper db seed</pre>
+        </div>
+
+        <div>
+            <h3># Ön bellekleri temizlemek</h3>
+            <pre data-highlight-lang="go">> php zhelper cache clear sessions|caches|views</pre>
+        </div>
+    </div>
+</div>

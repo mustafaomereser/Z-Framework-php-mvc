@@ -1,0 +1,58 @@
+<div class="content">
+    <div class="content-title">
+        6. E-posta
+    </div>
+    <div class="content-body">
+
+        <div class="separate">
+            <h3># E-Posta işlemlerimizi nasıl yönetiriz?</h3>
+            <div>
+                İlk önce bu özelliği kullanmadan bir kaç ayar yapmamız gerekiyor.
+                <pre style="color: #788;">config
+├─── mail.php</pre>
+                Dosyasının içinde
+                <pre data-highlight-lang="php">
+                    return [
+                        'sending' => true,
+
+                        'debug' => false,
+                        'SMTPAuth' => true, || SMPT girişi
+                        
+                        'mail' => 'smtp.mailtrap.io',   || SMTP Giriş: Mail Sunucusu
+                        'port' => 2525,                 || SMTP Giriş: Mail Sunucu Portu
+                        'username' => '65a52bb05478e1', || SMTP Giriş: Mail Sunucu Kullanıcı Adı
+                        'password' => 'd6b2953732bb0c', || SMTP Giriş: Mail Sunucu Kullanıcı Şifresi
+
+                        'from' => ['Kimden gittiği bilgisi', 'from@example.com'],
+                        'reply' => ['Kime dönüt yapılabileceği bilgisi', 'replyto@example.com']
+                    ];
+                </pre>
+                <div class="separate" style="--separate-px: 25px;">
+                    Gibi bir yapı ile karşılaşacağız.
+                </div>
+                <div class="separate" style="--separate-px: 25px;">
+                    <b>Not:</b> Eğer <kbd>sending</kbd> parametremiz <kbd>true</kbd> olmazsa gönderim yapamayız.
+                </div>
+                Bu bilgileri kendi bilgilerimiz ile doldurduktan sonra yapabileceğimiz işlemlere geçelim.
+            </div>
+        </div>
+
+        <div class="separate">
+            <h3># Nasıl Mail gönderilir?</h3>
+            <pre data-highlight-lang="php">
+                Mail::to('mustafaomereser@gmail.com')->send([
+                    'subject' => 'Mail başlığımız', || Bu kısımda göndereceğimiz mail`in başlığını ayarlamış oluyoruz.
+                    'message' => 'test mesaj',      || isterseniz bu kısımda bir `Arayüz` de gönderebilirsiniz. Örnek: view('e-postalar.sifremi-unuttum', ['token' => Str::rand()])
+                    'altbody' => 'Alt body',        || (Opsiyonel) Alt Body yazımız.
+                    'attachements' => [             || (Opsiyonel) Ve istersek beraberinde dosya da gönderebiliriz.
+                        'uploads/1.png',
+                        'uploads/2.png'
+                    ]
+                ]);
+            </pre>
+
+            Bu şekilde işlemlerimiz tamamlanmış olacaktır ve yukarıdaki örnek gibi artık E-posta gönderebileceğiz.
+        </div>
+
+    </div>
+</div>
