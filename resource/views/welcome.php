@@ -55,7 +55,7 @@ use zFramework\Core\Facades\Lang;
             </div>
         </h2>
         <div>
-            <a href="/test">Tests</a>
+            <a href="<?= route('test') ?>">Tests</a>
         </div>
         <div class="box">
             <div style="text-align: center;">

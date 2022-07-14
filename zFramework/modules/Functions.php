@@ -41,10 +41,20 @@ function back($add = null)
     return redirect(($_SERVER['HTTP_REFERER'] ?? '/') . $add);
 }
 
+// Where run it project's dirname.
+function script_name()
+{
+    $script_name = dirname($_SERVER['SCRIPT_NAME']);
+    if ($script_name == '\\') return null;
+    return strlen($script_name) ? $script_name : null;
+}
+
 // Get Current URI
 function uri()
 {
-    return @$_SERVER['REQUEST_URI'];
+    $uri = str_replace(script_name(), '', $_SERVER['REQUEST_URI']);
+    if (!strlen($uri)) $add = '/';
+    return ($uri . @$add);
 }
 
 // Get Current Request Method.

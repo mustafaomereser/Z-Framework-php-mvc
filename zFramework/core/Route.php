@@ -22,7 +22,7 @@ class Route
         if (!isset(self::$routes[$name])) return $name;
         $url = self::$routes[$name]['url'];
         foreach ($data as $key => $val) $url = str_replace("{" . $key . "}", $val, $url);
-        return host() . $url;
+        return (host() . script_name()) . $url;
     }
 
     public static function redirect($url, $to)
