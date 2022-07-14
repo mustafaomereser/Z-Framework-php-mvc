@@ -62,12 +62,12 @@
                     Bu Form <kbd>Resource Controller</kbd> içindeki <kbd>update()</kbd> methoduna gitmektedir.
                     formda <kbd>action</kbd> özelliğini kullanmamın amacı daha iyi bir anlatış biçmi içindir.
                 </small>
-                <pre data-highlight-lang="html">
-                    <form action="<?= route('users.update', ['id' => 1]) ?>" method="POST">
-                        <?= csrf() ?>
-                        <?= inputMethod('PATCH') ?>
-                        <input type="submit">
-                    </form>
+                <pre data-highlight-lang="xml">
+                    &lt;form action="&lt;?= route('users.update', ['id' => 1]) ?&gt;" method="POST"&gt;
+                        &lt;?= csrf() ?&gt;
+                        &lt;?= inputMethod('PATCH') ?&gt;
+                        &lt;input type="submit"&gt;
+                    &lt;/form&gt;
                 </pre>
             </div>
 
@@ -76,12 +76,12 @@
                     Bu Form <kbd>Resource Controller</kbd> içindeki <kbd>delete()</kbd> methoduna gitmektedir.
                     formda <kbd>action</kbd> özelliğini kullanmamın amacı daha iyi bir anlatış biçmi içindir.
                 </small>
-                <pre data-highlight-lang="html">
-                    <form action="<?= route('users.delete', ['id' => 1]) ?>" method="POST">
-                        <?= Csrf::csrf() ?>
-                        <?= inputMethod('DELETE') ?>
-                        <input type="submit">
-                    </form>
+                <pre data-highlight-lang="xml">
+                    &lt;form action="&lt;?= route('users.delete', ['id' => 1]) ?&gt;" method="POST"&gt;
+                        &lt;?= Csrf::csrf() ?&gt;
+                        &lt;?= inputMethod('DELETE') ?&gt;
+                        &lt;input type="submit"&gt;
+                    &lt;/form&gt;
                 </pre>
             </div>
 

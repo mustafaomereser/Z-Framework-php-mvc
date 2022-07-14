@@ -1,10 +1,15 @@
-// Url stuffs
-let url = document.URL.split('/').pop().split('?').pop(), query = {};
-url.split('&').forEach(item => {
-    let e = item.split('=');
-    if (e[1]) query[e[0]] = e[1];
-});
-//
+function loadFirst() {
+    // Url stuffs
+    let url = document.URL.split('/').pop().split('?').pop(), query = {};
+    url.split('&').forEach(item => {
+        let e = item.split('=');
+        if (e[1]) query[e[0]] = e[1];
+    });
+    //
+    loadModule(query.page, query.section);
+}
+window.onpopstate = () => loadFirst();
+
 var currentRoute, lastRouteLang;
 
 function initRouters() {
@@ -22,7 +27,7 @@ function initRouters() {
     });
 }
 
-function loadModule(page = 'home', section = 'index') {
+function loadModule(page = 'home', section = 'index', hash = null) {
     var oReq = new XMLHttpRequest();
 
     oReq.onload = function () {
@@ -30,14 +35,21 @@ function loadModule(page = 'home', section = 'index') {
 
         currentRoute = `${page}-${section}`;
         lastRouteLang = getLang();
-        window.history.pushState({}, '', `?page=${page}&section=${section}`);
+        window.history.pushState({}, '', `?page=${page}&section=${section}${hash ? `#${hash}` : ''}`);
         document.querySelector('#root').innerHTML = this.responseText;
         initHighlight();
         initRouters();
+
+        if (hash) scrollTo(hash);
+        else scrollTo('top');
     };
 
     oReq.open("GET", `/pages/${page}/${getLang()}/${section}.html`);
     oReq.send();
 }
 
-loadModule(query.page, query.section);
+function scrollTo(id) {
+    document.getElementById(id).scrollIntoView({ behavior: 'smooth' }, true);
+}
+
+loadFirst();

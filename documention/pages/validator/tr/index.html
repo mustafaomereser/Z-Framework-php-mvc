@@ -1,0 +1,35 @@
+<div class="content">
+    <div class="content-title">
+        13. Onaylayıcı (Validator)
+    </div>
+    <div class="content-body">
+        <div class="separate">
+            <b>Açıklama;</b> Onaylayıcı bir Diziyi onaylarken kullanılır, genelde ise <kbd>HTML Form</kbd>'larından
+            gelen verileri kontrol etmek için kullanılır.
+        </div>
+
+        <div class="separate">
+            <h4># Onaylayıcı Örneği</h4>
+            (Düzenlemeden Direkt GitHub dökümantasyonundan alınmıştır)
+            <pre data-highlight-lang="php">
+                || In array validate values.
+                || Current: type, required, max, min, same, email, unique, exists.
+                
+                || Unique & Exists ussage: 
+                || unique:table_name cl=column_name,db=database || cl and db parameters is optional, if you not add cl parameter get request key name, if you not add db parameter get first in array connection.
+            
+                || exists:table_name cl=column_name,db=database || cl and db parameters is optional, if you not add cl parameter get request key name, if you not add db parameter get first in array connection.
+                
+                || Unique Example: 'email' => ["unique:users cl=email,db=local"]
+                || Exists Example: 'email' => ["exists:users cl=email,db=local"]
+            
+                Validator::validate($_REQUEST, [
+                    'test1' => ['type:string', 'required', 'max:10', 'min:5', 'same:test2'],
+                    'test2' => ['same:test1'],
+                ]);
+            </pre>
+            Şeklinde bir kullanımı vardır.
+        </div>
+
+    </div>
+</div>

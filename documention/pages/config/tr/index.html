@@ -1,0 +1,61 @@
+<div class="content">
+    <div class="content-title">
+        11. Yapılandırma Dosyaları (Config)
+    </div>
+    <div class="content-body">
+        <div class="separate">
+            <b>Açıklama;</b> Yapılandırma Dosyaları işimize sabit bir şekilde belirlediğimiz <kbd>Verilerdir /
+                Kurallardır</kbd>.
+        </div>
+
+        <div class="separate">
+            <h3># Yapılandırma Dosyaları</h3>
+            Örnek olarak gerçek bir dosyadan feyz alabiliriz: (<kbd>config->app.php</kbd>)
+            <pre data-highlight-lang="php">
+                return [
+                    'debug' => true, || Bu veri hata sayfalarını detaylı şekilde görmemizi sağlar, proje ürünleştiği zaman bu veri `false` olarak değişmelidir.
+
+                    'lang' => 'tr',  || Tarayıcı dili bulunamadığı zaman otomatik seçilecek dil.
+                    
+                    'title' => 'Z Framework Project', || Projenin ana başlığıdır.
+                    'public' => 'public_html',        || Projenin izleneceği ana dizindir.
+
+                    'crypt' => [
+                        'key' => 'cryptkey',          || Crypter::class özelliğini kullanmak için gerekli EŞSİZ bir anahtar olmalıdır.
+                        'salt' => 'ThisSaltIsSecret'  || Crypter::class özelliğini kullanırken şifrelediğimiz verilerin sonuna yazılan anahtardır ve EŞSİZ olmalıdır.
+                    ]
+                ];
+            </pre>
+            Kendi özel Yapılandırma dosyalarımızı da oluşturup kullanabiliriz.
+        </div>
+
+        <div class="separate">
+            <h4># Yapılandırma dosyasından veri çekmek</h4>
+            <pre data-highlight-lang="php">
+                Config::get('app');       || Bütün yapılandırma dosyasını verir.
+                Config::get('app.title'); || Yapılandırma dosyasının içinden veriyi bize verir.
+
+                || Bunun yanında alttaki örnekler gibi de kullanımı mevcuttur.
+                config('app');
+                config('app.title');
+            </pre>
+        </div>
+
+
+        <div class="separate">
+            <h4># Yapılandırma dosyası Oluşturma/Güncelleme</h4>
+            <pre data-highlight-lang="php">
+                Config::set('app', [
+                    'title' => 'deneme'
+                ]);
+            </pre>
+            <div>
+                Bu kodun sonucunda <kbd>app->'title'</kbd> verisi `deneme` olarak değişmiş olacaktır.
+            </div>
+            <div>
+                Veya `app` adında bir yapılandırma Dosyamız yok ise oluşmuş ve içinde `title` adında bir veri de oluşmuş
+                olacaktır.
+            </div>
+        </div>
+    </div>
+</div>
