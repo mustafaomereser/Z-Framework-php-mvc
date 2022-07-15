@@ -75,18 +75,6 @@ class DB
         return $this;
     }
 
-    public function find($find, $class = false, $column_name = null)
-    {
-        return $this->resetBuild()->where($column_name ?? $this->attributes[0], '=', $find)->first($class);
-    }
-
-    public function findSlug($slug)
-    {
-        $find = $this->find($slug, true, 'slug');
-        if (@$find->id) $slug .= rand(0, 100);
-        return $slug;
-    }
-
     // Query methods
     public function insert(array $data)
     {
@@ -106,7 +94,7 @@ class DB
         } catch (\PDOException $e) {
             throw new \Exception($e->errorInfo[2]);
         }
-        
+
         throw new \Exception('Can not inserted.');
     }
 
@@ -150,6 +138,19 @@ class DB
     //
 
     // SELECT METHODS
+    public function find($find, $class = false, $column_name = null)
+    {
+        return $this->resetBuild()->where($column_name ?? $this->attributes[0], '=', $find)->first($class);
+    }
+
+    public function findSlug($slug)
+    {
+        $find = $this->find($slug, true, 'slug');
+        if (@$find->id) $slug .= rand(0, 100);
+        return $slug;
+    }
+
+
     public function first($class = false)
     {
         return self::limit(1)->get($class)[0] ?? null;

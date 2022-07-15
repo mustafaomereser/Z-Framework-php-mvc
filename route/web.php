@@ -1,12 +1,11 @@
 <?php
 
+use App\Controllers\HomeController;
 use zFramework\Core\Route;
 
 // Route::get('/', 'HomeController@index')
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index']);
 
 Route::get('/test', function () {
     return view('test');
