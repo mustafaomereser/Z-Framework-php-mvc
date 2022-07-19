@@ -151,6 +151,10 @@ class Db
         global $databases, $args;
         $migrations = glob('database/migrations/*.php');
 
+        $MySQL_defines = [
+            'CURRENT_TIMESTAMP'
+        ];
+
         foreach ($migrations as $inc) {
             $create_penetration = false;
 
@@ -165,13 +169,14 @@ class Db
             if (strlen($key = array_search('timestamps', $columns))) {
                 unset($columns[$key]);
                 $columns = array_merge($columns, [
-                    'updated_at' => ['required', 'int'],
-                    'created_at' => ['required', 'int'],
+                    'updated_at' => ['required', 'datetime', 'default:CURRENT_TIMESTAMP', 'onupdate'],
+                    'created_at' => ['required', 'datetime', 'default:CURRENT_TIMESTAMP'],
                 ]);
             }
+
             if (strlen($key = array_search('softDelete', $columns))) {
                 unset($columns[$key]);
-                $columns = array_merge($columns, ['deleted_at' => ['nullable', 'int', 'default']]);
+                $columns = array_merge($columns, ['deleted_at' => ['nullable', 'datetime', 'default']]);
             }
             //
 
@@ -286,11 +291,15 @@ class Db
                             # Date: end
 
                         case 'default':
-                            $data['default'] = " DEFAULT" . (@$switch[1] ? "(" . (is_numeric($switch[1]) ? $switch[1] : "'" . addslashes($switch[1]) . "'") . ")" : ' NULL') . " ";
+                            $data['default'] = " DEFAULT" . (@$switch[1] ? (!in_array($switch[1], $MySQL_defines) ? ("(" . (is_numeric($switch[1]) ? $switch[1] : "'" . addslashes($switch[1]) . "'") . ")") : (" " . $switch[1])) : ' NULL') . " ";
                             break;
 
                         case 'charset':
                             $data['charset'] =  " CHARACTER SET " . strtok($switch[1], '_') . " COLLATE " . $switch[1] . " ";
+                            break;
+
+                        case 'onupdate':
+                            $data['default'] = $data['default'] . " ON UPDATE CURRENT_TIMESTAMP";
                             break;
                     }
                 }

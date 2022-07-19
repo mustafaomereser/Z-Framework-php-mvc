@@ -2,6 +2,8 @@
 
 namespace zFramework\Core\Facades;
 
+use zFramework\Core\Helpers\Date;
+
 class DB
 {
     /**
@@ -79,8 +81,8 @@ class DB
     public function insert(array $data)
     {
         $this->__call(__FUNCTION__);
-        if (array_search($this->created_at, $this->attributes)) $data[$this->created_at] = time();
-        if (array_search($this->updated_at, $this->attributes)) $data[$this->updated_at] = time();
+        // if (array_search($this->created_at, $this->attributes)) $data[$this->created_at] = Date::timestamp();
+        // if (array_search($this->updated_at, $this->attributes)) $data[$this->updated_at] = Date::timestamp();
 
         $keys = array_keys($data);
         try {
@@ -101,7 +103,7 @@ class DB
     public function update(array $sets)
     {
         $this->__call(__FUNCTION__);
-        if (array_search($this->updated_at, $this->attributes)) $sets[$this->updated_at] = time();
+        // if (array_search($this->updated_at, $this->attributes)) $sets[$this->updated_at] = Date::timestamp();
 
         $sql_set = '';
         foreach ($sets as $key => $_) {
@@ -129,8 +131,9 @@ class DB
         $delete = $this->isSoftDelete(function () {
             return $this->run('delete') ? true : false;
         }, function () {
-            $this->buildQuery['data']['current'] = time();
-            return $this->prepare("UPDATE $this->table SET $this->deleted_at = :current" . $this->getWhere())->rowCount();
+            // $this->buildQuery['data']['current'] = Date::timestamp();
+            // return $this->prepare("UPDATE $this->table SET $this->deleted_at = :current" . $this->getWhere())->rowCount();
+            return $this->update([$this->deleted_at => Date::timestamp()]);
         });
         if ($delete) $this->__call('deleted');
         return $delete;

@@ -107,12 +107,10 @@ function ip()
     return ($_SERVER['HTTP_CLIENT_IP'] ?? ($_SERVER['HTTP_X_FORWARDED_FOR'] ?? $_SERVER['REMOTE_ADDR']));
 }
 
-// Abort to http response.
-function abort($code = 418, $message = null)
+// Http::abort shorcut
+function abort()
 {
-    http_response_code($code);
-    $view = @view("errors.$code", ['message' => $message], 'errors.main');
-    die(($view && !zFramework\Core\Helpers\Http::isAjax()) ? $view : $message);
+    return call_user_func_array([zFramework\Core\Helpers\Http::class, 'abort'], func_get_args());
 }
 
 // Current Request query.

@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\User;
 use zFramework\Core\Abstracts\Controller;
 
 class HomeController extends Controller
@@ -18,13 +17,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        echo "<pre>";
-        $users = new User;
-        $users = $users->get();
-        print_r($users);
-        echo "</pre>";
-        
-        // return view('welcome');
+        return view('welcome');
     }
 
     /** Show page | GET: /id
