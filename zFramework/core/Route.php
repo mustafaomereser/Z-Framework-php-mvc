@@ -69,6 +69,15 @@ class Route
         return new self();
     }
 
+    public static function ws($method = 'GET', $url, $callback)
+    {
+        self::pre('/ws')->group(function () use ($method, $url, $callback) {
+            self::call([$url, $callback], strtolower($method));
+        });
+
+        return new self();
+    }
+
     public static function resource($url, $callback, $options = [])
     {
         self::get($url, [$callback, 'index'], $options)->name("$url.index");

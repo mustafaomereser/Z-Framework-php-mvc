@@ -5,14 +5,14 @@ include('zFramework/modules/Functions.php');
 spl_autoload_register(function ($class) {
     include("$class.php");
 });
+include('zFramework/vendor/autoload.php');
+
 
 $databases = reloadDatabases();
 $connected_databases = [];
 foreach ($databases as $key => $val) $databases[$key] = new PDO($val[0], $val[1], $val[2] ?? null);
 
-unset($argv[0]);
-$argv = array_values($argv);
-$args = array_merge(commandParser(@$argv[3]), ['firstCommand' => @$argv[2]]);
+$args = array_merge(commandParser(@$argv[4]), ['firstCommand' => @$argv[3]]);
 blank();
 
 function reloadDatabases()
@@ -367,9 +367,11 @@ class Cache
 
     public function clear()
     {
-        $option = func_get_args()[0]['firstCommand'];
+        global $argv;
+        $option = $argv[3];
+
         $list = array_values(array_diff(scandir(self::$path), ['.', '..']));
-        if (!in_array($option, $list)) die(text('Wrong Option!\nOptions: ' . implode(', ', $list) . ".", 31));
+        if (!in_array($option, $list)) die(text("Wrong Option!\nOptions: " . implode(', ', $list) . ".", 31));
 
         $dir = glob(self::$path . "/$option/*");
         foreach ($dir as $unlink) unlink($unlink);
@@ -387,8 +389,8 @@ class Run
         $public = include('config/app.php');
         chdir($public['public']);
 
-        $server = $argv[1] ?? (getHostByName(getHostName()) ?? '127.0.0.1');
-        $port = $argv[2] ?? 1000;
+        $server = $argv[2] ?? (getHostByName(getHostName()) ?? '127.0.0.1');
+        $port = $argv[3] ?? 1000;
 
         shell_exec("start http://$server:$port");
 
@@ -398,5 +400,41 @@ class Run
     }
 }
 
-$argv[0] = ucfirst($argv[0]);
-call_user_func([new $argv[0], $argv[1]], []);
+use Workerman\Worker;
+
+class Ws
+{
+    public function __construct()
+    {
+        $config = include('config/app.php');
+        $config = $config['ws'];
+
+        $tcp_worker = new Worker($config['protocol'] . '://' . $config['server'] . ':' . $config['port']);
+        $tcp_worker->count = $config['worker-count'];
+
+        $tcp_worker->onConnect = function ($connection) {
+            text("($connection->id) New Connection", 32);
+        };
+
+        $tcp_worker->onMessage = function ($client, $data) {
+            $parseData = json_decode($data, true);
+            parse_str($parseData[1], $parseData[1]);
+
+            $ws = (object) [/*'client' => $client,*/'data' => $parseData[0], 'args' => $parseData[1], 'response' => 'NULL'];
+            include('ws/api.php');
+
+            if (gettype($ws->response) != 'string') $ws->response = json_encode($ws->response, JSON_UNESCAPED_UNICODE);
+            $client->send($ws->response);
+        };
+
+        $tcp_worker->onClose = function ($connection) {
+            text("($connection->id) Connection Close", 31);
+        };
+
+        echo "\e[33mWebSocket running on \e[32m`" . getHostName() . "`\e[33m host: \e[31m\n";
+        Worker::runAll();
+    }
+}
+
+$argv[1] = ucfirst($argv[1]);
+call_user_func([new $argv[1], $argv[2]], []);

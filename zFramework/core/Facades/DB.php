@@ -36,12 +36,16 @@ class DB
 
     private function db()
     {
-        global $databases, $connected_databases;
+        global $connected_databases, $databases;
+
         if (!isset($databases[$this->db])) die('Böyle bir veritabanı yok!');
         if (in_array($this->db, $connected_databases)) return $databases[$this->db];
 
         $connected_databases[] = $this->db;
         $parameters = $databases[$this->db];
+
+        // For WebSocket api
+        if (gettype($parameters) == 'object') return $databases[$this->db];;
 
         $databases[$this->db] = new \PDO($parameters[0], $parameters[1], ($parameters[2] ?? null));
         foreach ($parameters['options'] ?? [] as $option) $databases[$this->db]->setAttribute($option[0], $option[1]);
