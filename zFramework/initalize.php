@@ -3,7 +3,9 @@
 date_default_timezone_set('ETC/UTC');
 
 // Session: Start
-session_save_path(FRAMEWORK_PATH . "/storage/sessions");
+$sessions_path = FRAMEWORK_PATH . "/storage/sessions";
+@mkdir($sessions_path, 777, true);
+session_save_path($sessions_path);
 ini_set('session.gc_probability', 1);
 session_start();
 // Session: End
