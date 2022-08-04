@@ -238,6 +238,9 @@ class Db
                             $data['type'] = " TEXT ";
                             break;
 
+                        case 'longtext':
+                            $data['type'] = " LONGTEXT ";
+                            break;
 
                         case 'varchar':
                             $data['type'] = " VARCHAR(" . ($switch[1] ?? 255) . ") ";
@@ -264,6 +267,10 @@ class Db
 
                         case 'tinyint':
                             $data['type'] = " TINYINT ";
+                            break;
+
+                        case 'bool':
+                            $data['type'] = " TINYINT(1) ";
                             break;
 
                         case 'decimal':
