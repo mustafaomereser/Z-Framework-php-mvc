@@ -10,7 +10,7 @@ class Middleware
      * @param object $callback
      * @return array|int
      */
-    public static function middleware(array $middlewares, object $callback = null)
+    public static function middleware(array $middlewares, $callback = null)
     {
         $declined = [];
 
