@@ -84,6 +84,7 @@ class DB
     // Query methods
     public function insert(array $data)
     {
+        $this->resetBuild();
         $this->__call(__FUNCTION__);
         // if (array_search($this->created_at, $this->attributes)) $data[$this->created_at] = Date::timestamp();
         // if (array_search($this->updated_at, $this->attributes)) $data[$this->updated_at] = Date::timestamp();
