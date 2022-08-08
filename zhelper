@@ -1,5 +1,5 @@
 <?php
-// error_reporting(0);
+// error_reporting(E_ALL);
 define('BASE_PATH', __DIR__);
 include('zFramework/modules/Functions.php');
 spl_autoload_register(function ($class) {
@@ -19,7 +19,7 @@ function reloadDatabases()
 {
     global $connected_databases;
     $connected_databases = [];
-    return include('database/connections.php');
+    return include(BASE_PATH . '/database/connections.php');
 }
 
 function commandParser($commands = null)
@@ -136,11 +136,11 @@ class Make
 
 class Db
 {
-    private function existsTable($dbname, $findTable)
+    private function existsTable($db, $dbname, $findTable)
     {
         global $databases;
 
-        $tables = $databases[$dbname]->query("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = '" . $dbname . "'")->fetchAll(\PDO::FETCH_ASSOC);
+        $tables = $databases[$db]->query("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = '" . $dbname . "'")->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
         if (in_array($findTable, $tables)) return true;
         return false;
@@ -149,7 +149,8 @@ class Db
     public function migrate()
     {
         global $databases, $args;
-        $migrations = glob('database/migrations/*.php');
+
+        $migrations = glob(BASE_PATH . '/database/migrations/customer/*.php');
 
         $MySQL_defines = [
             'CURRENT_TIMESTAMP'
@@ -161,34 +162,37 @@ class Db
             $class = include($inc);
             $class = str_replace(['.php'], '', ucfirst(@end(explode('/', $inc))));
             if (!class_exists($class)) die(text('There are not migrate class.', 31));
+            if (!isset($databases[$class::$db])) continue;
 
             // settings
             $columns = $class::columns();
 
-            // Setting up 
+            // Setting up
             if (strlen($key = array_search('timestamps', $columns))) {
                 unset($columns[$key]);
                 $columns = array_merge($columns, [
-                    'updated_at' => ['required', 'datetime', 'default:CURRENT_TIMESTAMP', 'onupdate'],
-                    'created_at' => ['required', 'datetime', 'default:CURRENT_TIMESTAMP'],
+                    'gun_tarih' => ['required', 'datetime', 'default:CURRENT_TIMESTAMP', 'onupdate'],
+                    'kay_tarih' => ['required', 'datetime', 'default:CURRENT_TIMESTAMP'],
                 ]);
             }
 
             if (strlen($key = array_search('softDelete', $columns))) {
                 unset($columns[$key]);
-                $columns = array_merge($columns, ['deleted_at' => ['nullable', 'datetime', 'default']]);
+                $columns = array_merge($columns, ['sil_tarih' => ['nullable', 'datetime', 'default']]);
             }
             //
 
             $charset = $class::$charset ?? null;
             $table = $class::$table;
             $db = $databases[$class::$db];
+            $dbname = $db->query('select database()')->fetchColumn();
             //
             text("\n$table migrating:", 33);
 
             $dropColumns = [];
 
-            if (!$this->existsTable($class::$db, $table)) $create_penetration = true;
+
+            if (!$this->existsTable($class::$db, $dbname, $table)) $create_penetration = true;
 
             if ($args['firstCommand'] == 'fresh' || $create_penetration) {
                 $initColumnName = "table_initilazing";
@@ -201,7 +205,6 @@ class Db
 
             $tableAttributes = $db->query("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
             foreach ($tableAttributes as $val) if (!isset($columns[$val])) $dropColumns[] = $val;
-
 
             $lastColumn = null;
             foreach ($columns as $name => $val) {
@@ -231,7 +234,6 @@ class Db
                         case 'unique':
                             $data['extras'][] = " ADD UNIQUE (`$name`) ";
                             break;
-
 
                             # String: start
                         case 'text':
@@ -316,6 +318,7 @@ class Db
                 $executeType = 0;
                 try {
                     $tryAdd = $db->exec($buildSQL);
+                    // print_r($buildSQL);
                     if (strlen($tryAdd)) $executeType = 1;
                     else throw new \PDOException('TRY MODIFY', 1060);
                 } catch (\PDOException $tryAddEx) {
@@ -404,42 +407,6 @@ class Run
         echo str_repeat("\n", 100);
         echo "\e[33mServer running on \e[32m`" . getHostName() . "`\e[33m host: \e[31m\n";
         shell_exec("php -S $server:$port");
-    }
-}
-
-use Workerman\Worker;
-
-class Ws
-{
-    public function __construct()
-    {
-        $config = include('config/app.php');
-        $config = $config['ws'];
-
-        $tcp_worker = new Worker($config['protocol'] . '://' . $config['server'] . ':' . $config['port']);
-        $tcp_worker->count = $config['worker-count'];
-
-        $tcp_worker->onConnect = function ($connection) {
-            text("($connection->id) New Connection", 32);
-        };
-
-        $tcp_worker->onMessage = function ($client, $data) {
-            $parseData = json_decode($data, true);
-            parse_str($parseData[1], $parseData[1]);
-
-            $ws = (object) [/*'client' => $client,*/'data' => $parseData[0], 'args' => $parseData[1], 'response' => 'NULL'];
-            include('ws/api.php');
-
-            if (gettype($ws->response) != 'string') $ws->response = json_encode($ws->response, JSON_UNESCAPED_UNICODE);
-            $client->send($ws->response);
-        };
-
-        $tcp_worker->onClose = function ($connection) {
-            text("($connection->id) Connection Close", 31);
-        };
-
-        echo "\e[33mWebSocket running on \e[32m`" . getHostName() . "`\e[33m host: \e[31m\n";
-        Worker::runAll();
     }
 }
 

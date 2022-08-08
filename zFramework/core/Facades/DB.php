@@ -361,6 +361,11 @@ class DB
         return $this;
     }
 
+    public function reset()
+    {
+        return $this->resetBuild();
+    }
+
     private function run($type = "select")
     {
         $r = self::prepare(self::buildSQL($type));
