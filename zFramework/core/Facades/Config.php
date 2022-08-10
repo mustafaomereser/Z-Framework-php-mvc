@@ -64,13 +64,13 @@ class Config
      * Update Config set veriables.
      * @return void
      */
-    public static function set(string $config, array $sets): void
+    public static function set(string $config, array $sets)
     {
         $path = self::parseUrl($config, true)[0];
         $arr = self::get($config);
 
         foreach ($sets as $key => $set)
-            if (!empty($set)) $arr[$key] = $set;
+            if ($set !== 'CONF_VAR_UNSET') $arr[$key] = $set;
             else unset($arr[$key]);
 
         file_put_contents(strstr($path, '.php') ? $path : "$path.php", "<?php \nreturn " . var_export($arr, true) . ";");
