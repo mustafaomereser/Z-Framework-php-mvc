@@ -4,7 +4,7 @@
 function MySQLcreateDatabase($host = "localhost", $dbname, $user, $pass = null)
 {
     global $databases;
-    return $databases[$dbname] = ["mysql:host=$host;dbname=$dbname;charset=utfmb4", $user, $pass];
+    return $databases[$dbname] = ["mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass];
 }
 
 // Get project base path.
