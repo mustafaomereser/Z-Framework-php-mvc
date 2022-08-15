@@ -63,7 +63,8 @@ class DB
 
     public function tables()
     {
-        $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $this->db])->fetchAll(\PDO::FETCH_ASSOC);
+        $dbname = $this->prepare('select database()')->fetchColumn();
+        $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
         return $tables;
     }
@@ -246,10 +247,17 @@ class DB
         $replaced_key = str_replace(".", "_", $key);
 
         if (strlen((string) @$this->buildQuery['where']) == 0) $trim = true;
-        @$this->buildQuery['where'] .= " $prev $key $operator " . ($value ? ":$replaced_key" : null);
+        @$this->buildQuery['where'] .= " $prev $key $operator " . ($value ? ":$replaced_key" : (string) $value);
         if (@$trim) @$this->buildQuery['where'] = ltrim($this->buildQuery['where'], " $prev");
 
         if (!empty($value)) $this->buildQuery['data'][$replaced_key] = $value;
+        return $this;
+    }
+
+    public function whereRaw($sql, $prev = "AND")
+    {
+        // @$this->buildQuery['where'] .= " $sql ";
+        $this->where('', $sql, '', $prev);
         return $this;
     }
 
@@ -329,7 +337,7 @@ class DB
         return @$this->buildQuery['groupBy'] ? " GROUP BY " . $this->buildQuery['groupBy'] : null;
     }
 
-    private function buildSQL($type = "select")
+    public function buildSQL($type = "select")
     {
         switch ($type) {
             case 'select':

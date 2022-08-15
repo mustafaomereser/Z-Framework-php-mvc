@@ -26,7 +26,7 @@ class File
     private static function createName(string $name): string
     {
         $ext = @end(explode(".", $name));
-        return uniqid('file-', true) . ".$ext";
+        return "$name---" . uniqid('file-', true) . ".$ext";
     }
 
     /**

@@ -113,6 +113,24 @@ function abort()
     return call_user_func_array([zFramework\Core\Helpers\Http::class, 'abort'], func_get_args());
 }
 
+// Get current uri but with parse
+function getQuery($adds = [], $except = [], $string = true)
+{
+    parse_str($_SERVER['QUERY_STRING'], $output);
+
+    //
+    foreach ($except as $key => $unset)
+        if (is_array($unset)) foreach ($unset as $f) unset($output[$key][$f]);
+        else unset($output[$unset]);
+
+    foreach ($adds as $key => $add) $output[$key] = $add;
+    //
+
+    if ($string) return "?" . http_build_query($output);
+
+    return $output;
+}
+
 // Current Request query.
 function request($name = null, $val = NULL)
 {
