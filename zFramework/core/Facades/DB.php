@@ -265,7 +265,7 @@ class DB
     {
         // init search for softDelete
         $this->isSoftDelete(null, function () {
-            if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where($this->deleted_at, 'IS NULL');
+            if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where("$this->table.$this->deleted_at", 'IS NULL');
         });
 
         $where = @$this->buildQuery['where'];
