@@ -18,5 +18,7 @@ return [
     'crypt'    => [
         'key'  => 'cryptkey',
         'salt' => 'ThisSaltIsSecret'
-    ]
+    ],
+
+    'version'  => '1.0.0'
 ];

@@ -152,10 +152,10 @@ class Route
             case 'string':
                 $callback = explode('@', $callback);
                 $findController = strtok(findFile($callback[0], 'php', 'App\Controllers'), '.');
-                $callback = [new $findController(), $callback[1]];
+                $callback = [new $findController($callback[1]), $callback[1]];
                 break;
             case 'array':
-                $callback = [new $callback[0](), $callback[1]];
+                $callback = [new $callback[0]($callback[1]), $callback[1]];
                 break;
         }
 

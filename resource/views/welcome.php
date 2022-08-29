@@ -72,8 +72,11 @@ use zFramework\Core\Facades\Lang;
                 </ul>
             </div>
         </div>
+        <div class="text">
+            <b>Framework:</b> v<?= FRAMEWORK_VERSION ?><br />
+            <b>App:</b> v<?= config('app.version') ?>
+        </div>
     </div>
-
 </body>
 
 </html>
