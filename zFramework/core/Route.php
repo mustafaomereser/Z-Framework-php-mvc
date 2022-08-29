@@ -151,8 +151,8 @@ class Route
         switch (gettype($callback)) {
             case 'string':
                 $callback = explode('@', $callback);
-                $findController = strtok(findFile($callback[0], 'php', 'App\Controllers'), '.');
-                $callback = [new $findController($callback[1]), $callback[1]];
+                $callback[0] = strtok(findFile($callback[0], 'php', 'App\Controllers'), '.');
+                $callback = [new $callback[0]($callback[1]), $callback[1]];
                 break;
             case 'array':
                 $callback = [new $callback[0]($callback[1]), $callback[1]];

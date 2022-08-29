@@ -7,9 +7,9 @@ use zFramework\Core\Abstracts\Controller;
 class HomeController extends Controller
 {
 
-    public function __construct()
+    public function __construct($method)
     {
-        //
+        // echo $method;
     }
 
     /** Index page | GET: /

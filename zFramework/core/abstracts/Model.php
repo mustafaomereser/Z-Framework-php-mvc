@@ -22,5 +22,6 @@ abstract class Model extends DB
     {
         parent::__construct(@$this->db);
         parent::table($this->table);
+        $this->reset();
     }
 }

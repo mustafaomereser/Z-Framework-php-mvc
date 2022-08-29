@@ -15,6 +15,17 @@ class User extends Model
     public $table = "users";
     public $guard = ['password', 'api_token', 'deleted_at', 'created_at'];
 
+
+    // public function beginQuery()
+    // {
+    //     return $this->where('id', '=', 1);
+    // }
+
+    public function friends()
+    {
+        return $this->getPrimary();
+    }
+
     public function getAttributes()
     {
         return [$this->attributes, $this->attrCount];

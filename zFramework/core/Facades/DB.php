@@ -12,6 +12,7 @@ class DB
     private $table;
     private $buildQuery = [];
     private $cache = [];
+    public $data = null;
     public $lastID = 0;
 
     public $attributes = [];
@@ -31,7 +32,7 @@ class DB
     {
         if (!count($args)) $args = $this->cache['buildQuery']['data'] ?? [];
         foreach ($this->buildQuery['data'] ?? [] as $key => $val) $args[$key] = $val;
-        if (isset($this->observe)) return call_user_func_array([new $this->observe(), 'observer_router'], [$name, $args]);
+        if (isset($this->observe)) return call_user_func_array([new $this->observe(), 'router'], [$name, $args]);
     }
 
     private function db()
@@ -58,6 +59,7 @@ class DB
     {
         $e = $this->db()->prepare($sql);
         $e->execute($this->buildQuery['data'] ?? ($data ?? []));
+        $this->data = $e;
         return $e;
     }
 
@@ -235,6 +237,12 @@ class DB
         return $class ? (object) $return : $return;
     }
 
+    public function getPrimary()
+    {
+        if (@$primary = $this->data[$this->primary]) return $primary;
+        return new \Exception("This object haven't a primary key.");
+    }
+
     // Build
     public function select($select)
     {
@@ -371,7 +379,9 @@ class DB
 
     public function reset()
     {
-        return $this->resetBuild();
+        $this->resetBuild();
+        $this->beginQuery();
+        return $this;
     }
 
     private function run($type = "select")
