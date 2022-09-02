@@ -216,7 +216,6 @@ class Route
     }
     // Groups: end
 
-
     static $api_logged_in = false;
     public static function api_user(int $type = 0, $token = '')
     {

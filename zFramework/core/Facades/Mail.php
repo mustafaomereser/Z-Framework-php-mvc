@@ -58,7 +58,7 @@ class Mail
         if (!isset(self::$toMail)) throw new \Exception(_l('errors.mail.must-set-a-mail'));
 
         self::$mail->addAddress(self::$toMail);
-        self::$mail->Subject = @$data['subject'];
+        self::$mail->Subject = Config::get('mail.subject') . (@$data['subject']);
         self::$mail->msgHTML(@$data['message']);
         self::$mail->AltBody = @$data['altbody'];
         foreach ($data['attachements'] ?? [] as $attach) self::$mail->addAttachment($attach);
