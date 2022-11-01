@@ -220,7 +220,9 @@ class DB
             'item_count' => $row_count,
             'shown' => ($start_count + 1) . " / " . (($per_page_count * $current_page) >= $row_count ? $row_count : ($per_page_count * $current_page)),
             'start' => ($start_count + 1),
-            'links' => function () use ($max_page_count, $current_page, $url, $uniqueID) { ?>
+            'links' => function ($view) use ($max_page_count, $current_page, $url, $uniqueID) {
+                if ($view) return view($view, compact('max_page_count', 'current_page', 'url', 'uniqueID'));
+?>
             <ul class="pagination">
                 <?php for ($x = 1; $x <= $max_page_count; $x++) : ?>
                     <li class="<?= $x == $current_page ? 'active' : null ?>">
