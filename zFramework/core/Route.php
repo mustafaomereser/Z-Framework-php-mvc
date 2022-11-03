@@ -135,7 +135,7 @@ class Route
 
 
         // Middlewares
-        Middleware::middleware($options['middlewares'] ?? []);
+        if (isset($options['middlewares'])) Middleware::middleware($options['middlewares']);
         //
 
         // Verify
