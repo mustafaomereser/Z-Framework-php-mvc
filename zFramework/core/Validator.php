@@ -117,7 +117,7 @@ class Validator
                 }
 
                 if ($ok) {
-                    if ($dataValue) $statics[$dataKey] = $dataValue;
+                    $statics[$dataKey] = $dataValue;
                     // $statics[$dataKey]['value'] = $dataValue;
                     // $statics[$dataKey]['length'] = $length;
                     // $statics[$dataKey]['type'] = $type;
