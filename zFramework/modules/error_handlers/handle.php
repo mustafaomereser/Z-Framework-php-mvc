@@ -170,8 +170,8 @@ function errorHandler($data)
     </div>
 
     <script>
-        let error_buttons = document.querySelectorAll('[data-button]');
-        let codes = document.querySelectorAll('.code-block');
+        error_buttons = document.querySelectorAll('[data-button]');
+        codes = document.querySelectorAll('.code-block');
 
         function selectError(id) {
             error_buttons.forEach(item => item.classList.remove('active'));
