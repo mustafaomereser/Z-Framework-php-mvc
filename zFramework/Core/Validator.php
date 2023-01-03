@@ -17,7 +17,7 @@ class Validator
      * @param array $attributeNames
      * @return string|array
      */
-    public static function validate(array $data = null, array $validate = [], array $attributeNames = [])
+    public static function validate(array $data = null, array $validate = [], array $attributeNames = [], string $customRedirect = null)
     {
         if (!$data) $data = $_REQUEST;
 
@@ -133,7 +133,9 @@ class Validator
         if (count($errors)) {
             if (Http::isAjax()) abort(400, Response::json($errors));
             foreach ($errors as $key => $error_list) foreach ($error_list as $error) Alerts::danger($error);
-            back();
+
+            if (!$customRedirect) back();
+            else redirect($customRedirect);
         }
 
         return $statics;
