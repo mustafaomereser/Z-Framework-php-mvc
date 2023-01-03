@@ -182,7 +182,16 @@ class DB
     {
         $fetch = \PDO::FETCH_ASSOC;
         if ($class) $fetch = \PDO::FETCH_CLASS;
-        return self::run()->fetchAll($fetch);
+
+        $get = self::run()->fetchAll($fetch);
+
+        // foreach ($get as $key => $val) { 
+        //     $get[$key]['test'] = function () use ($val) {
+        //         echo $val['id'];
+        //     };
+        // }
+
+        return $get;
     }
 
     public function count()
