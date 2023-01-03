@@ -12,6 +12,13 @@ class Auth
      */
     static $user = null;
 
+    public static function init()
+    {
+        if (!Auth::check()) {
+            if ($api_token = @$_COOKIE['auth_stay_in']) Auth::attempt(['api_token' => Crypter::decode($api_token)]);
+        }
+    }
+
     /**
      * Login from a User model result array.
      * @param array $user
@@ -45,6 +52,7 @@ class Auth
     {
         self::$user = null;
         unset($_SESSION['user_id']);
+        setcookie('auth_stay_in', null, time() - 60);
         return true;
     }
 
@@ -78,15 +86,15 @@ class Auth
     /**
      * Attempt for login.
      * @param array $fields
-     * @param bool $getUser
+     * @param bool $staymein
      * @return bool
      */
-    public static function attempt(array $fields = [], bool $getUser = false): bool
+    public static function attempt(array $fields = [], bool $staymein = false): bool
     {
         if (self::check()) return false;
 
         $user = new User;
-        $user = $user->select('id');
+        $user = $user->select('id, api_token');
         foreach ($fields as $key => $val) {
             if ($key == 'password') $val = Crypter::encode($val);
             $user->where($key, '=', $val);
@@ -95,7 +103,10 @@ class Auth
 
         if (@$user['id']) {
             $_SESSION['user_id'] = $user['id'];
-            return $getUser ? $user : true;
+
+            if ($staymein) setcookie('auth_stay_in', Crypter::encode($user['api_token']), (time() + (86400 * 360)));
+
+            return true;
         }
 
         return false;

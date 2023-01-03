@@ -2,8 +2,6 @@
 
 namespace zFramework\Core\Facades;
 
-use zFramework\Core\Facades\DB;
-
 class DBColumns
 {
     public static function columnsMaxLen($model)

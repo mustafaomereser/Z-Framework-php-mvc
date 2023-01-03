@@ -6,7 +6,7 @@ use zFramework\Core\Facades\Auth;
 
 class Guest
 {
-    public function __construct()
+    public function attempt()
     {
         if (!Auth::check()) return true;
         return false;

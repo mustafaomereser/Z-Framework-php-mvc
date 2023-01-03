@@ -13,6 +13,7 @@ class User extends Model
     // public $observe = UserObserver::class;
 
     public $table = "users";
+    public $as    = "users_table";
     public $guard = ['password', 'api_token', 'deleted_at', 'created_at'];
 
 

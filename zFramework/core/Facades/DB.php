@@ -115,8 +115,10 @@ class DB
 
         $sql_set = '';
         foreach ($sets as $key => $_) {
-            $sql_set .= "$key = :$key, ";
-            $this->buildQuery['data'][$key] = $_;
+            $replaced_key = $key . "_" . uniqid();
+
+            $sql_set .= "$key = :$replaced_key, ";
+            $this->buildQuery['data'][$replaced_key] = $_;
         }
         $this->buildQuery['sets'] = " SET " . rtrim($sql_set, ', ') . " ";
 
@@ -167,11 +169,13 @@ class DB
         return self::limit(1)->get($class)[0] ?? null;
     }
 
-    public function firstOrFail()
+    public function firstOrFail($action = null)
     {
         $row = call_user_func_array([$this, 'first'], func_get_args()) ?? [];
         if (count((array) $row)) return $row;
-        abort(404);
+
+        if (gettype($action) == 'object') return $action();
+        abort(404, $action);
     }
 
     public function get($class = false)
@@ -257,9 +261,29 @@ class DB
         return $this;
     }
 
+    public function selectAutoBuild()
+    {
+        $select = "";
+
+        $this->buildQuery['automatic_select_builder'][$this->table] = [
+            'as'      => ($this->as ? $this->as : $this->table),
+            'columns' => array_diff($this->attributes, ($this->guard ?? []))
+        ];
+
+        foreach ($this->buildQuery['automatic_select_builder'] as $table => $data) {
+            $as = $data['as'];
+            foreach ($data['columns'] as $column) $select .= "$as.$column AS " . $column . "_$as, ";
+        }
+
+        $this->buildQuery['select'] = rtrim($select, ', ');
+
+        return $this;
+    }
+
+
     public function where($key, $operator, $value = null, $prev = "AND")
     {
-        $replaced_key = str_replace(".", "_", $key);
+        $replaced_key = str_replace(".", "_", $key) . "_" . uniqid();
 
         if (strlen((string) @$this->buildQuery['where']) == 0) $trim = true;
         @$this->buildQuery['where'] .= " $prev $key $operator " . ($value ? ":$replaced_key" : (string) $value);
@@ -283,7 +307,7 @@ class DB
     {
         // init search for softDelete
         $this->isSoftDelete(null, function () {
-            if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where("$this->table.$this->deleted_at", 'IS NULL');
+            if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where(($this->as ? $this->as : $this->table) . ".$this->deleted_at", 'IS NULL');
         });
 
         $where = @$this->buildQuery['where'];
@@ -322,12 +346,28 @@ class DB
         return $limit ? " LIMIT $limit " : null;
     }
 
-    public function join($type = null, $table = "", $onArray = [])
+    public function join($type = null, $model = null, $onArray = [])
     {
+        if (!$model) new \Exception('Model can not be empty!');
         if ($type) $type = strtoupper($type);
 
+        $model = new $model();
+        $table = $model->table;
+
         if (!in_array($type, [null, 'LEFT', 'LEFT OUTER', 'OUTER', 'RIGHT', 'RIGHT OUTER', 'FULL', 'FULL OUTER ', 'INNER'])) throw new \Throwable('This not acceptable join type.');
-        $this->buildQuery['joins'][] = ($type ? "$type " : null) . "JOIN $table ON " . $onArray[0] . " " . $onArray[1] . " " . $onArray[2];
+        $this->buildQuery['joins'][] = ($type ? "$type " : null) . "JOIN $table" . ($model->as ? " AS $model->as" : null) . " ON " . $onArray[0] . " " . $onArray[1] . " " . $onArray[2];
+
+
+        // get table's info
+        $getinfo = new DB;
+        $getinfo = $getinfo->table($table);
+        $this->buildQuery['automatic_select_builder'][$table] = [
+            'as'      => ($model->as ? $model->as : $table),
+            'columns' => array_diff($getinfo->attributes, ($model->guard ?? []))
+        ];
+        $getinfo = null;
+        //
+
         return $this;
     }
 
@@ -357,9 +397,11 @@ class DB
 
     public function buildSQL($type = "select")
     {
+        $as = $this->as ?? $this->table;
+
         switch ($type) {
             case 'select':
-                $select = $this->buildQuery['select'] ?? ("$this->table." . implode(", $this->table.", array_diff($this->attributes, $this->guard ?? [])));
+                $select = $this->buildQuery['select'] ?? ("$as." . implode(", $as.", array_diff($this->attributes, $this->guard ?? [])));
                 $type = "SELECT $select FROM";
                 break;
             case 'delete':
@@ -375,7 +417,7 @@ class DB
                 abort(400, 'something wrong, buildSQL invalid type.');
         }
 
-        $sql = trim(str_replace(['  '], [' '], "$type $this->table" . @$sets . $this->getJoins() . $this->getWhere() . $this->getGroupBy() . $this->getOrderBy() . $this->getLimit()));
+        $sql = trim(str_replace(['  '], [' '], "$type $this->table" . ($as ? " AS $as " : null) . @$sets . $this->getJoins() . $this->getWhere() . $this->getGroupBy() . $this->getOrderBy() . $this->getLimit()));
         // echo "$sql <br>";
         return $sql;
     }

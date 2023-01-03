@@ -6,7 +6,7 @@ use zFramework\Core\Facades\Lang;
 
 class Language
 {
-    public function __construct()
+    public function attempt()
     {
         Lang::locale($_SESSION['lang'] ?? null);
         return true;

@@ -4,6 +4,8 @@ namespace App\Controllers;
 
 use App\Models\User;
 use zFramework\Core\Abstracts\Controller;
+use zFramework\Core\Crypter;
+use zFramework\Core\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -11,7 +13,7 @@ class HomeController extends Controller
     public function __construct($method)
     {
         // echo $method;
-        $this->user = new User;
+        // $this->user = new User;
     }
 
     /** Index page | GET: /
@@ -19,8 +21,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        print_r($this->user->where('id', '=', 1)->get());
-
+        // Auth::attempt(['username' => 'tex', 'password' => '123'], true);
+        // print_r($this->user->where('users_table.id', '=', 1)->join('LEFT', \App\Models\Posts::class, ['posts.user_id', '=', 'users_table.id'])->selectAutoBuild()->get());
         return view('welcome');
     }
 

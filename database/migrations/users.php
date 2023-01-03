@@ -13,6 +13,7 @@ class Users
             'password' => ['varchar:50'],
             'email' => ['varchar:50', 'unique'],
             'api_token' => ['varchar:60', 'required'],
+            
             'timestamps',
             'softDelete',
         ];

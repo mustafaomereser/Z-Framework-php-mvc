@@ -6,7 +6,7 @@ use zFramework\Core\Facades\Auth as FacadesAuth;
 
 class Auth
 {
-    public function __construct()
+    public function attempt()
     {
         if (FacadesAuth::check()) return true;
         return false;

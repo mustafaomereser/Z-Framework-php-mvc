@@ -16,7 +16,7 @@ class Middleware
 
         foreach ($middlewares as $middleware) {
             $call = new $middleware();
-            if (!call_user_func_array([$call, '__construct'], [])) {
+            if (!call_user_func_array([$call, 'attempt'], [])) {
                 $declined[] = $middleware;
                 if (!$callback) call_user_func_array([$call, 'error'], []);
             }
