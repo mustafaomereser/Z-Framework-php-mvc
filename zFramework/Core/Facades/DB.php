@@ -295,7 +295,7 @@ class DB
         $replaced_key = str_replace(".", "_", $key) . "_" . uniqid();
 
         if (strlen((string) @$this->buildQuery['where']) == 0) $trim = true;
-        @$this->buildQuery['where'] .= " $prev $key $operator " . ($value ? ":$replaced_key" : (string) $value);
+        @$this->buildQuery['where'] .= " $prev " . (!strstr($key, '.') ? ($this->as ? $this->as : $this->table) . "." : null) . "$key $operator " . ($value ? ":$replaced_key" : (string) $value);
         if (@$trim) @$this->buildQuery['where'] = ltrim($this->buildQuery['where'], " $prev");
 
         if (!empty($value)) $this->buildQuery['data'][$replaced_key] = $value;
