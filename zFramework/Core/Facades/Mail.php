@@ -8,7 +8,7 @@ use PHPMailer\PHPMailer\SMTP;
 class Mail
 {
     static $mail;
-    static $toMail;
+    static $toMail = [];
     /**
      * Initalize settings.
      */
@@ -44,7 +44,7 @@ class Mail
     public static function to(string $toMail): self
     {
         if (!filter_var($toMail, FILTER_VALIDATE_EMAIL)) throw new \Exception(_l('errors.mail.not-validate-mail'));
-        self::$toMail = $toMail;
+        self::$toMail[] = $toMail;
         return new self();
     }
 
@@ -57,13 +57,14 @@ class Mail
     {
         if (!isset(self::$toMail)) throw new \Exception(_l('errors.mail.must-set-a-mail'));
 
-        self::$mail->addAddress(self::$toMail);
         self::$mail->Subject = Config::get('mail.subject') . (@$data['subject']);
         self::$mail->msgHTML(@$data['message']);
         self::$mail->AltBody = @$data['altbody'];
+
+        foreach (self::$toMail as $mail) self::$mail->addAddress($mail);
         foreach ($data['attachements'] ?? [] as $attach) self::$mail->addAttachment($attach);
 
-        self::$toMail = null;
+        self::$toMail = [];
         if (self::$mail->send()) return true;
         return false;
     }

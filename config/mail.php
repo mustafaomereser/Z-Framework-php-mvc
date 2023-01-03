@@ -13,6 +13,6 @@ return [
 
 
     'subject' => '',
-    'from'     => ['First Last', 'from@example.com'],
-    'reply'    => ['First Last', 'replyto@example.com']
+    'from'    => ['First Last', 'from@example.com'],
+    'reply'   => ['First Last', 'replyto@example.com']
 ];
