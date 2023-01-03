@@ -1,9 +1,11 @@
 <?php
 
+namespace App\Middlewares;
+
 use zFramework\Core\Middleware;
 
 $list = [
-    App\Middlewares\Language::class
+    Language::class
 ];
 
 Middleware::middleware($list);

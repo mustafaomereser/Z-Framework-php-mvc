@@ -17,12 +17,21 @@ class Route
     static $csrfNoCheck = false; // if that be true csrf not match return always true 
     //
 
-    public static function findRoute($name, $data = [])
+    public static function findRoute($name, $data = [], $return_bool = false)
     {
-        if (!isset(self::$routes[$name])) return $name;
-        $url = self::$routes[$name]['url'];
-        foreach ($data as $key => $val) $url = str_replace("{" . $key . "}", $val, $url);
-        return (host() . script_name()) . $url;
+        $route_is_exists = true;
+        $return = $name;
+        if (!isset(self::$routes[$name])) $route_is_exists = false;
+
+        if ($route_is_exists) {
+            $url = self::$routes[$name]['url'];
+            foreach ($data as $key => $val) $url = str_replace("{" . $key . "}", $val, $url);
+
+            $return = (host() . script_name()) . $url;
+        }
+
+        if ($return_bool) return $route_is_exists;
+        return $return;
     }
 
     public static function redirect($url, $to)
@@ -118,7 +127,8 @@ class Route
 
         foreach ($uri as $key => $val) {
             $urlVal = @$url[$key];
-            if ((!$val || !$urlVal) || (!strstr($urlVal, '{') || !strstr($urlVal, '}'))) continue;
+
+            if ((((int) $val !== 0 && !$val) || !$urlVal) || (!strstr($urlVal, '{') || !strstr($urlVal, '}'))) continue;
 
             $url[$key] = $val;
             $parameters[str_replace(['{', '}'], '', $urlVal)] = $val;
@@ -190,8 +200,6 @@ class Route
     }
 
     // Groups: Start
-    static $groups = [];
-    static $groupsReverse = [];
     public static function pre(string $url): self
     {
         self::$groups['prefix_URL'] = self::$prefix_URL . $url;
@@ -204,14 +212,17 @@ class Route
         return new self();
     }
 
+    static $groups = [];
     public static function group($callback)
     {
+        $groupsReverse = [];
         foreach (self::$groups as $key => $setting) {
-            self::$groupsReverse[$key] = self::${$key};
+            $groupsReverse[$key] = self::${$key};
             self::${$key} = $setting;
         }
         $callback = $callback();
-        foreach (self::$groupsReverse as $key => $reverse) self::${$key} = $reverse;
+        foreach ($groupsReverse as $key => $reverse) self::${$key} = $reverse;
+        self::$groups = [];
         return $callback;
     }
     // Groups: end

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\User;
 use zFramework\Core\Abstracts\Controller;
 
 class HomeController extends Controller
@@ -10,6 +11,7 @@ class HomeController extends Controller
     public function __construct($method)
     {
         // echo $method;
+        $this->user = new User;
     }
 
     /** Index page | GET: /
@@ -17,6 +19,8 @@ class HomeController extends Controller
      */
     public function index()
     {
+        print_r($this->user->where('id', '=', 1)->get());
+
         return view('welcome');
     }
 

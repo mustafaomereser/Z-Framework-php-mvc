@@ -220,6 +220,11 @@ class DB
             'item_count' => $row_count,
             'shown' => ($start_count + 1) . " / " . (($per_page_count * $current_page) >= $row_count ? $row_count : ($per_page_count * $current_page)),
             'start' => ($start_count + 1),
+
+            'per_page' => $per_page_count,
+            'max_page_count' => $max_page_count,
+            'current_page' => $current_page,
+
             'links' => function ($view) use ($max_page_count, $current_page, $url, $uniqueID) {
                 if ($view) return view($view, compact('max_page_count', 'current_page', 'url', 'uniqueID'));
 ?>
@@ -264,9 +269,12 @@ class DB
         return $this;
     }
 
-    public function whereRaw($sql, $prev = "AND")
+    public function whereRaw($sql, $data = [], $prev = "AND")
     {
         // @$this->buildQuery['where'] .= " $sql ";
+
+        $this->buildQuery['data'] = array_merge(($this->buildQuery['data'] ?? []), $data);
+
         $this->where('', $sql, '', $prev);
         return $this;
     }
@@ -318,7 +326,7 @@ class DB
     {
         if ($type) $type = strtoupper($type);
 
-        if (!in_array($type, [null, 'LEFT', 'OUTER', 'RIGHT', 'FULL'])) throw new \Throwable('This not acceptable join type.');
+        if (!in_array($type, [null, 'LEFT', 'LEFT OUTER', 'OUTER', 'RIGHT', 'RIGHT OUTER', 'FULL', 'FULL OUTER ', 'INNER'])) throw new \Throwable('This not acceptable join type.');
         $this->buildQuery['joins'][] = ($type ? "$type " : null) . "JOIN $table ON " . $onArray[0] . " " . $onArray[1] . " " . $onArray[2];
         return $this;
     }
@@ -351,7 +359,7 @@ class DB
     {
         switch ($type) {
             case 'select':
-                $select = $this->buildQuery['select'] ?? implode(', ', array_diff($this->attributes, $this->guard ?? []));
+                $select = $this->buildQuery['select'] ?? ("$this->table." . implode(", $this->table.", array_diff($this->attributes, $this->guard ?? [])));
                 $type = "SELECT $select FROM";
                 break;
             case 'delete':
@@ -367,7 +375,7 @@ class DB
                 abort(400, 'something wrong, buildSQL invalid type.');
         }
 
-        $sql = trim(str_replace(['  '], [' '], "$type $this->table" . @$sets . $this->getJoins() . $this->getWhere() . $this->getOrderBy() . $this->getGroupBy() . $this->getLimit()));
+        $sql = trim(str_replace(['  '], [' '], "$type $this->table" . @$sets . $this->getJoins() . $this->getWhere() . $this->getGroupBy() . $this->getOrderBy() . $this->getLimit()));
         // echo "$sql <br>";
         return $sql;
     }

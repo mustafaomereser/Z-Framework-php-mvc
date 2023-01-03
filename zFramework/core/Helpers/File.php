@@ -80,7 +80,7 @@ class File
             if (isset($options['size']) && is_numeric($options['size']))
                 if ($file['size'][$key] > $options['size']) {
                     $error++;
-                    Alerts::danger(Lang::get('errors.file.size', ['current-size' => human_filesize($file['size'][$key]), 'accept-size' => human_filesize($options['size'])]));
+                    Alerts::danger(Lang::get('errors.file.size', ['current-size' => self::humanFileSize($file['size'][$key]), 'accept-size' => self::humanFileSize($options['size'])]));
                 }
 
             if ($error) continue;
@@ -120,5 +120,18 @@ class File
         imagejpeg($target, str_replace(".$ext", '', $file) . "-$width" . "x" . "$height.$ext", 100);
 
         return self::removePublic($file);
+    }
+
+    /**
+     * Show human readable file size
+     * 
+     * @param float $bytes
+     * @param int $decimals
+     * @return string
+     */
+    public static function humanFileSize(float $bytes, int $decimals = 2): string
+    {
+        $factor = floor((strlen($bytes) - 1) / 3);
+        return sprintf("%.{$decimals}f", $bytes / pow(1024, $factor)) . @['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'][$factor];
     }
 }

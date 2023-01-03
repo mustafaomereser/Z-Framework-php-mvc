@@ -24,6 +24,18 @@ class Cache
         return $_SESSION['caching'][$name];
     }
 
+    /**
+     * Remove Cache from cache's name.
+     * 
+     * @param string $name
+     * @return bool
+     */
+    public static function remove(string $name): bool
+    {
+        unset($_SESSION['caching'][$name]);
+        return true;
+    }
+
     // public static function cache_view(string $view_name, string $view)
     // {
     //     return file_put_contents(self::$path . "\\views\\$view_name.html", $view);
