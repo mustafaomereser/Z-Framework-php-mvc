@@ -238,7 +238,8 @@ ALSO you can normal query like /1?test=true
         use softDelete; // (optional) if you are need soft delete a table's row use this. that mean delete you can not seen but not delete in db.
 
         public $table = "users";
-        public $db = "local"; // (optional) if you do not write that it's connect your first connection.
+        public $as    = "user_table"; // set new usable short or what are you want name.
+        public $db    = "local"; // (optional) if you do not write that it's connect your first connection.
 
 
         // do not show that columns but if you use ->select('guarded_column_name') you can see it
@@ -300,10 +301,7 @@ ALSO you can normal query like /1?test=true
     $user->paginate(20, 'request_id', true|false);
 
     // Joins example
-    $user->join('LEFT|RIGHT|OUTER|FULL|NULL', 'table_name', ['table_name.id', '=', 'this_table.id'])->get();
-                                                // You also set name
-    $user->join('LEFT|RIGHT|OUTER|FULL|NULL', 'table_name as name', ['name.id', '=', 'this_table.id'])->get();
-
+    $user->join('LEFT|RIGHT|OUTER|FULL|NULL', App\Models\User::class, ['table_name.id', '=', 'this_table.id'])->get();
 
     // retrn class output
     $...->get(true);
@@ -323,7 +321,7 @@ ALSO you can normal query like /1?test=true
     
     Auth::user() // (if logged in) get user
 
-    Auth::attempt(array) // example ['username' => 'test', 'password' => 'test']
+    Auth::attempt(array, true|false) // example ['username' => 'test', 'password' => 'test'], true (for stay in)
  
     Auth::id() // get user id
     
