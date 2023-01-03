@@ -2,8 +2,8 @@
 class {name}
 {
     static $charset = "utf8mb4_general_ci";
-    static $table = "{table}";
-    static $db = "{dbname}";
+    static $table   = "{table}";
+    static $db      = "{dbname}";
 
     public static function columns()
     {

@@ -173,26 +173,25 @@ class Db
             if (strlen($key = array_search('timestamps', $columns))) {
                 unset($columns[$key]);
                 $columns = array_merge($columns, [
-                    'gun_tarih' => ['required', 'datetime', 'default:CURRENT_TIMESTAMP', 'onupdate'],
-                    'kay_tarih' => ['required', 'datetime', 'default:CURRENT_TIMESTAMP'],
+                    'updated_at' => ['required', 'datetime', 'default:CURRENT_TIMESTAMP', 'onupdate'],
+                    'created_at' => ['required', 'datetime', 'default:CURRENT_TIMESTAMP'],
                 ]);
             }
 
             if (strlen($key = array_search('softDelete', $columns))) {
                 unset($columns[$key]);
-                $columns = array_merge($columns, ['sil_tarih' => ['nullable', 'datetime', 'default']]);
+                $columns = array_merge($columns, ['deleted_at' => ['nullable', 'datetime', 'default']]);
             }
             //
 
             $charset = $class::$charset ?? null;
-            $table = $class::$table;
-            $db = $databases[$class::$db];
-            $dbname = $db->query('select database()')->fetchColumn();
+            $table   = $class::$table;
+            $db      = $databases[$class::$db];
+            $dbname  = $db->query('select database()')->fetchColumn();
             //
             text("\n$table migrating:", 33);
 
             $dropColumns = [];
-
 
             if (!$this->existsTable($class::$db, $dbname, $table)) $create_penetration = true;
 
@@ -253,8 +252,11 @@ class Db
                         case 'char':
                             $data['type'] = " CHAR(" . ($switch[1] ?? 50) . ") ";
                             break;
-                            # String: end
 
+                        case 'json':
+                            $data['type'] = " JSON ";
+                            break;
+                            # String: end
 
                             # INT: start
                         case 'bigint':
@@ -284,7 +286,6 @@ class Db
                         case 'float':
                             $data['type'] = " FLOAT ";
                             break;
-
                             # INT: end
 
                             # Date: start
