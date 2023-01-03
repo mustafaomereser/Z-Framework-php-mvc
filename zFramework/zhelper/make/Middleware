@@ -4,7 +4,7 @@ namespace App\Middlewares{namespace};
 
 class {name}
 {
-    public function __construct()
+    public function attempt()
     {
         // middleware code
     }

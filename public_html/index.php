@@ -6,7 +6,7 @@
 define('BASE_PATH', dirname(__DIR__));
 
 // Initalize
-include(BASE_PATH . '/zFramework/Initalize.php');
+include(BASE_PATH . '/zFramework/initalize.php');
 
 // Run framework
 zFramework\Run::begin();
