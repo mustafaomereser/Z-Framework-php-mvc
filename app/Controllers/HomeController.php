@@ -13,7 +13,7 @@ class HomeController extends Controller
     public function __construct($method)
     {
         // echo $method;
-        // $this->user = new User;
+        $this->user = new User;
     }
 
     /** Index page | GET: /
@@ -22,7 +22,7 @@ class HomeController extends Controller
     public function index()
     {
         // Auth::attempt(['username' => 'tex', 'password' => '123'], true);
-        // print_r($this->user->where('users_table.id', '=', 1)->join('LEFT', \App\Models\Posts::class, ['posts.user_id', '=', 'users_table.id'])->selectAutoBuild()->get());
+        print_r($this->user->where('id', '=', 1)->buildSQL());
         return view('welcome');
     }
 
