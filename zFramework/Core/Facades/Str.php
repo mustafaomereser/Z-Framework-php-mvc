@@ -13,9 +13,25 @@ class Str
      */
     public static function limit(string $text, int $length = 50, string $continue = "..."): string
     {
-        if (strlen($text) > $length) $text = substr($text, 0, $length) . $continue;
+        if (strlen($text) > $length) $text = mb_substr($text, 0, $length) . $continue;
         return $text;
     }
+
+    /**
+     * Word Limit length a text
+     * @param string $text
+     * @param int $length
+     * @param string $continue
+     * @return string
+     */
+    public static function wordLimit(string $text, int $length = 3, string $continue = "..."): string
+    {
+        $return = [];
+        $words  = explode(' ', $text);
+        for ($x = 0; $x < $length; $x++) if (isset($words[$x])) $return[] = $words[$x];
+        return implode(' ', $return) . (count($words) > $length ? $continue : null);
+    }
+
 
     /**
      * Create Random String

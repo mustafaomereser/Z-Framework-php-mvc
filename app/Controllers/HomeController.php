@@ -4,8 +4,6 @@ namespace App\Controllers;
 
 use App\Models\User;
 use zFramework\Core\Abstracts\Controller;
-use zFramework\Core\Crypter;
-use zFramework\Core\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -21,8 +19,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        // Auth::attempt(['username' => 'tex', 'password' => '123'], true);
-        print_r($this->user->where('id', '=', 1)->buildSQL());
         return view('welcome');
     }
 

@@ -31,7 +31,7 @@ class Date
      */
     public static function format(string $date, string $format = 'd.m.Y'): string
     {
-        return date($format, (is_string($date) ? strtotime($date) : $date));
+        return $date ? date($format, (is_string($date) ? strtotime($date) : $date)) : '-';
     }
 
     /**

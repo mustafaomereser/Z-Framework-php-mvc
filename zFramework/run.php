@@ -56,6 +56,7 @@ class Run
 
             \zFramework\Core\Route::run();
             \zFramework\Core\Facades\Alerts::unset(); // forget alerts
+            \zFramework\Core\Facades\JustOneTime::unset(); // forget data
         } catch (\Throwable $errorHandle) {
             errorHandler($errorHandle);
         } catch (\Exception $errorHandle) {
