@@ -100,7 +100,12 @@ class Validator
 
                     case 'exists':
                         $db = new DB(@$parameters['db']);
-                        $exists = $db->table($val)->where(($parameters['cl'] ?? $dataKey), '=', $dataValue)->first() ?? [];
+                        $column = $parameters['cl'] ?? $dataKey;
+                        $exists = $db->table($val)->where($column, '=', $dataValue);
+
+                        if ($ex = @$parameters['ex']) $exists->where('id', '!=', $ex);
+
+                        $exists = $exists->first() ?? [];
                         if (count($exists)) {
                             $dataValue = $exists;
                             $ok = true;
@@ -109,7 +114,8 @@ class Validator
 
                     case 'unique':
                         $db = new DB(@$parameters['db']);
-                        if (!$db->table($val)->where(($parameters['cl'] ?? $dataKey), '=', $dataValue)->count()) $ok = true;
+                        $column = $parameters['cl'] ?? $dataKey;
+                        if (!$db->table($val)->where($column, '=', $dataValue)->count()) $ok = true;
                         break;
 
                     default:
