@@ -68,7 +68,7 @@ class Validator
                 switch ($key) {
                     case 'type':
                         if ($type == $val) $ok = true;
-                        else $errorData = ['now-type' => $val, 'must-type' => $type];
+                        else $errorData = ['now-type' => $type, 'must-type' => $val];
                         break;
 
                     case 'email':

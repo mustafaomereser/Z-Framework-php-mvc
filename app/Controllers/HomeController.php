@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\User;
 use zFramework\Core\Abstracts\Controller;
+use zFramework\Core\Facades\Mail;
 
 class HomeController extends Controller
 {

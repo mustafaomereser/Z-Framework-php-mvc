@@ -8,7 +8,10 @@ use PHPMailer\PHPMailer\SMTP;
 class Mail
 {
     static $mail;
+
     static $toMail = [];
+    static $cc     = [];
+    static $bcc    = [];
     /**
      * Initalize settings.
      */
@@ -37,7 +40,7 @@ class Mail
     }
 
     /**
-     * Select to mail
+     * add mail to list
      * @param string $toMail
      * @return self
      */
@@ -49,19 +52,73 @@ class Mail
     }
 
     /**
+     * @return self
+     */
+    public static function clearTo(): self
+    {
+        self::$toMail[] = [];
+        return new self();
+    }
+
+    /**
+     * add cc to list
+     * @param string $cc
+     * @return self
+     */
+    public static function cc(string $cc): self
+    {
+        if (!filter_var($cc, FILTER_VALIDATE_EMAIL)) throw new \Exception(_l('errors.mail.not-validate-mail'));
+        self::$cc[] = $cc;
+        return new self();
+    }
+
+    /**
+     * @return self
+     */
+    public static function clearCc(): self
+    {
+        self::$cc[] = [];
+        return new self();
+    }
+
+    /**
+     * add bcc to list
+     * @param string $bcc
+     * @return self
+     */
+    public static function bcc(string $bcc): self
+    {
+        if (!filter_var($bcc, FILTER_VALIDATE_EMAIL)) throw new \Exception(_l('errors.mail.not-validate-mail'));
+        self::$bcc[] = $bcc;
+        return new self();
+    }
+
+    /**
+     * @return self
+     */
+    public static function clearBcc(): self
+    {
+        self::$bcc[] = [];
+        return new self();
+    }
+
+
+    /**
      * Send Mail
      * @param array $data
      * @return bool
      */
     public static function send(array $data): bool
     {
-        if (!isset(self::$toMail)) throw new \Exception(_l('errors.mail.must-set-a-mail'));
+        if (!count(self::$toMail)) throw new \Exception(_l('errors.mail.must-set-a-mail'));
 
         self::$mail->Subject = Config::get('mail.subject') . (@$data['subject']);
         self::$mail->msgHTML(@$data['message']);
         self::$mail->AltBody = @$data['altbody'];
 
         foreach (self::$toMail as $mail) self::$mail->addAddress($mail);
+        foreach (self::$cc as $mail) self::$mail->AddCC($mail);
+        foreach (self::$bcc as $mail) self::$mail->AddBCC($mail);
         foreach ($data['attachements'] ?? [] as $attach) self::$mail->addAttachment($attach);
 
         self::$toMail = [];
