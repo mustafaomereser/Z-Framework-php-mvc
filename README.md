@@ -591,7 +591,8 @@ ALSO you can normal query like /1?test=true
     # Database Seeder:
     php zhelper db seed // output: seed all seeders.
     
-    # Database Seeder:
+    # Database Backup:
+    # you must set app.config.mysql.mysqldump path.
     php zhelper db backup local // output: backup db to /database/backups/mysql/...
 
     # cache delete
