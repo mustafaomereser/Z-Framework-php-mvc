@@ -21,24 +21,30 @@ class UserObserver extends Observer
     public function onupdate(array $args)
     {
         // Update before run that
-        echo "updating: " . $args['id'];
+
+        echo "updating:";
+        var_dump($args['where']);
+        var_dump($args['sets']);
     }
 
     public function onupdated(array $args)
     {
         // Update after run that
-        echo "updated:" . $args['id'];
+        echo "updated:";
+        var_dump($args);
     }
 
     public function ondelete(array $args)
     {
         // Delete before run that
-        echo "deleting: " . $args['id'];
+        echo "deleting:";
+        var_dump($args);
     }
 
     public function ondeleted(array $args)
     {
         // Delete after run that
-        echo "deleted: " . $args['id'];
+        echo "deleted:";
+        var_dump($args);
     }
 }

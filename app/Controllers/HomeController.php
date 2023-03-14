@@ -4,8 +4,6 @@ namespace App\Controllers;
 
 use App\Models\User;
 use zFramework\Core\Abstracts\Controller;
-use zFramework\Core\Facades\Mail;
-use zFramework\Core\Validator;
 
 class HomeController extends Controller
 {
@@ -23,6 +21,14 @@ class HomeController extends Controller
     {
         // or you can set model like `(new User)->get();`
 
+        echo "<pre>";
+        $users = (new User)->get();
+        foreach ($users as $user) {
+            print_r($user['posts']()->get());
+        }
+
+
+        exit;
         return view('welcome');
     }
 

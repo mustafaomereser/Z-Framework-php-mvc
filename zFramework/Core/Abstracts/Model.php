@@ -12,6 +12,7 @@ abstract class Model extends DB
     public $primary    = "id";
     public $as         = "";
     public $guard      = [];
+    public $closures   = [];
     public $created_at = 'created_at';
     public $updated_at = 'updated_at';
     public $deleted_at = 'deleted_at';

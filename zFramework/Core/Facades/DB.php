@@ -3,9 +3,12 @@
 namespace zFramework\Core\Facades;
 
 use zFramework\Core\Helpers\Date;
+use zFramework\Core\Traits\DB\RelationShips;
 
 class DB
 {
+    use RelationShips;
+
     /**
      * Options parameters
      */
@@ -107,7 +110,7 @@ class DB
             $insert = $this->prepare("INSERT INTO $this->table(" . implode(', ', $keys) . ") VALUES (:" . implode(', :', $keys) . ")", $data)->rowCount();
             if ($insert) {
                 $this->lastID = $this->db()->lastInsertId();
-                $this->__call('inserted', [['id' => $this->lastID]]);
+                $this->__call('inserted', ['id' => $this->lastID]);
 
                 return $this->where('id', '=', $this->lastID)->first();
             }
@@ -120,8 +123,10 @@ class DB
 
     public function update(array $sets)
     {
-        $this->__call(__FUNCTION__);
         // if (array_search($this->updated_at, $this->attributes)) $sets[$this->updated_at] = Date::timestamp();
+        $observe_data = ['where' => $this->buildQuery['where'] ?? [], 'sets' => $sets];
+
+        $this->__call(__FUNCTION__, $observe_data);
 
         $sql_set = '';
         foreach ($sets as $key => $_) {
@@ -133,7 +138,7 @@ class DB
         $this->buildQuery['sets'] = " SET " . rtrim($sql_set, ', ') . " ";
 
         $update = $this->run('update')->rowCount();
-        if ($update) $this->__call('updated');
+        if ($update) $this->__call('updated', $observe_data);
         return $update;
     }
 
@@ -147,7 +152,10 @@ class DB
 
     public function delete()
     {
-        $this->__call(__FUNCTION__);
+        # feed observe
+        $observe_data = $this->buildQuery['where'] ?? [];
+        #
+        $this->__call(__FUNCTION__, $observe_data);
         $delete = $this->isSoftDelete(function () {
             return $this->run('delete') ? true : false;
         }, function () {
@@ -155,7 +163,7 @@ class DB
             // return $this->prepare("UPDATE $this->table SET $this->deleted_at = :current" . $this->getWhere())->rowCount();
             return $this->update([$this->deleted_at => Date::timestamp()]);
         });
-        if ($delete) $this->__call('deleted');
+        if ($delete) $this->__call('deleted', array_merge($observe_data, ['softDelete' => $this->softDelete]));
         return $delete;
     }
     //
@@ -195,7 +203,17 @@ class DB
 
         $get = self::run()->fetchAll($fetch);
 
-        // foreach ($get as $key => $val) { 
+        if (count($this->closures)) foreach ($get as $key => $val) foreach ($this->closures as $name => $closure) {
+            $closure = function () use ($val, $closure) {
+                return $closure($val);
+            };
+
+            if ($class) $get[$key]->$name = $closure;
+            else $get[$key][$name] = $closure;
+        }
+
+
+        // foreach ($get as $key => $val) {
         //     $get[$key]['test'] = function () use ($val) {
         //         echo $val['id'];
         //     };
@@ -227,9 +245,9 @@ class DB
         elseif ($current_page <= 0) $current_page = 1;
 
 
-        // Again reload same query
+        # Again reload same query
         $this->againSameQuery();
-        //
+
 
         $start_count = ($per_page_count * ($current_page - 1));
         if (!$row_count) $start_count = -1;
@@ -452,6 +470,7 @@ class DB
     {
         $this->resetBuild();
         $this->beginQuery();
+        $this->closures();
         return $this;
     }
 
