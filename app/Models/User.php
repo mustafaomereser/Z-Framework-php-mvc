@@ -22,6 +22,16 @@ class User extends Model
     //     return $this->where('id', '=', 1);
     // }
 
+
+    /**
+     * every row get this special methods.
+     * 
+     * example:
+     * *****
+     *   $users = (new User)->get();
+     *   foreach ($users as $user) $user['posts']()->get();
+     * *****
+     */
     public function closures()
     {
         $this->closures = [

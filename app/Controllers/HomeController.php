@@ -4,7 +4,6 @@ namespace App\Controllers;
 
 use App\Models\User;
 use zFramework\Core\Abstracts\Controller;
-use zFramework\Core\Facades\DBColumns;
 
 class HomeController extends Controller
 {
@@ -21,16 +20,6 @@ class HomeController extends Controller
     public function index()
     {
         // or you can set model like `(new User)->get();`
-
-        echo "<pre>";
-        $users = (new User)->get();
-        foreach ($users as $user) {
-            print_r($user['posts']()->get());
-        }
-
-        print_R(DBColumns::columnsLength(User::class));
-
-        exit;
         return view('welcome');
     }
 
