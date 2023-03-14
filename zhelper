@@ -1,5 +1,6 @@
 <?php
 // error_reporting(E_ALL);
+
 define('BASE_PATH', __DIR__);
 include('zFramework/modules/Functions.php');
 spl_autoload_register(function ($class) {
@@ -9,6 +10,7 @@ include('zFramework/vendor/autoload.php');
 
 
 $databases = reloadDatabases();
+$_databases = $databases;
 $connected_databases = [];
 foreach ($databases as $key => $val) $databases[$key] = new PDO($val[0], $val[1], $val[2] ?? null);
 
@@ -371,6 +373,28 @@ class Db
             call_user_func_array([new $className(), 'seed'], []);
             text("$className seeded.", 32);
         }
+    }
+
+    public function backup()
+    {
+        global $_databases, $args;
+        $informations = [];
+
+        $db    = $_databases[$args['firstCommand']];
+        $parse = explode(';', str_replace('mysql:', '', $db[0]));
+
+        foreach ($parse as $val) {
+            $val = explode('=', $val);
+            $informations[$val[0]] = $val[1];
+        }
+
+        $outdir = base_path('database/backups/mysql/');
+        @mkdir($outdir, 0777, true);
+        $outfile = $outdir . $args['firstCommand'] . '_' . date('Y-m-d_H-i-s') . '.sql';
+
+        // exec("D:\wamp\bin\mysql\mysql5.7.19\bin\mysqldump z_zframework --password=123123 --user=root --host=localhost --all-databases --single-transaction >" . base_path('backup.sql'));
+        exec(config('app.mysql.mysqldump') . " --user=" . $db[1] . " --password=" . $db[2] . " --host=" . $informations['host'] . " " . $informations['dbname'] . " --result-file=" . $outfile . " 2>&1", $output_1);
+        print_r($output_1);
     }
 }
 

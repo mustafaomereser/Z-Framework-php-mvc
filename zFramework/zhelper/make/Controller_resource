@@ -54,6 +54,7 @@ class {name} extends Controller
     }
 
     /** Update page | PATCH/PUT: /id
+     * @param integer $id
      * @return mixed
      */
     public function update($id)
@@ -62,6 +63,7 @@ class {name} extends Controller
     }
 
     /** Delete page | DELETE: /id
+     * @param integer $id
      * @return mixed
      */
     public function delete($id)

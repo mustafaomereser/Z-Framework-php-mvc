@@ -20,5 +20,9 @@ return [
         'salt' => 'ThisSaltIsSecret'
     ],
 
-    'version'  => '1.0.0'
+    'version'  => '1.0.0',
+
+    'mysql'    => [
+        'mysqldump' => 'D:\wamp\bin\mysql\mysql5.7.19\bin\mysqldump'
+    ]
 ];

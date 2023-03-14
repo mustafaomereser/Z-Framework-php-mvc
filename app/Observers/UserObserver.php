@@ -6,44 +6,55 @@ use zFramework\Core\Abstracts\Observer;
 
 class UserObserver extends Observer
 {
+    /**
+     * Insert before run that
+     */
     public function oninsert()
     {
-        // Insert before run that
         echo "inserting";
     }
 
+    /**
+     * Insert after run that
+     */
     public function oninserted(array $args)
     {
-        // Insert after run that
         echo "inserted: " . $args['id'];
     }
 
+    /**
+     * Update before run that
+     */
     public function onupdate(array $args)
     {
-        // Update before run that
-
         echo "updating:";
         var_dump($args['where']);
         var_dump($args['sets']);
     }
 
+    /**
+     * Update after run that
+     */
     public function onupdated(array $args)
     {
-        // Update after run that
         echo "updated:";
         var_dump($args);
     }
 
+    /**
+     * Delete before run that
+     */
     public function ondelete(array $args)
     {
-        // Delete before run that
         echo "deleting:";
         var_dump($args);
     }
 
+    /**
+     * Delete after run that
+     */
     public function ondeleted(array $args)
     {
-        // Delete after run that
         echo "deleted:";
         var_dump($args);
     }

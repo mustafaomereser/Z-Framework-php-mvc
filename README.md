@@ -1,7 +1,6 @@
 You can select version on branch list.
 
-Vendors included because modified some modules.
-Install packages ()
+Install packages (Vendors included because modified some modules)
 ```php
 cmd> composer install
 ```
@@ -592,6 +591,9 @@ ALSO you can normal query like /1?test=true
     # Database Seeder:
     php zhelper db seed // output: seed all seeders.
     
+    # Database Seeder:
+    php zhelper db backup local // output: backup db to /database/backups/mysql/...
+
     # cache delete
     php zhelper cache clear sessions|caches|views
 ```
