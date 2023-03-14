@@ -73,13 +73,23 @@ class DB
 
     public function table($table)
     {
-        if (!in_array($table, $this->tables())) throw new \Exception("$table is not exists in tables list.");
+        # replaced to new
+        # if (!in_array($table, $this->tables())) throw new \Exception("$table is not exists in tables list.");
+        # $this->table = $table;
+        # Table columns
+        # $this->attributes = $this->prepare("DESCRIBE $this->table")->fetchAll(\PDO::FETCH_COLUMN);
+        # $this->attrCount = count($this->attributes);
+        # return $this;
+
+        $tables = $this->tables();
+        if (is_array($tables) && !strstr($table, ' ')) {
+            if (!in_array($table, $tables)) throw new \Exception("$table is not exists in tables list.");
+            // Table columns
+            $this->attributes = $this->prepare("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
+            $this->attrCount = count($this->attributes);
+        }
 
         $this->table = $table;
-        // Table columns
-        $this->attributes = $this->prepare("DESCRIBE $this->table")->fetchAll(\PDO::FETCH_COLUMN);
-        $this->attrCount = count($this->attributes);
-        //
 
         return $this;
     }

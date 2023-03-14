@@ -10,7 +10,7 @@ class User extends Model
 {
     use softDelete;
 
-    // public $observe = UserObserver::class;
+    public $observe = UserObserver::class;
 
     public $table = "users";
     public $as    = "users_table";

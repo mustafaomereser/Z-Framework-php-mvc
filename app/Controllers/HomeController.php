@@ -23,12 +23,6 @@ class HomeController extends Controller
     {
         // or you can set model like `(new User)->get();`
 
-        $validate = Validator::validate($_REQUEST, [
-            'email' => ['nullable', 'email']
-        ], [], function ($errors) {
-            print_r($errors);
-        });
-
         return view('welcome');
     }
 
