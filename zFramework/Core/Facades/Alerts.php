@@ -5,6 +5,8 @@ namespace zFramework\Core\Facades;
 class Alerts
 {
 
+    static $name = null;
+
     /**
      * Set just one time alerts.
      * @param mixed
@@ -12,7 +14,19 @@ class Alerts
      */
     private static function set(): self
     {
-        $_SESSION['alerts'][] = func_get_args();
+        $_SESSION['alerts'][self::$name ? self::$name : Str::rand(10)] = func_get_args();
+        self::$name = null;
+        return new self();
+    }
+
+    /**
+     * Set name alerts for not duplicate
+     * @param $name
+     * @return self
+     */
+    public static function name($name): self
+    {
+        self::$name = $name;
         return new self();
     }
 

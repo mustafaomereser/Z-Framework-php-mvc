@@ -72,7 +72,8 @@ class Validator
                         break;
 
                     case 'email':
-                        if (filter_var($dataValue, FILTER_VALIDATE_EMAIL)) $ok = true;
+                        if (!$length && in_array('nullable', $data)) $ok = true;
+                        elseif (filter_var($dataValue, FILTER_VALIDATE_EMAIL)) $ok = true;
                         break;
 
                     case 'required':
@@ -99,9 +100,8 @@ class Validator
                         break;
 
                     case 'exists':
-                        $db = new DB(@$parameters['db']);
-                        $column = $parameters['cl'] ?? $dataKey;
-                        $exists = $db->table($val)->where($column, '=', $dataValue);
+                        $column = $parameters['key'] ?? $dataKey;
+                        $exists = (new DB(@$parameters['db']))->table($val)->where($column, '=', $dataValue);
 
                         if ($ex = @$parameters['ex']) $exists->where('id', '!=', $ex);
 
@@ -113,9 +113,8 @@ class Validator
                         break;
 
                     case 'unique':
-                        $db = new DB(@$parameters['db']);
-                        $column = $parameters['cl'] ?? $dataKey;
-                        if (!$db->table($val)->where($column, '=', $dataValue)->count()) $ok = true;
+                        $column = $parameters['key'] ?? $dataKey;
+                        if (!(new DB(@$parameters['db']))->table($val)->where($column, '=', $dataValue)->count()) $ok = true;
                         break;
 
                     default:

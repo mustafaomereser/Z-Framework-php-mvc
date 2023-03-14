@@ -122,7 +122,7 @@ class DB
         }
         $this->buildQuery['sets'] = " SET " . rtrim($sql_set, ', ') . " ";
 
-        $update = $this->run('update')->rowCount() ? true : false;
+        $update = $this->run('update')->rowCount();
         if ($update) $this->__call('updated');
         return $update;
     }

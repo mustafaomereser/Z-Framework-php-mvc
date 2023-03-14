@@ -20,6 +20,8 @@ class HomeController extends Controller
      */
     public function index()
     {
+        // or you can set model like `(new User)->get();`
+
         return view('welcome');
     }
 
