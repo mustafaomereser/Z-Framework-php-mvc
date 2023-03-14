@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'welcome' => 'Welcome!',
+    'welcome'   => 'Welcome!',
     'languages' => 'Languages',
-    'current' => 'Current'
+    'current'   => 'Current'
 ];

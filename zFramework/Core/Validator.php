@@ -73,7 +73,7 @@ class Validator
                         break;
 
                     case 'email':
-                        if (!$length && in_array('nullable', $data)) $ok = true;
+                        if ($length <= 0 && in_array('nullable', $validateArray)) $ok = true;
                         elseif (filter_var($dataValue, FILTER_VALIDATE_EMAIL)) $ok = true;
                         break;
 
@@ -137,11 +137,13 @@ class Validator
         }
 
         if (count($errors)) {
-            if (Http::isAjax()) abort(400, Response::json($errors));
-            foreach ($errors as $key => $error_list) foreach ($error_list as $error) Alerts::danger($error);
-
-            if (!$callback) back();
-            else $callback($errors, $statics);
+            if (!$callback) {
+                if (Http::isAjax()) abort(400, Response::json($errors));
+                foreach ($errors as $key => $error_list) foreach ($error_list as $error) Alerts::danger($error);
+                back();
+            } else {
+                $callback($errors, $statics);
+            }
         }
 
         return $statics;

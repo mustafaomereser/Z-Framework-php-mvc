@@ -5,6 +5,7 @@ namespace App\Controllers;
 use App\Models\User;
 use zFramework\Core\Abstracts\Controller;
 use zFramework\Core\Facades\Mail;
+use zFramework\Core\Validator;
 
 class HomeController extends Controller
 {
@@ -21,6 +22,12 @@ class HomeController extends Controller
     public function index()
     {
         // or you can set model like `(new User)->get();`
+
+        $validate = Validator::validate($_REQUEST, [
+            'email' => ['nullable', 'email']
+        ], [], function ($errors) {
+            print_r($errors);
+        });
 
         return view('welcome');
     }

@@ -11,8 +11,8 @@ return [
     ],
 
     'mail' => [
-        'sending-is-false' => 'Mail gönderimi kapalı.',
+        'sending-is-false'  => 'Mail gönderimi kapalı.',
         'not-validate-mail' => 'Girdiğiniz email geçerli değil.',
-        'must-set-a-mail' => 'Bir email adresi girmeniz gerekmektedir.'
+        'must-set-a-mail'   => 'Bir email adresi girmeniz gerekmektedir.'
     ]
 ];

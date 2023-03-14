@@ -11,8 +11,8 @@ return [
     ],
 
     'mail' => [
-        'sending-is-false' => 'Mail sending is close.',
+        'sending-is-false'  => 'Mail sending is close.',
         'not-validate-mail' => 'That is not validate a email.',
-        'must-set-a-mail' => 'You must the select a mail address.'
+        'must-set-a-mail'   => 'You must the select a mail address.'
     ]
 ];
