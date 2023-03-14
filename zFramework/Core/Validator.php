@@ -15,13 +15,14 @@ class Validator
      * @param array $data
      * @param array $validate
      * @param array $attributeNames
+     * @param \Closure $callback
      * @return string|array
      */
-    public static function validate(array $data = null, array $validate = [], array $attributeNames = [], string $customRedirect = null)
+    public static function validate(array $data = null, array $validate = [], array $attributeNames = [], \Closure $callback = null)
     {
         if (!$data) $data = $_REQUEST;
 
-        $errors = [];
+        $errors  = [];
         $statics = [];
 
         foreach ($validate as $dataKey => $validateArray) {
@@ -139,8 +140,8 @@ class Validator
             if (Http::isAjax()) abort(400, Response::json($errors));
             foreach ($errors as $key => $error_list) foreach ($error_list as $error) Alerts::danger($error);
 
-            if (!$customRedirect) back();
-            else redirect($customRedirect);
+            if (!$callback) back();
+            else $callback($errors, $statics);
         }
 
         return $statics;
