@@ -94,6 +94,26 @@ class File
     }
 
     /**
+     * Download a file from public_path
+     * @param string $file
+     */
+    public static function download(string $file)
+    {
+        $attachment_location = public_path($file);
+        $filename = self::removePublic(@end(explode('/', str_replace('\\', '/', $file))));
+
+        if (!file_exists($attachment_location)) abort(404, 'File not exists.');
+
+        header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
+        header("Cache-Control: public");
+        header("Content-Type: application/zip");
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-Length:" . filesize($attachment_location));
+        header("Content-Disposition: attachment; filename=$filename");
+        die(readfile($attachment_location));
+    }
+
+    /**
      * Resize a image
      * @param string $file
      * @param int $width
@@ -105,18 +125,14 @@ class File
         $file = public_path($file);
         if (!is_file($file)) return false;
 
-        // Yeni boyutları hesaplayalım
         list($image_width, $image_height) = getimagesize($file);
 
-        // Görüntüyü örnekleyelim
         $target = imagecreatetruecolor($width, $height);
         $source = imagecreatefromjpeg($file);
         imagecopyresampled($target, $source, 0, 0, 0, 0, $width, $height, $image_width, $image_height);
 
-
         $ext = @end(explode('.', $file));
 
-        // Görüntüyü çıktılayalım
         imagejpeg($target, str_replace(".$ext", '', $file) . "-$width" . "x" . "$height.$ext", 100);
 
         return self::removePublic($file);
