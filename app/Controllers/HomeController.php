@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\User;
 use zFramework\Core\Abstracts\Controller;
+use zFramework\Core\Facades\DBColumns;
 
 class HomeController extends Controller
 {
@@ -27,6 +28,7 @@ class HomeController extends Controller
             print_r($user['posts']()->get());
         }
 
+        print_R(DBColumns::columnsLength(User::class));
 
         exit;
         return view('welcome');
