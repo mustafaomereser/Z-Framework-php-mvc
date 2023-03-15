@@ -15,6 +15,11 @@ class DB
     private $table;
     private $buildQuery = [];
     private $cache = [];
+    public $queue = [
+        'mode' => 0,
+        'sql'  => [],
+        'data' => []
+    ];
     public $data = null;
     public $lastID = 0;
 
@@ -100,25 +105,42 @@ class DB
     // Query methods
     public function insert(array $data)
     {
-        $this->resetBuild();
         $this->__call(__FUNCTION__);
         // if (array_search($this->created_at, $this->attributes)) $data[$this->created_at] = Date::timestamp();
         // if (array_search($this->updated_at, $this->attributes)) $data[$this->updated_at] = Date::timestamp();
 
         $keys = array_keys($data);
         try {
-            $insert = $this->prepare("INSERT INTO $this->table(" . implode(', ', $keys) . ") VALUES (:" . implode(', :', $keys) . ")", $data)->rowCount();
-            if ($insert) {
-                $this->lastID = $this->db()->lastInsertId();
-                $this->__call('inserted', ['id' => $this->lastID]);
+            // $insert = $this->prepare("INSERT INTO $this->table(" . implode(', ', $keys) . ") VALUES (:" . implode(', :', $keys) . ")", $data)->rowCount();
+            // if ($insert) {
+            //     $this->lastID = $this->db()->lastInsertId();
+            //     $this->__call('inserted', ['id' => $this->lastID]);
 
-                return $this->where('id', '=', $this->lastID)->first();
+            //     return $this->where('id', '=', $this->lastID)->first();
+            // }
+
+            $sql_sets = [];
+            $sql_keys = [];
+            foreach ($data as $key => $_) {
+                $replaced_key = $key . "_" . uniqid();
+                $sql_keys[] = $key;
+                $sql_sets[] = $replaced_key;
+                $this->buildQuery['data'][$replaced_key] = $_;
+            }
+            $this->buildQuery['sets'] = "(" . implode(', ', $sql_keys) . ") VALUES (:" . implode(', :', $sql_sets) . ")";
+
+            $insert = $this->run('insert');
+
+            if (!$this->queue['mode']) {
+                $insert = $insert->rowCount();
+                if ($insert) $this->__call('inserted', ['id' => $this->lastID]);
+                return $insert;
             }
         } catch (\PDOException $e) {
             throw new \Exception($e->errorInfo[2]);
         }
 
-        throw new \Exception('Can not inserted.');
+        // throw new \Exception('Can not inserted.');
     }
 
     public function update(array $sets)
@@ -128,18 +150,21 @@ class DB
 
         $this->__call(__FUNCTION__, $observe_data);
 
-        $sql_set = '';
+        $sql_sets = [];
         foreach ($sets as $key => $_) {
             $replaced_key = $key . "_" . uniqid();
 
-            $sql_set .= "$key = :$replaced_key, ";
+            $sql_sets[] = "$key = :$replaced_key";
             $this->buildQuery['data'][$replaced_key] = $_;
         }
-        $this->buildQuery['sets'] = " SET " . rtrim($sql_set, ', ') . " ";
+        $this->buildQuery['sets'] = " SET " . implode(', ', $sql_sets) . " ";
 
-        $update = $this->run('update')->rowCount();
-        if ($update) $this->__call('updated', $observe_data);
-        return $update;
+        $update = $this->run('update');
+        if (!$this->queue['mode']) {
+            $update = $update->rowCount();
+            if ($update) $this->__call('updated', $observe_data);
+            return $update;
+        }
     }
 
     // Is it soft delete?
@@ -340,8 +365,10 @@ class DB
         return $this;
     }
 
-    private function getWhere()
+    private function getWhere($type = null)
     {
+        if ($type == 'insert') return null;
+
         // init search for softDelete
         $this->isSoftDelete(null, function () {
             if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where(($this->as ? $this->as : $this->table) . ".$this->deleted_at", 'IS NULL');
@@ -432,17 +459,24 @@ class DB
         return @$this->buildQuery['groupBy'] ? " GROUP BY " . $this->buildQuery['groupBy'] : null;
     }
 
-    public function buildSQL($type = "select")
+    public function buildSQL($select_type = "select")
     {
         $as = $this->as ? $this->as : $this->table;
 
-        switch ($type) {
+        switch ($select_type) {
             case 'select':
                 $select = $this->buildQuery['select'] ?? ("$as." . implode(", $as.", array_diff($this->attributes, $this->guard ?? [])));
                 $type = "SELECT $select FROM";
                 break;
+
             case 'delete':
                 $type = "DELETE FROM";
+                break;
+
+            case 'insert':
+                $type = "INSERT INTO";
+                $as   = null;
+                $sets = $this->buildQuery['sets'];
                 break;
 
             case 'update':
@@ -454,7 +488,7 @@ class DB
                 abort(400, 'something wrong, buildSQL invalid type.');
         }
 
-        $sql = trim(str_replace(['  '], [' '], "$type $this->table" . ($as ? " AS $as " : null) . @$sets . $this->getJoins() . $this->getWhere() . $this->getGroupBy() . $this->getOrderBy() . $this->getLimit()));
+        $sql = trim(str_replace(['  '], [' '], "$type $this->table" . ($as ? " AS $as " : null) . @$sets . $this->getJoins() . $this->getWhere($select_type) . $this->getGroupBy() . $this->getOrderBy() . $this->getLimit()));
         // echo "$sql <br>";
         return $sql;
     }
@@ -476,8 +510,32 @@ class DB
 
     private function run($type = "select")
     {
-        $r = self::prepare(self::buildSQL($type));
+        $sql = self::buildSQL($type);
+
+        $queue_mode = $this->queue['mode'] && $type != 'select';
+
+        if (!$queue_mode) $result = self::prepare($sql);
         $this->resetBuild();
-        return $r;
+        if ($queue_mode) {
+            $this->queue['sql'][] = $sql;
+            $this->queue['data'] = array_merge($this->cache['buildQuery']['data'] ?? [], $this->queue['data']);
+            $result = 'queued';
+        }
+
+        return $result;
+    }
+
+    public function queue()
+    {
+        $this->queue['mode'] = $this->queue['mode'] ? 0 : 1;
+        if ($this->queue['mode']) {
+            $this->queue['sql']  = [];
+            $this->queue['data'] = [];
+            return 'queue mode on';
+        } else {
+            if (!count($this->queue['sql'])) return false;
+            $result = $this->prepare(implode(';', $this->queue['sql']), $this->queue['data'])->rowCount();
+            return $result;
+        }
     }
 }
