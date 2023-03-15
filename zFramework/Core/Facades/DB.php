@@ -15,7 +15,7 @@ class DB
     private $table;
     private $buildQuery = [];
     private $cache = [];
-    public $queue = [
+    private $queue = [
         'mode' => 0,
         'sql'  => [],
         'data' => []
