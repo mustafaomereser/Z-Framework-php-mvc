@@ -109,7 +109,6 @@ class DB
         // if (array_search($this->created_at, $this->attributes)) $data[$this->created_at] = Date::timestamp();
         // if (array_search($this->updated_at, $this->attributes)) $data[$this->updated_at] = Date::timestamp();
 
-        $keys = array_keys($data);
         try {
             // $insert = $this->prepare("INSERT INTO $this->table(" . implode(', ', $keys) . ") VALUES (:" . implode(', :', $keys) . ")", $data)->rowCount();
             // if ($insert) {
@@ -140,6 +139,7 @@ class DB
             throw new \Exception($e->errorInfo[2]);
         }
 
+        return false;
         // throw new \Exception('Can not inserted.');
     }
 
