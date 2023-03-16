@@ -342,7 +342,6 @@ class DB
         return $this;
     }
 
-
     public function where($key, $operator, $value = null, $prev = "AND")
     {
         $replaced_key = str_replace(".", "_", $key) . "_" . uniqid();

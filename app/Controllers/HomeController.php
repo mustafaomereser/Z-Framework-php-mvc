@@ -4,8 +4,6 @@ namespace App\Controllers;
 
 use App\Models\User;
 use zFramework\Core\Abstracts\Controller;
-use zFramework\Core\Crypter;
-use zFramework\Core\Facades\Str;
 
 class HomeController extends Controller
 {
@@ -22,21 +20,6 @@ class HomeController extends Controller
     public function index()
     {
         // or you can set model like `(new User)->get();`
-
-        $this->user->queue();
-
-        $this->user->insert([
-            'username'  => 'admin',
-            'password'  => Crypter::encode('admin'),
-            'email'     => Str::rand(15) . '@localhost.com',
-            'api_token' => Str::rand(60)
-        ]);
-        $this->user->update(['username' => 'test']);
-
-        $result = $this->user->queue();
-        var_dump($result);
-
-        exit;
         return view('welcome');
     }
 
