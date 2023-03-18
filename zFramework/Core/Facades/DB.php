@@ -132,8 +132,11 @@ class DB
 
             if (!$this->queue['mode']) {
                 $insert = $insert->rowCount();
-                if ($insert) $this->__call('inserted', ['id' => $this->lastID]);
-                return $insert;
+                if ($insert) {
+                    $this->lastID = $this->db()->lastInsertId();
+                    $this->__call('inserted', ['id' => $this->lastID]);
+                }
+                return in_array($this->primary, $this->attributes) && $insert ? $this->where($this->primary, '=', $this->lastID)->first() : false;
             }
         } catch (\PDOException $e) {
             throw new \Exception($e->errorInfo[2]);
