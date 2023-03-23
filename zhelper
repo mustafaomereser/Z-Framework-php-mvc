@@ -171,6 +171,12 @@ class Db
             // settings
             $columns = $class::columns();
 
+            if (isset($class::$prefix)) foreach ($columns as $name => $val) {
+                unset($columns[$name]);
+                $name = ($class::$prefix ? $class::$prefix . "_" : null) . $name;
+                $columns[$name] = $val;
+            }
+
             // Setting up
             if (strlen($key = array_search('timestamps', $columns))) {
                 unset($columns[$key]);
@@ -191,6 +197,7 @@ class Db
             $db      = $databases[$class::$db];
             $dbname  = $db->query('select database()')->fetchColumn();
             //
+
             text("\n$table migrating:", 33);
 
             $dropColumns = [];
