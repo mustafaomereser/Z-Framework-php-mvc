@@ -19,7 +19,7 @@ class cURL
     {
         self::$cURL = curl_init($url);
         curl_setopt(self::$cURL, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt(self::$cURL, CURLOPT_HEADER, true);
+        curl_setopt(self::$cURL, CURLOPT_HEADER, false);
         return new self();
     }
 
@@ -53,13 +53,13 @@ class cURL
     public static function send(\Closure $callback = null)
     {
         $response = curl_exec(self::$cURL);
-        if ($callback != null) {
-            $err     = curl_errno(self::$cURL);
-            $errmsg  = curl_error(self::$cURL);
-            $header  = curl_getinfo(self::$cURL);
-            $callback($response, $header, ['error_no' => $err, 'error_message' => $errmsg]);
-        }
-
+        $err      = curl_errno(self::$cURL);
+        $errmsg   = curl_error(self::$cURL);
+        $header   = curl_getinfo(self::$cURL);
         curl_close(self::$cURL);
+
+        if ($callback != null) return $callback($response, $header, ['error_no' => $err, 'error_message' => $errmsg]);
+
+        return $response;
     }
 }
