@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Models\User;
 use zFramework\Core\Abstracts\Controller;
+use zFramework\Core\Facades\Cookie;
 
 class HomeController extends Controller
 {
@@ -19,6 +20,13 @@ class HomeController extends Controller
      */
     public function index()
     {
+
+        // var_dump(Cookie::set('selam', 'hey'));
+        // var_dump(Cookie::get('selam'));
+        // // var_dump(Cookie::delete('selam'));
+
+        // exit;
+
         // or you can set model like `(new User)->get();`
         return view('welcome');
     }
