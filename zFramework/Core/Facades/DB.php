@@ -73,10 +73,22 @@ class DB
 
     public function tables()
     {
-        $dbname = $this->prepare('select database()')->fetchColumn();
-        $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
-        foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
-        return $tables;
+        // $dbname = $this->prepare('select database()')->fetchColumn();
+        // $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
+        // foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
+        // return $tables;
+        try {
+            $dbname = $this->prepare('SELECT DATABASE()')->fetchColumn();
+            if (isset($GLOBALS['DB_TABLES'][$dbname])) return $GLOBALS['DB_TABLES'][$dbname];
+
+            $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
+            foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
+
+            $GLOBALS["DB_TABLES"][$dbname] = $tables;
+            return $tables;
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     public function table($table)
