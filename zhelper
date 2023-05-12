@@ -470,8 +470,18 @@ class Run
         $public = include('config/app.php');
         chdir($public['public']);
 
-        $server = $argv[2] ?? (getHostByName(getHostName()) ?? '127.0.0.1');
-        $port = $argv[3] ?? 1000;
+        $sock = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
+        if (@socket_connect($sock, "8.8.8.8", 53)) {
+            socket_getsockname($sock, $name); // $name passed by reference
+            socket_close($sock);
+            // This is the local machine's external IP address
+            $localAddr = $name;
+        } else {
+            $localAddr = getHostByName(getHostName());
+        }
+
+        $server = $argv[2] ?? ($localAddr ?? '127.0.0.1');
+        $port = $argv[3] ?? 80;
 
         shell_exec("start http://$server:$port");
 
