@@ -73,18 +73,14 @@ class DB
 
     public function tables()
     {
-        // $dbname = $this->prepare('select database()')->fetchColumn();
-        // $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
-        // foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
-        // return $tables;
+        if (@$tables = $GLOBALS['DB_TABLES'][$GLOBALS["DB_NAMES"][$this->db]]) return $tables;
         try {
             $dbname = $this->prepare('SELECT DATABASE()')->fetchColumn();
-            if (isset($GLOBALS['DB_TABLES'][$dbname])) return $GLOBALS['DB_TABLES'][$dbname];
 
             $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
             foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
-
-            $GLOBALS["DB_TABLES"][$dbname] = $tables;
+            $GLOBALS["DB_TABLES"][$dbname]  = $tables;
+            $GLOBALS["DB_NAMES"][$this->db] = $dbname;
             return $tables;
         } catch (\Throwable $e) {
             return false;
@@ -93,26 +89,63 @@ class DB
 
     public function table($table)
     {
-        # replaced to new
-        # if (!in_array($table, $this->tables())) throw new \Exception("$table is not exists in tables list.");
-        # $this->table = $table;
-        # Table columns
-        # $this->attributes = $this->prepare("DESCRIBE $this->table")->fetchAll(\PDO::FETCH_COLUMN);
-        # $this->attrCount = count($this->attributes);
-        # return $this;
-
         $tables = $this->tables();
         if (is_array($tables) && !strstr($table, ' ')) {
             if (!in_array($table, $tables)) throw new \Exception("$table is not exists in tables list.");
             // Table columns
-            $this->attributes = $this->prepare("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
-            $this->attrCount = count($this->attributes);
+            $this->attributes = $GLOBALS['DB_DESCRIBES'][$this->db][$table] ?? $this->prepare("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
+            $this->attrCount  = count($this->attributes);
+
+            $GLOBALS['DB_DESCRIBES'][$this->db][$table] = $this->attributes;
         }
 
         $this->table = $table;
 
         return $this;
     }
+
+    // public function tables()
+    // {
+    //     // $dbname = $this->prepare('select database()')->fetchColumn();
+    //     // $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
+    //     // foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
+    //     // return $tables;
+    //     try {
+    //         $dbname = $this->prepare('SELECT DATABASE()')->fetchColumn();
+    //         if (isset($GLOBALS['DB_TABLES'][$dbname])) return $GLOBALS['DB_TABLES'][$dbname];
+
+    //         $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
+    //         foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
+
+    //         $GLOBALS["DB_TABLES"][$dbname] = $tables;
+    //         return $tables;
+    //     } catch (\Throwable $e) {
+    //         return false;
+    //     }
+    // }
+
+    // public function table($table)
+    // {
+    //     # replaced to new
+    //     # if (!in_array($table, $this->tables())) throw new \Exception("$table is not exists in tables list.");
+    //     # $this->table = $table;
+    //     # Table columns
+    //     # $this->attributes = $this->prepare("DESCRIBE $this->table")->fetchAll(\PDO::FETCH_COLUMN);
+    //     # $this->attrCount = count($this->attributes);
+    //     # return $this;
+
+    //     $tables = $this->tables();
+    //     if (is_array($tables) && !strstr($table, ' ')) {
+    //         if (!in_array($table, $tables)) throw new \Exception("$table is not exists in tables list.");
+    //         // Table columns
+    //         $this->attributes = $this->prepare("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
+    //         $this->attrCount = count($this->attributes);
+    //     }
+
+    //     $this->table = $table;
+
+    //     return $this;
+    // }
 
     // Query methods
     public function insert(array $data)
