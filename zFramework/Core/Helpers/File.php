@@ -64,8 +64,8 @@ class File
 
         if (gettype($file['name']) === 'string') foreach ($file as $key => $val) $file[$key] = [$val];
 
+        $path = self::path($path);
         foreach ($file['name'] as $key => $name) {
-            $path = self::path($path);
             $name = $file['name'][$key];
             $error = 0;
 
