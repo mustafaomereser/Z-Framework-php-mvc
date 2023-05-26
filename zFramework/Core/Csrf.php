@@ -14,7 +14,7 @@ class Csrf
     /**
      * Show csrf input
      */
-    public static function csrf()
+    public static function csrf(): void
     {
         echo "<input type='hidden' name='_token' value='" . self::get() . "' />";
     }
@@ -30,19 +30,42 @@ class Csrf
     }
 
     /**
-     * Set Csrf Token randomly
-     * @return void
+     * Csrf token history, only 2 token allowed.
+     * @return array
      */
-    public static function set()
+    private static function getStorage(): array
     {
-        $_SESSION['csrf_token_timeout'] = time() + self::$timeOut;
-        $_SESSION['csrf_token'] = Str::rand(30);
+        return $_SESSION['csrf_storage'] ?? [];
     }
 
     /**
-     * Unset Csrf Token
+     * Storage csrf tokens, only history storage 2 csrf token.
+     * @param $csrf
+     * @return void
      */
-    public static function unset()
+    private static function addStorage(string $csrf): void
+    {
+        $tokens = self::getStorage();
+        if (count($tokens) >= 2) unset($tokens[0]);
+        $tokens[] = $csrf;
+        $_SESSION['csrf_storage'] = array_values($tokens);
+    }
+
+    /**
+     * Set Csrf Token randomly
+     * @return void
+     */
+    public static function set(): void
+    {
+        $_SESSION['csrf_token_timeout'] = time() + self::$timeOut;
+        $_SESSION['csrf_token'] = Str::rand(30);
+        self::addStorage($_SESSION['csrf_token']);
+    }
+
+    /**
+     * Destroy Csrf Token
+     */
+    public static function unset(): void
     {
         unset($_SESSION['csrf_token']);
     }
@@ -57,14 +80,24 @@ class Csrf
     }
 
     /**
+     * Compare csrf token
+     * @param string $token
+     * @return bool
+     */
+    public static function compare(string $token): bool
+    {
+        return in_array($token, self::getStorage());
+    }
+
+    /**
      * Check is a valid Csrf Token
      * $alwaysTrue parameter: if you wanna do not check it you can use $alwaysTrue = true
      * @param bool $alwaysTrue
      * @return bool
      */
-    public static function check($alwaysTrue = false): bool
+    public static function check(bool $alwaysTrue = false): bool
     {
-        if ((method() != 'get' && request('_token') != self::get()) && $alwaysTrue != true) return false;
+        if ((method() != 'get' && !self::compare(request('_token'))) && $alwaysTrue != true) return false;
         return true;
     }
 }
