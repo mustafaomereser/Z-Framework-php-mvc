@@ -8,7 +8,7 @@ class Language
 {
     public function attempt()
     {
-        Lang::locale($_SESSION['lang'] ?? null);
+        Lang::locale($_COOKIE['lang'] ?? null);
         return true;
     }
 }

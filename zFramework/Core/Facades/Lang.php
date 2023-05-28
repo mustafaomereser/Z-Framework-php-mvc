@@ -31,14 +31,14 @@ class Lang
     /**
      * Set Locale
      * @param string $lang
-     * @param bool $syncSession
+     * @param bool $syncCookie
      * @return bool|self
      */
-    public static function locale(string $lang = null, bool $syncSession = true): bool
+    public static function locale(string $lang = null, bool $syncCookie = true): bool
     {
         $lang = ($lang ?? substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
         if (!$path = self::canSelect($lang)) return self::locale(Config::get('app.lang') ?? self::list()[0]);
-        if ($syncSession) $_SESSION['lang'] = $lang;
+        if ($syncCookie) setcookie('lang', $lang, time() * 2, '/');
 
         self::$locale = $lang;
         self::$path = $path;
