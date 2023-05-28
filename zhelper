@@ -481,7 +481,7 @@ class Run
         }
 
         $server = $argv[2] ?? ($localAddr ?? '127.0.0.1');
-        $port = $argv[3] ?? 80;
+        $port   = $argv[3] ?? 80;
 
         shell_exec("start http://$server:$port");
 
