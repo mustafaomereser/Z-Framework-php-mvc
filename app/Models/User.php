@@ -22,7 +22,6 @@ class User extends Model
     //     return $this->where('id', '=', 1);
     // }
 
-
     /**
      * every row get this special methods.
      * 
