@@ -10,6 +10,10 @@ class Terminal
     public static function init()
     {
         self::clear();
+
+        echo "Usable Modules:" . PHP_EOL . PHP_EOL;
+        foreach (array_diff(scandir(FRAMEWORK_PATH . "\Kernel\Modules"), ['.', '..']) as $module) echo "• " . strtolower(str_replace('.php', '', $module)) . PHP_EOL;
+
         return self::readline();
     }
 
