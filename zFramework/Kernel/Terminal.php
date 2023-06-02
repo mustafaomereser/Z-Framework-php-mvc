@@ -9,8 +9,15 @@ class Terminal
     static $parameters;
     static $history;
 
-    public static function begin()
+    public static function begin($args)
     {
+        unset($args[0]);
+
+        if (count($args)) {
+            self::$terminate = true;
+            return self::parseCommands(implode(' ', $args));
+        }
+
         self::text('Terminal fired.');
         self::clear();
 
@@ -72,7 +79,9 @@ class Terminal
             self::text($e->getMessage(), 'yellow');
         }
 
-        return (!self::$terminate ? self::readline() : null);
+        if (self::$terminate) return null;
+
+        return self::readline();
     }
 
     public static function clear()
