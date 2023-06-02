@@ -4,11 +4,12 @@ namespace zFramework\Kernel;
 
 class Terminal
 {
+    static $terminate = false;
     static $commands;
     static $parameters;
     static $history;
 
-    public static function init()
+    public static function begin()
     {
         self::text('Terminal fired.');
         self::clear();
@@ -71,7 +72,7 @@ class Terminal
             self::text($e->getMessage(), 'yellow');
         }
 
-        return self::readline();
+        return (!self::$terminate ? self::readline() : null);
     }
 
     public static function clear()

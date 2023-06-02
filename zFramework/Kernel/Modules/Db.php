@@ -137,8 +137,8 @@ class Db
                     // Terminal::text('Warning: ' . $e->getMessage(), 'yellow');
                 }
 
-                foreach ($parameters as $switch) {
-                    $switch = explode(':', $switch);
+                foreach ($parameters as $parameter) {
+                    $switch = explode(':', $parameter);
                     switch ($switch[0]) {
                         case 'primary':
                             $data['index'] = " PRIMARY KEY AUTO_INCREMENT ";
@@ -283,7 +283,7 @@ class Db
                 }
             }
 
-            Terminal::text("`$table` migrate finish.", 'green');
+            Terminal::text("`$table` migrate complete.", 'green');
         }
     }
 

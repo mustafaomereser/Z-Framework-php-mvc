@@ -1,6 +1,10 @@
 <?php
 error_reporting(0);
+unset($argv[0]);
 define('BASE_PATH', __DIR__);
 include('zFramework/initalize.php');
 zFramework\Run::includer(BASE_PATH . '/zFramework/modules', false);
-new zFramework\Kernel\Terminal();
+
+if (!count($argv)) return zFramework\Kernel\Terminal::begin();
+zFramework\Kernel\Terminal::$terminate = true;
+zFramework\Kernel\Terminal::parseCommands(implode(' ', $argv));
