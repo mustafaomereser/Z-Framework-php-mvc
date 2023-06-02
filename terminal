@@ -1,0 +1,6 @@
+<?php
+error_reporting(0);
+define('BASE_PATH', __DIR__);
+include('zFramework/initalize.php');
+zFramework\Run::includer(BASE_PATH . '/zFramework/modules', false);
+new zFramework\Kernel\Terminal();

@@ -50,7 +50,7 @@ class Make
 
         if (!$make) return Terminal::text('This is not acceptable.');
 
-        return self::class::{$method}($make);
+        return self::{$method}($make);
     }
 
     private static function controller($make)
