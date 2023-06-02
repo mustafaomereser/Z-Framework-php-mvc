@@ -144,7 +144,7 @@ class Db
     {
         global $databases;
 
-        $tables = $databases[$db]->query("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = '" . $dbname . "'")->fetchAll(\PDO::FETCH_ASSOC);
+        $tables = $databases[$db]->query("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = '$dbname'")->fetchAll(\PDO::FETCH_ASSOC);
         foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
         if (in_array($findTable, $tables)) return true;
         return false;
@@ -221,6 +221,7 @@ class Db
                 $data = [
                     'type' => 'INT'
                 ];
+
                 try {
                     $db->exec("ALTER TABLE $table DROP index $name;");
                 } catch (\PDOException $e) {

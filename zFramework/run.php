@@ -10,7 +10,10 @@ class Run
     public static function includer($_path, $include_in_folder = true, $reverse_include = false, $ext = '.php')
     {
         // $_path = "/$_path";
-        if (is_file($_path)) return include($_path);
+        if (is_file($_path)) {
+            self::$included[] = $_path;
+            return include($_path);
+        }
 
         $path = array_values(array_diff(scandir($_path), ['.', '..']));
 

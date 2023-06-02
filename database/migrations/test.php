@@ -10,8 +10,10 @@ class Test
     {
         return [
             'id' => ['primary'],
+            'ehehe' => ['varchar'],
+            'test' => ['varchar'],
             'timestamps',
-            'softDelete'
+            'softDelete',
         ];
     }
 }

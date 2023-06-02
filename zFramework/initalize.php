@@ -7,7 +7,8 @@ header("X-Powered-By: zFramework v" . FRAMEWORK_VERSION);
 date_default_timezone_set('ETC/UTC');
 
 // Session: Start
-$sessions_path = FRAMEWORK_PATH . "/storage/sessions";
+$storage_path = FRAMEWORK_PATH . "\storage";
+$sessions_path = "$storage_path\sessions";
 @mkdir($sessions_path, 0777, true);
 session_save_path($sessions_path);
 ini_set('session.gc_probability', 1);

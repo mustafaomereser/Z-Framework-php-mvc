@@ -6,20 +6,17 @@ class Terminal
 {
     static $commands;
     static $parameters;
+    static $history;
 
     public static function init()
     {
+        self::text('Terminal fired.');
         self::clear();
 
         echo "Usable Modules:" . PHP_EOL . PHP_EOL;
         foreach (array_diff(scandir(FRAMEWORK_PATH . "\Kernel\Modules"), ['.', '..']) as $module) echo "• " . strtolower(str_replace('.php', '', $module)) . PHP_EOL;
 
         return self::readline();
-    }
-
-    private static function clear()
-    {
-        echo str_repeat(PHP_EOL, 50);
     }
 
     public static function readline()
@@ -30,6 +27,12 @@ class Terminal
 
     public static function parseCommands($commands)
     {
+        // command add to history.
+        // unset(self::$history[array_search($commands, self::$commands)]);
+        self::$history[] = $commands;
+        readline_add_history($commands);
+        //
+
         $commands   = explode(' ', $commands);
         $parameters = [];
 
@@ -65,29 +68,45 @@ class Terminal
             $module = "\zFramework\Kernel\Modules\\" . ucfirst(mb_strtolower(self::$commands[0]));
             $module::begin();
         } catch (\Throwable $e) {
-            self::text($e->getMessage());
+            self::text($e->getMessage(), 'yellow');
         }
 
         return self::readline();
     }
 
-
-    public static function text($text)
+    public static function clear()
     {
-        // echo PHP_EOL;
+        echo str_repeat(PHP_EOL, 50);
+    }
 
-        // // $matches = [
-        // //     '~\[color=(.*?)\](.*?)\[/color\]~s'
-        // // ];
+    /**
+     * CLI send text.
+     * @param string $text
+     * @param string $color
+     * @return void
+     */
+    public static function text(string $text, string $color = 'default'): void
+    {
+        $colors = [
+            'default'       => 39,
+            'white'         => 97,
+            'black'         => 30,
+            'red'           => 31,
+            'green'         => 32,
+            'yellow'        => 33,
+            'blue'          => 34,
+            'magenta'       => 35,
+            'cyan'          => 36,
+            'light-gray'    => 37,
+            'dark-gray'     => 90,
+            'light-red'     => 91,
+            'light-green'   => 92,
+            'light-yellow'  => 93,
+            'light-blue'    => 94,
+            'light-magenta' => 95,
+            'light-cyan'    => 96,
+        ];
 
-        // // $parse_replace = [];
-
-        // // foreach ($matches as $match) {
-        // //     preg_match_all($match, $text, $result);
-        // //     if (!count($result[0])) continue;
-        // // }
-
-
-        echo $text;
+        echo "\e[" . $colors[$color] . "m$text\n\e[" . $colors['default'] . "m";
     }
 }
