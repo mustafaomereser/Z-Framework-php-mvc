@@ -289,13 +289,12 @@ class Db
 
     public static function seed()
     {
-        $seeders = glob('database\seeders\*.php');
+        $seeders = glob(BASE_PATH . '\database\seeders\*.php');
         if (!count($seeders)) return Terminal::text("You haven't any seeder.", 'red');
         foreach ($seeders as $inc) {
             if (!in_array($inc, \zFramework\Run::$included)) \zFramework\Run::includer($inc);
-
-            $className = ucfirst(str_replace(['.php', '/'], ['', '\\'], $inc));
-            call_user_func_array([new $className(), 'seed'], []);
+            $className = ucfirst(str_replace(['.php', BASE_PATH], '', $inc));
+            (new $className())->destroy()->seed();
             Terminal::text("$className seeded.", 'green');
         }
 

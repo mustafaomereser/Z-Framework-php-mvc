@@ -20,4 +20,12 @@ class {name}
         //     'api_token' => Str::rand(60)
         // ]); 
     }
+
+    public function destroy()
+    {
+
+        // $this->user->prepare('TRUNCATE users');
+
+        return $this;
+    }
 }

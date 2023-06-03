@@ -29,7 +29,7 @@ class Make
     private static function parseName()
     {
         $namespace = explode('\\', str_replace('/', '\\', Terminal::$commands[2]));
-        $name      = end($namespace);
+        $name      = ucfirst(end($namespace));
         unset($namespace[array_search(end($namespace), $namespace)]);
 
         $namespace = implode('\\', $namespace);

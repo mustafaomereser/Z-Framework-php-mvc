@@ -18,8 +18,14 @@ class Seeder
         (new User)->insert([
             'username'  => 'admin',
             'password'  => Crypter::encode('admin'),
-            'email'     => 'admin@localhost.com',
+            'email'     => Str::rand(15) . '@localhost.com',
             'api_token' => Str::rand(60)
         ]);
+    }
+
+    public function destroy()
+    {
+        (new User)->prepare('TRUNCATE users');
+        return $this;
     }
 }

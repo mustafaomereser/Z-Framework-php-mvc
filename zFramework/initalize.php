@@ -16,12 +16,12 @@ session_start();
 // Session: End
 
 $connected_databases = [];
-$databases = include(BASE_PATH . '/database/connections.php'); #db connections strings
+$databases = include(BASE_PATH . '\database\connections.php'); #db connections strings
 
-include(BASE_PATH . '/zFramework/run.php');
-include(BASE_PATH . '/zFramework/vendor/autoload.php');
+include(BASE_PATH . '\zFramework\run.php');
+include(BASE_PATH . '\zFramework\vendor\autoload.php');
 
 spl_autoload_register(function ($class) {
-    zFramework\Run::includer(BASE_PATH . "/$class.php");
+    zFramework\Run::includer(BASE_PATH . "\\$class.php");
     if (method_exists($class, 'init')) $class::init();
 });
