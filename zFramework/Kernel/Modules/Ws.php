@@ -3,6 +3,7 @@
 namespace zFramework\Kernel\Modules;
 
 use Workerman\Worker;
+use zFramework\Kernel\Terminal;
 
 class Ws
 {
@@ -14,7 +15,7 @@ class Ws
         $tcp_worker->count = $config['worker-count'];
 
         $tcp_worker->onConnect = function ($connection) {
-            text("($connection->id) New Connection", 32);
+            Terminal::text("($connection->id) New Connection", 'green');
         };
 
         $tcp_worker->onMessage = function ($client, $data) {
@@ -29,7 +30,7 @@ class Ws
         };
 
         $tcp_worker->onClose = function ($connection) {
-            text("($connection->id) Connection Close", 31);
+            Terminal::text("($connection->id) Connection Close", 'red');
         };
 
         echo "\e[33mWebSocket running on \e[32m`" . getHostName() . "`\e[33m host: \e[31m\n";

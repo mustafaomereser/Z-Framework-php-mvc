@@ -408,3 +408,35 @@ Stack trace:
 #12 E:\aaPROJECTS\php-mvc\zhelper(436): Workerman\Worker::runAll()
 #13 E:\aaPROJECTS\php-mvc\zhelper(441): Ws->__construct()
 #14 {main}
+2023-06-03 13:47:13 pid:1 Error: Call to undefined function zFramework\Kernel\Modules\text() in E:\a-projects\zFramework\zFramework\Kernel\Modules\Ws.php:17
+Stack trace:
+#0 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Worker.php(2512): zFramework\Kernel\Modules\Ws::zFramework\Kernel\Modules\{closure}(Object(Workerman\Connection\TcpConnection))
+#1 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Events\Select.php(295): Workerman\Worker->acceptConnection(Resource id #25)
+#2 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Worker.php(2447): Workerman\Events\Select->loop()
+#3 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Worker.php(1442): Workerman\Worker->run()
+#4 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Worker.php(1385): Workerman\Worker::forkWorkersForWindows()
+#5 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Worker.php(550): Workerman\Worker::forkWorkers()
+#6 E:\a-projects\zFramework\zFramework\Kernel\Modules\Ws.php(36): Workerman\Worker::runAll()
+#7 E:\a-projects\zFramework\zFramework\Kernel\Terminal.php(77): zFramework\Kernel\Modules\Ws::begin()
+#8 E:\a-projects\zFramework\zFramework\Kernel\Terminal.php(65): zFramework\Kernel\Terminal::do()
+#9 E:\a-projects\zFramework\zFramework\Kernel\Terminal.php(18): zFramework\Kernel\Terminal::parseCommands(Array)
+#10 E:\a-projects\zFramework\terminal(6): zFramework\Kernel\Terminal::begin(Array)
+#11 {main}
+2023-06-03 13:47:14 pid:1 Error: Call to undefined function zFramework\Kernel\Modules\text() in E:\a-projects\zFramework\zFramework\Kernel\Modules\Ws.php:32
+Stack trace:
+#0 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Connection\TcpConnection.php(920): zFramework\Kernel\Modules\Ws::zFramework\Kernel\Modules\{closure}(Object(Workerman\Connection\TcpConnection))
+#1 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Connection\TcpConnection.php(827): Workerman\Connection\TcpConnection->destroy()
+#2 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Worker.php(2472): Workerman\Connection\TcpConnection->close()
+#3 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Worker.php(1881): Workerman\Worker->stop()
+#4 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Worker.php(2516): Workerman\Worker::stopAll(250, Object(Error))
+#5 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Events\Select.php(295): Workerman\Worker->acceptConnection(Resource id #25)
+#6 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Worker.php(2447): Workerman\Events\Select->loop()
+#7 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Worker.php(1442): Workerman\Worker->run()
+#8 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Worker.php(1385): Workerman\Worker::forkWorkersForWindows()
+#9 E:\a-projects\zFramework\zFramework\vendor\workerman\workerman\Worker.php(550): Workerman\Worker::forkWorkers()
+#10 E:\a-projects\zFramework\zFramework\Kernel\Modules\Ws.php(36): Workerman\Worker::runAll()
+#11 E:\a-projects\zFramework\zFramework\Kernel\Terminal.php(77): zFramework\Kernel\Modules\Ws::begin()
+#12 E:\a-projects\zFramework\zFramework\Kernel\Terminal.php(65): zFramework\Kernel\Terminal::do()
+#13 E:\a-projects\zFramework\zFramework\Kernel\Terminal.php(18): zFramework\Kernel\Terminal::parseCommands(Array)
+#14 E:\a-projects\zFramework\terminal(6): zFramework\Kernel\Terminal::begin(Array)
+#15 {main}
