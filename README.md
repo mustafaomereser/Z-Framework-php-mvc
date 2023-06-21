@@ -82,6 +82,11 @@ You can read detailed documention(only Turkish) or read here.
     Route::get('/', 'HomeController@index');
 
 
+    // you can use parameters in uri.
+    Route::get('/test/{name}/{?surname}', function($name, $surname = null) {
+        echo "Hey $name $surname";
+    });
+
     // if you create resource controller it's like that simple
     Route::resource('/', TestController::class, ['name' => 'home']);
    
@@ -131,12 +136,12 @@ You can read detailed documention(only Turkish) or read here.
         });
     });
 
-    Route::csrfNoCheck(true)->group(function() {
+    Route::noCSRF()->group(function() {
         Route::post(..., ...); // that not need a csrf token allow all request like GET method.
     });
 
     // merge using
-    Route::pre('/admin')->csrfNoCheck(true)->group(function() {
+    Route::pre('/admin')->noCSRF()->group(function() {
         Route::post(..., ...); // that not need a csrf token allow all request like GET method. and have /admin prefix.
     });
 

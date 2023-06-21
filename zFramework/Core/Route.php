@@ -2,20 +2,12 @@
 
 namespace zFramework\Core;
 
-use zFramework\Core\Facades\Auth;
 use zFramework\Core\Facades\Lang;
 
 class Route
 {
-    static $routes = [];
-    static $called = false;
+    static $routes      = [];
     static $calledRoute = null;
-    static $calledInformations = [];
-
-    // Changable Parameters
-    static $prefix_URL = null; // Route's before write url. example: /admin
-    static $csrfNoCheck = false; // if that be true csrf not match return always true 
-    //
 
     public static function findRoute($name, $data = [], $return_bool = false)
     {
@@ -34,54 +26,68 @@ class Route
         return $return;
     }
 
+    private static function nameOrganize($val)
+    {
+        $name = str_replace("..", ".", rtrim(ltrim(str_replace('/', '.', $val), '.'), '.'));
+        if (strstr($name, '..')) return self::nameOrganize($name);
+        return $name;
+    }
+
+    public static function name($name)
+    {
+        self::$routes[self::nameOrganize(@self::$groups['pre'] . $name)] = array_pop(self::$routes);
+        return new self();
+    }
+
     public static function redirect($url, $to)
     {
-        self::call([$url, function () use ($to) {
-            return redirect($to);
-        }]);
+        self::any($url, function () use ($to) {
+            http_response_code(302);
+            die(header("Location: $to"));
+        });
         return new self();
     }
 
     public static function any()
     {
-        self::call(func_get_args());
+        self::call(null, func_get_args());
         return new self();
     }
 
     public static function get()
     {
-        self::call(func_get_args(), __FUNCTION__);
+        self::call(__FUNCTION__, func_get_args());
         return new self();
     }
 
     public static function post()
     {
-        self::call(func_get_args(), __FUNCTION__);
+        self::call(__FUNCTION__, func_get_args());
         return new self();
     }
 
     public static function patch()
     {
-        self::call(func_get_args(), __FUNCTION__);
+        self::call(__FUNCTION__, func_get_args());
         return new self();
     }
 
     public static function put()
     {
-        self::call(func_get_args(), __FUNCTION__);
+        self::call(__FUNCTION__, func_get_args());
         return new self();
     }
 
     public static function delete()
     {
-        self::call(func_get_args(), __FUNCTION__);
+        self::call(__FUNCTION__, func_get_args());
         return new self();
     }
 
     public static function ws($method = 'GET', $url, $callback)
     {
         self::pre('/ws')->group(function () use ($method, $url, $callback) {
-            self::call([$url, $callback], strtolower($method));
+            self::call($method, [$url, $callback]);
         });
 
         return new self();
@@ -101,146 +107,104 @@ class Route
         return new self();
     }
 
-    // Private Methods
-    private static function parser($data, $method, $options)
+    private static function dispatch($method, $args)
     {
-        if (self::$prefix_URL && $data[0] == '/') $data[0] = null;
+        $method = mb_strtoupper($method);
+        $URI    = explode('/', substr($_SERVER['REQUEST_URI'], 1));
+        $URL    = explode('/', substr($args[0], 1));
 
-        $_uri = strtok(strtok(uri(), '#'), '?');
-        $_url = str_replace("//", "/", (self::$prefix_URL . $data[0]));
+        self::$routes[] = [
+            'url'    => $args[0],
+            'method' => $method
+        ];
 
-        //
-        $inf = ['url' => $_url, 'method' => $method];
-        if (@$options['name']) self::$routes[$options['name']] = $inf;
-        else self::$routes[] = $inf;
-        //
-
-        //
-        $uri = explode('/', $_uri);
-        $url = explode('/', $_url);
-        unset($uri[0], $url[0]);
-        $url = array_values($url);
-        $uri = array_values($uri);
-        //
-
+        $match      = 0;
         $parameters = [];
+        foreach ($URL as $key => $row) {
+            @$column = $URI[$key];
 
-        foreach ($uri as $key => $val) {
-            $urlVal = @$url[$key];
+            if (strstr($row, '{') && strstr($row, '}')) {
+                if (!strlen($column)) {
+                    if (strstr($row, '{?')) $match++;
+                    continue;
+                }
 
-            if ((((int) $val !== 0 && !$val) || !$urlVal) || (!strstr($urlVal, '{') || !strstr($urlVal, '}'))) continue;
-
-            $url[$key] = $val;
-            $parameters[str_replace(['{', '}'], '', $urlVal)] = $val;
+                $URL[$key] = $column;
+                $match++;
+                $parameters[str_replace(['{?', '{', '}'], '', $row)] = $column;
+            } else {
+                if ($column == $row) $match++;
+            }
         }
 
-        return compact('parameters', 'uri', 'url');
+        $match = ((empty($method) || $method == method()) && ($match > 0 && (count($URL) - count($URI) == 0))) ? 1 : 0;
+
+        return compact('match', 'parameters', 'URI', 'URL');
     }
 
-    private static function call(array $data, $method = null)
+    public static function call($method, $args)
     {
-        $callback = $data[1] ?? null;
-        $options  = $data[2] ?? [];
-        extract(self::parser($data, $method, $options));
+        $args[0] = @self::$groups['pre'] . $args[0];
 
+        $dispatch = self::dispatch($method, $args);
+        if (self::$calledRoute != null || !$dispatch['match']) return;
+        if (!Csrf::check($options['no-csrf'] ?? isset(self::$groups['no-csrf']))) abort(406, Lang::get('errors.csrf.no-verify'));
 
-        // Middlewares
-        if (isset($options['middlewares'])) Middleware::middleware($options['middlewares']);
-        //
+        self::$calledRoute = [
+            'url'        => $dispatch['URL'],
+            'callback'   => $args[1],
+            'parameters' => $dispatch['parameters']
+        ];
+    }
 
-        // Verify
-        if (self::$called == true || ($url != $uri || ($method && $method != method()))) return;
-        if (!Csrf::check($options['no-csrf'] ?? self::$csrfNoCheck)) abort(406, Lang::get('errors.csrf.no-verify'));
-        //
-        self::$called = true;
-        self::$calledRoute = $data[0];
+    public static function run()
+    {
+        if (self::$calledRoute === null) die(http_response_code(404));
 
+        $callback = self::$calledRoute['callback'];
         if (!in_array(gettype($callback), ['object', 'array', 'string'])) throw new \Exception('This type not valid.');
 
-        Route::api_user(0, $_REQUEST['user_token'] ?? ''); // login if url is api
         switch (gettype($callback)) {
             case 'string':
-                $callback = explode('@', $callback);
+                $callback    = explode('@', $callback);
                 $callback[0] = strtok(findFile($callback[0], 'php', 'App\Controllers'), '.');
-                $callback = [new $callback[0]($callback[1]), $callback[1]];
+                $callback    = [new $callback[0]($callback[1]), $callback[1]];
                 break;
             case 'array':
                 $callback = [new $callback[0]($callback[1]), $callback[1]];
                 break;
         }
 
-        self::$calledInformations = [$callback, $parameters];
+        echo call_user_func_array($callback, self::$calledRoute['parameters']);
     }
 
-    public static function run()
+    # Groups: Start
+    static $groups     = [];
+    static $add_groups = [];
+
+    public static function noCSRF()
     {
-        if (count(self::$calledInformations) != 2) throw new \Exception('Route can not run.');
-        echo call_user_func_array(self::$calledInformations[0], self::$calledInformations[1]);
-        self::api_user(1); // logout if url is api;
-    }
-
-    public function name($name)
-    {
-        $name = self::nameOrganize(self::$prefix_URL . "/$name");
-
-        $key = @end(array_keys(self::$routes));
-        $route = self::$routes[$key];
-        unset(self::$routes[$key]);
-
-        self::$routes[$name] = $route;
-
+        self::$add_groups['no-csrf'] = true;
         return new self();
     }
 
-    private static function nameOrganize($val)
+    public static function pre($prefix)
     {
-        $name = str_replace("..", ".", rtrim(ltrim(str_replace('/', '.', $val), '.'), '.'));
-        if (strstr($name, '..')) return self::nameOrganize($name);
-        return $name;
-    }
-
-    // Groups: Start
-    public static function pre(string $url): self
-    {
-        self::$groups['prefix_URL'] = self::$prefix_URL . $url;
+        self::$add_groups['pre'] = @self::$groups['pre'] . $prefix;
         return new self();
     }
 
-    public static function csrfNoCheck(bool $arg): self
-    {
-        self::$groups['csrfNoCheck'] = $arg;
-        return new self();
-    }
-
-    static $groups = [];
     public static function group($callback)
     {
         $groupsReverse = [];
-        foreach (self::$groups as $key => $setting) {
-            $groupsReverse[$key] = self::${$key};
-            self::${$key} = $setting;
+        foreach (self::$add_groups as $key => $setting) {
+            $groupsReverse[$key] = self::$groups[$key] ?? null;
+            self::$groups[$key]  = $setting;
         }
         $callback = $callback();
-        foreach ($groupsReverse as $key => $reverse) self::${$key} = $reverse;
-        self::$groups = [];
+        foreach ($groupsReverse as $key => $reverse) self::$groups[$key] = $reverse;
+        self::$add_groups = [];
         return $callback;
     }
-    // Groups: end
-
-    static $api_logged_in = false;
-    public static function api_user(int $type = 0, $token = '')
-    {
-        if (!self::$api_logged_in) {
-            if (@explode('/', self::$prefix_URL)[1] != 'api') return;
-            if ($type == 0) {
-                self::$api_logged_in = true;
-                Auth::token_login($token);
-            }
-        }
-
-        if ($type == 1) {
-            self::$api_logged_in = false;
-            Auth::logout();
-        }
-    }
+    # Groups: End
 }

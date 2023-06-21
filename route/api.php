@@ -4,7 +4,7 @@ use zFramework\Core\Facades\Auth;
 use zFramework\Core\Helpers\Http;
 use zFramework\Core\Route;
 
-Route::pre('/api')->csrfNoCheck(true)->group(function () {
+Route::pre('/api')->noCSRF()->group(function () {
     Route::get('/', function () {
         $text = "Welcome to API Route.\nIf you wanna user login.\n/api?user_token={user_token}\n";
         if (Auth::check()) {

@@ -60,7 +60,7 @@ function uri()
 // Get Current Request Method.
 function method()
 {
-    return strtolower($_POST['_method'] ?? $_SERVER['REQUEST_METHOD']);
+    return mb_strtoupper($_POST['_method'] ?? $_SERVER['REQUEST_METHOD']);
 }
 
 // Show method with ready input

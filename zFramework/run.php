@@ -54,7 +54,7 @@ class Run
             self::initProviders();
             self::includer('..\route');
             self::includer('..\ws\routes.php');
-            self::includer('..\zFramework\modules\error_http');
+            // self::includer('..\zFramework\modules\error_http');
             @self::$loadtime = ((microtime() + 0.003) - $start);
 
             \zFramework\Core\Route::run();

@@ -97,7 +97,7 @@ class Csrf
      */
     public static function check(bool $alwaysTrue = false): bool
     {
-        if ((method() != 'get' && !self::compare(request('_token'))) && $alwaysTrue != true) return false;
+        if ((method() != 'GET' && !self::compare(request('_token'))) && $alwaysTrue != true) return false;
         return true;
     }
 }
