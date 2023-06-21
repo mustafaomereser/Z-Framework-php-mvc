@@ -3,80 +3,81 @@
 use zFramework\Core\Facades\Lang;
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="<?= Lang::$locale ?>" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= Lang::get('lang.welcome') ?></title>
-
-    <style>
-        body {
-            background-color: #1B2430;
-        }
-
-        .container {
-            margin: 15% 20%;
-        }
-
-        .box {
-            width: 100%;
-            font-size: 19px;
-            color: #ddd;
-            background-color: rgba(81, 85, 126, .7);
-            border-radius: 5px;
-            padding: 10px 15px;
-        }
-
-        .text {
-            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-            color: #D6D5A8;
-        }
-
-        a {
-            color: #D6D5A8;
-        }
-
-        .active {
-            color: #816797;
-        }
-    </style>
+    <title>zFramework</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>
-    <div class="container">
-        <h2 class="text" style="overflow: hidden;">
-            <div style="float: left;">
-                Z Framework
-            </div>
-            <div style="float: right;">
+    <div class="container my-lg-5 my-2">
+        <div class="clearfix">
+            <div class="float-start">
                 <a href="https://github.com/mustafaomereser/Z-Framework-php-mvc" target="_blank">Github & Docs</a>
             </div>
-        </h2>
-        <div>
-            <a href="<?= route('test') ?>">Tests</a>
-        </div>
-        <div class="box">
-            <div style="text-align: center;">
-                <?= _l('lang.welcome') ?>
-            </div>
-            <div>
-                <?= _l('lang.languages') ?>: (<?= _l('lang.current') ?>: <?= Lang::currentLocale() ?>)
-                <ul>
-                    <?php foreach (Lang::list() as $lang) : ?>
-                        <li>
-                            <a href="/language/<?= $lang ?>" class="<?= Lang::currentLocale() == $lang ? 'active' : 'text' ?>"><?= $lang ?></a>
-                        </li>
-                    <?php endforeach; ?>
-                </ul>
+            <div class="float-end">
+                <div class="btn-group">
+                    <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100px">
+                        <?= _l('lang.languages') ?>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <?php foreach (Lang::list() as $lang) : ?>
+                            <li><a class="dropdown-item <?= Lang::currentLocale() == $lang ? 'active' : null ?>" href="<?= route('language', ['lang' => $lang]) ?>"><?= $lang ?></a></li>
+                        <?php endforeach ?>
+                    </ul>
+                </div>
             </div>
         </div>
-        <div class="text">
-            <b>Framework:</b> v<?= FRAMEWORK_VERSION ?><br />
-            <b>App:</b> v<?= config('app.version') ?>
+
+        <div class="my-5">
+            <div class="text-center mb-4">
+                <h1><?= _l('lang.welcome') ?></h1>
+            </div>
+
+            <!-- <div class="row">
+                <div class="col-lg-6 col-12 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-12 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-12 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6 col-12 mb-3">
+                    <div class="card">
+                        <div class="card-body">
+
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+        </div>
+
+        <div class="text-lg-end text-center">
+            <small>
+                <b>zFramework</b> v<?= FRAMEWORK_VERSION ?> | <b>PHP</b> v<?= PHP_VERSION ?> | <b>APP</b> v<?= config('app.version') ?>
+            </small>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 
 </html>

@@ -14,4 +14,4 @@ Route::get('/test', function () {
 Route::get('/language/{lang}', function ($lang) {
     zFramework\Core\Facades\Lang::locale($lang);
     back();
-});
+})->name('language');
