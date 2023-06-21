@@ -26,7 +26,7 @@ use zFramework\Core\Facades\Lang;
                     </button>
                     <ul class="dropdown-menu">
                         <?php foreach (Lang::list() as $lang) : ?>
-                            <li><a class="dropdown-item <?= Lang::currentLocale() == $lang ? 'active' : null ?>" href="<?= route('language', ['lang' => $lang]) ?>"><?= $lang ?></a></li>
+                            <li><a class="dropdown-item <?= Lang::currentLocale() == $lang ? 'active' : null ?>" href="<?= route('language', ['lang' => $lang]) ?>"><?= config("languages.$lang") ?></a></li>
                         <?php endforeach ?>
                     </ul>
                 </div>
@@ -37,37 +37,25 @@ use zFramework\Core\Facades\Lang;
             <div class="text-center mb-4">
                 <h1><?= _l('lang.welcome') ?></h1>
             </div>
+            <div class="card rounded-0">
+                <pre class="card-body" style="height: 400px; overflow-y: auto;" id="terminal-body">
+Usable Modules:
 
-            <!-- <div class="row">
-                <div class="col-lg-6 col-12 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-                            
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-12 mb-3">
-                    <div class="card">
-                        <div class="card-body">
+    • cache
+    • db
+    • make
+    • run
+    • ws
 
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-12 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-6 col-12 mb-3">
-                    <div class="card">
-                        <div class="card-body">
-
-                        </div>
-                    </div>
-                </div>
-            </div> -->
+you can read more information in github repository page.
+</pre>
+            </div>
+            <div class="form-group">
+                <form id="terminal-form">
+                    <?= csrf() ?>
+                    <input type="text" name="command" class="form-control rounded-0" placeholder="Command to Helper Terminal.">
+                </form>
+            </div>
         </div>
 
         <div class="text-lg-end text-center">
@@ -78,6 +66,22 @@ use zFramework\Core\Facades\Lang;
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+
+    <script>
+        $('#terminal-form').on('submit', function(e) {
+            e.preventDefault();
+            let data = {};
+            $(this).find('[name]').each((index, item) => data[$(item).attr('name')] = item.value);
+            $.ajax({
+                method: 'POST',
+                url: '<?= route('store') ?>',
+                data: data,
+                success: e => $('#terminal-body').html(e).scrollTop(99999999999),
+                error: e => $('#terminal-body').html(JSON.parse(e.responseText).message)
+            });
+        });
+    </script>
 </body>
 
 </html>

@@ -26,6 +26,6 @@ class Cache
         foreach ($dir as $unlink) unlink($unlink);
 
         Terminal::clear();
-        Terminal::text("$option caches cleared!", 'green');
+        Terminal::text("$option (" . count($list) . " qty) caches cleared!", 'green');
     }
 }
