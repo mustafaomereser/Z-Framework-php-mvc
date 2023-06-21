@@ -59,7 +59,7 @@ class Terminal
         }
         //
 
-        self::$commands   = $commands;
+        self::$commands   = array_values($commands);
         self::$parameters = $parameters;
 
         return self::do();
@@ -67,9 +67,6 @@ class Terminal
 
     public static function do()
     {
-        // print_r(self::$commands);
-        // print_r(self::$parameters);
-
         self::clear();
 
         try {

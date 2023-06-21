@@ -285,6 +285,9 @@ class Db
 
             Terminal::text("`$table` migrate complete.", 'green');
         }
+
+
+        if (in_array('--seed', Terminal::$parameters)) self::seed();
     }
 
     public static function seed()

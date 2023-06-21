@@ -44,6 +44,7 @@ You can read detailed documention(only Turkish) or read here.
 - [18. Development](#18-development)
 - [19. Helper Methods](#19-helper-methods)
 - [20. Run Project](#20-run-project)
+- [21. Run WS Server](#21-run-ws-server)
 
 ## 1. Route
 ```php
@@ -595,7 +596,7 @@ ALSO you can normal query like /1?test=true
     > php zhelper make migration Users
 
     # Database Seeder          // what are u want
-    > php zhelper make migration UsersSeeder
+    > php zhelper make seeder UsersSeeder
 
 
     # Database Migrator:
@@ -612,6 +613,15 @@ ALSO you can normal query like /1?test=true
     # cache delete
     php zhelper cache clear sessions|caches|views
 ```
+Run project.
+```php
+    ....
+    // Default run host's ip and 1000 port
+    C:\Users\...\Desktop\Project>php zhelper run (press enter)
+    
+    // with custom ip and port
+    C:\Users\...\Desktop\Project>php zhelper run 127.0.0.1 2000 (press enter)
+```
 
 ## 8. Terminal
 ```php
@@ -619,28 +629,29 @@ ALSO you can normal query like /1?test=true
     C:\Users\...\Desktop\Project>php terminal
     
     // Makes Usage:
-    # Controller                // what are u want  // if u want get ready resource controller (Optional)
-    > php terminal make controller Test/TestController resource
+    # Controller                   # what are u want  // if u want get ready resource controller (Optional)
+    > php terminal make controller Test/TestController --resource
     
-    # Model                  // what are u want
+    # Model                   # what are u want
     > php terminal make model Test/Test
     
-    # Observer                // what are u want
+    # Observer                   # what are u want
     > php terminal make observer Test/TestObserver
     
-    # Middleware                  // what are u want
+    # Middleware                   # what are u want
     > php terminal make middleware Test/Test
 
-    # Database Migration          // what are u want
+    # Database Migration          # what are u want
     > php terminal make migration Users
 
-    # Database Seeder          // what are u want
-    > php terminal make migration UsersSeeder
+    # Database Seeder          # what are u want
+    > php terminal make seeder UsersSeeder
 
 
     # Database Migrator:
     php terminal db migrate // output: just add/modify after changes columns.
-    php terminal db migrate fresh // output: reset table and write all columns.
+    php terminal db migrate --fresh // output: reset table and write all columns.
+    php terminal db migrate --fresh --seed // output: reset table and seed it.
     
     # Database Seeder:
     php terminal db seed // output: seed all seeders.
@@ -932,8 +943,14 @@ ALSO you can normal query like /1?test=true
 ```php
     ....
     // Default run host's ip and 1000 port
-    C:\Users\...\Desktop\Project>php zhelper run (press enter)
+    C:\Users\...\Desktop\Project>php terminal run (press enter)
     
     // with custom ip and port
-    C:\Users\...\Desktop\Project>php zhelper run 127.0.0.1 2000 (press enter)
+    C:\Users\...\Desktop\Project>php terminal run host=127.0.0.1 port=2000 (press enter)
+```
+
+## 21. Run WS Server
+```php
+    ....
+    C:\Users\...\Desktop\Project>php terminal ws (press enter)
 ```
