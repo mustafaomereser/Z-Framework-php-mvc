@@ -30,7 +30,6 @@ You can read detailed documention(only Turkish) or read here.
 - [5. Controller](#5-controller)
 - [6. View](#6-view)
   - [6.1. ViewProvider](#61-viewprovider)
-- [7. zhelper](#7-zhelper)
 - [7. zhelper (deprecated)](#7-zhelper-deprecated)
 - [8. Terminal](#8-terminal)
 - [9. Csrf](#9-csrf)
@@ -572,46 +571,6 @@ ALSO you can normal query like /1?test=true
     }
 
     // test view get every time $users parameter.
-```
-
-## 7. zhelper
-```php
-    ....
-    C:\Users\...\Desktop\Project>php zhelper
-    
-    // Makes Usage:
-    # Controller                // what are u want  // if u want get ready resource controller (Optional)
-    > php zhelper make controller Test\TestController resource
-    
-    # Model                  // what are u want
-    > php zhelper make model Test\Test
-    
-    # Observer                // what are u want
-    > php zhelper make observer Test\TestObserver
-    
-    # Middleware                  // what are u want
-    > php zhelper make middleware Test\Test
-
-    # Database Migration          // what are u want
-    > php zhelper make migration Users
-
-    # Database Seeder          // what are u want
-    > php zhelper make migration UsersSeeder
-
-
-    # Database Migrator:
-    php zhelper db migrate // output: just add/modify after changes columns.
-    php zhelper db migrate fresh // output: reset table and write all columns.
-    
-    # Database Seeder:
-    php zhelper db seed // output: seed all seeders.
-    
-    # Database Backup:
-    # you must set app.config.mysql.mysqldump path.
-    php zhelper db backup local // output: backup db to /database/backups/mysql/...
-
-    # cache delete
-    php zhelper cache clear sessions|caches|views
 ```
 
 ## 7. zhelper (deprecated)
