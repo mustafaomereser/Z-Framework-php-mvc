@@ -140,7 +140,7 @@ class Route
     private static function call(array $data, $method = null)
     {
         $callback = $data[1] ?? null;
-        $options = $data[2] ?? [];
+        $options  = $data[2] ?? [];
         extract(self::parser($data, $method, $options));
 
 
