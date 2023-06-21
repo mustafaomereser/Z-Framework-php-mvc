@@ -942,7 +942,7 @@ Run project.
 ## 20. Run Project
 ```php
     ....
-    // Default run host's ip and 1000 port
+    // Default run host's ip and 80 port
     C:\Users\...\Desktop\Project>php terminal run (press enter)
     
     // with custom ip and port
