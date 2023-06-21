@@ -620,16 +620,16 @@ ALSO you can normal query like /1?test=true
     
     // Makes Usage:
     # Controller                // what are u want  // if u want get ready resource controller (Optional)
-    > php terminal make controller Test\TestController resource
+    > php terminal make controller Test/TestController resource
     
     # Model                  // what are u want
-    > php terminal make model Test\Test
+    > php terminal make model Test/Test
     
     # Observer                // what are u want
-    > php terminal make observer Test\TestObserver
+    > php terminal make observer Test/TestObserver
     
     # Middleware                  // what are u want
-    > php terminal make middleware Test\Test
+    > php terminal make middleware Test/Test
 
     # Database Migration          // what are u want
     > php terminal make migration Users
