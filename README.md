@@ -31,18 +31,20 @@ You can read detailed documention(only Turkish) or read here.
 - [6. View](#6-view)
   - [6.1. ViewProvider](#61-viewprovider)
 - [7. zhelper](#7-zhelper)
-- [8. Csrf](#8-csrf)
-- [9. Language](#9-language)
-- [10. Crypter](#10-crypter)
-- [11. Config](#11-config)
-- [12. Alerts](#12-alerts)
-- [13. Validator](#13-validator)
-- [14. Middleware](#14-middleware)
-- [15. Cache](#15-cache)
-- [16. API](#16-api)
-- [17. Development](#17-development)
-- [18. Helper Methods](#18-helper-methods)
-- [19. Run Project](#19-run-project)
+- [7. zhelper (deprecated)](#7-zhelper-deprecated)
+- [8. Terminal](#8-terminal)
+- [9. Csrf](#9-csrf)
+- [10. Language](#10-language)
+- [11. Crypter](#11-crypter)
+- [12. Config](#12-config)
+- [13. Alerts](#13-alerts)
+- [14. Validator](#14-validator)
+- [15. Middleware](#15-middleware)
+- [16. Cache](#16-cache)
+- [17. API](#17-api)
+- [18. Development](#18-development)
+- [19. Helper Methods](#19-helper-methods)
+- [20. Run Project](#20-run-project)
 
 ## 1. Route
 ```php
@@ -87,16 +89,16 @@ You can read detailed documention(only Turkish) or read here.
     Resource Route list:
    
     |------------------------------------------------------------|
-    | URL        | METHOD    | Callback Function | Route Name    |
-    |------------|-----------|-----------------------------------|
-    | /          | GET       | index()           | home.index    |
-    | /          | POST      | store()           | home.store    |
-    | /{id}      | GET       | show($id)         | home.show     |
-    | /{id}/edit | GET       | edit($id)         | home.edit     |
-    | /create    | GET       | create()          | home.create   |
-    | /{id}      | PUT/PATCH | update($id)       | home.update   |
-    | /{id}      | DELETE    | delete($id)       | home.delete   |
-    |--------------------------------------------|---------------|
+    | URL                                          | METHOD          | Callback Function | Route Name  |
+    | -------------------------------------------- | --------------- | ----------------- |
+    | /                                            | GET             | index()           | home.index  |
+    | /                                            | POST            | store()           | home.store  |
+    | /{id}                                        | GET             | show($id)         | home.show   |
+    | /{id}/edit                                   | GET             | edit($id)         | home.edit   |
+    | /create                                      | GET             | create()          | home.create |
+    | /{id}                                        | PUT/PATCH       | update($id)       | home.update |
+    | /{id}                                        | DELETE          | delete($id)       | home.delete |
+    | -------------------------------------------- | --------------- |
 
 
     # if you wanna simple use route names for resource
@@ -611,7 +613,88 @@ ALSO you can normal query like /1?test=true
     # cache delete
     php zhelper cache clear sessions|caches|views
 ```
-## 8. Csrf
+
+## 7. zhelper (deprecated)
+```php
+    ....
+    C:\Users\...\Desktop\Project>php zhelper
+    
+    // Makes Usage:
+    # Controller                // what are u want  // if u want get ready resource controller (Optional)
+    > php zhelper make controller Test\TestController resource
+    
+    # Model                  // what are u want
+    > php zhelper make model Test\Test
+    
+    # Observer                // what are u want
+    > php zhelper make observer Test\TestObserver
+    
+    # Middleware                  // what are u want
+    > php zhelper make middleware Test\Test
+
+    # Database Migration          // what are u want
+    > php zhelper make migration Users
+
+    # Database Seeder          // what are u want
+    > php zhelper make migration UsersSeeder
+
+
+    # Database Migrator:
+    php zhelper db migrate // output: just add/modify after changes columns.
+    php zhelper db migrate fresh // output: reset table and write all columns.
+    
+    # Database Seeder:
+    php zhelper db seed // output: seed all seeders.
+    
+    # Database Backup:
+    # you must set app.config.mysql.mysqldump path.
+    php zhelper db backup local // output: backup db to /database/backups/mysql/...
+
+    # cache delete
+    php zhelper cache clear sessions|caches|views
+```
+
+## 8. Terminal
+```php
+    ....
+    C:\Users\...\Desktop\Project>php terminal
+    
+    // Makes Usage:
+    # Controller                // what are u want  // if u want get ready resource controller (Optional)
+    > php terminal make controller Test\TestController resource
+    
+    # Model                  // what are u want
+    > php terminal make model Test\Test
+    
+    # Observer                // what are u want
+    > php terminal make observer Test\TestObserver
+    
+    # Middleware                  // what are u want
+    > php terminal make middleware Test\Test
+
+    # Database Migration          // what are u want
+    > php terminal make migration Users
+
+    # Database Seeder          // what are u want
+    > php terminal make migration UsersSeeder
+
+
+    # Database Migrator:
+    php terminal db migrate // output: just add/modify after changes columns.
+    php terminal db migrate fresh // output: reset table and write all columns.
+    
+    # Database Seeder:
+    php terminal db seed // output: seed all seeders.
+    
+    # Database Backup:
+    # you must set app.config.mysql.mysqldump path.
+    php terminal db backup local // output: backup db to /database/backups/mysql/...
+
+    # cache delete
+    php terminal cache clear sessions|caches|views
+```
+
+## 9. Csrf
 ```php
     // Usage:
     Csrf::csrf(); // Output: ready csrf input
@@ -620,7 +703,8 @@ ALSO you can normal query like /1?test=true
     Csrf::unset(); // Destroy csrf token
     Csrf::remainTimeOut(); // How much seconds left for change csrf token
 ```
-## 9. Language
+
+## 10. Language
 ```php
     // Usage:
     
@@ -648,7 +732,7 @@ ALSO you can normal query like /1?test=true
     print_r(Lang::list());
 ```
 
-## 10. Crypter
+## 11. Crypter
 ```php
     # Usage:
 
@@ -660,7 +744,7 @@ ALSO you can normal query like /1?test=true
 ```
 
 
-## 11. Config
+## 12. Config
 ```php
     Config::get('app'); // return all config
     Config::get('app.title'); // return in app config title index's element
@@ -669,7 +753,7 @@ ALSO you can normal query like /1?test=true
     ]); // update config
 ```
 
-## 12. Alerts
+## 13. Alerts
 ```php
     // Alerts is show just one time, when you refresh your page Alerts is gone.
 
@@ -698,7 +782,7 @@ ALSO you can normal query like /1?test=true
     <?php endforeach; ?>
 ```
 
-## 13. Validator
+## 14. Validator
 ```php
     // In array validate values.
     // Current: type, required, max, min, same, email, unique, exists.
@@ -716,7 +800,7 @@ ALSO you can normal query like /1?test=true
         'test2' => ['same:test1'],
     ]);
 ```
-##  14. Middleware
+##  15. Middleware
 ```php
     # App\Middlewares\Auth.php
     # Validate first and go on.
@@ -747,7 +831,7 @@ ALSO you can normal query like /1?test=true
         // if you are not logged in # output: Array ('Auth::class')
 ```
 
-## 15. Cache
+## 16. Cache
 ```php
     // Parameters: cache name, what it storage, seconds type timeout
     $users = Cache::cache('users', function() {
@@ -758,7 +842,7 @@ ALSO you can normal query like /1?test=true
     print_r($users);
 ```
 
-## 16. API
+## 17. API
 ```php
     # route/api.php
     Route::get('/test', function () {
@@ -767,7 +851,7 @@ ALSO you can normal query like /1?test=true
     // example: http://localhost/api/test?user_token=12345678 (user logged in.)
 ```
 
-## 17. Development
+## 18. Development
 ```php
     // Database connections
     # Folder: database/connections.php
@@ -812,7 +896,7 @@ ALSO you can normal query like /1?test=true
     # it is so secure. crypter make passwords or etc.
 ```
 
-## 18. Helper Methods
+## 19. Helper Methods
 ```php
     // main base path
     base_path("optional url add");
@@ -885,7 +969,7 @@ ALSO you can normal query like /1?test=true
     File::resizeImage('file_path', 50, 50);
 ```
 
-## 19. Run Project
+## 20. Run Project
 ```php
     ....
     // Default run host's ip and 1000 port
