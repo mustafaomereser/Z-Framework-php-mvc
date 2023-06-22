@@ -17,9 +17,11 @@ class Route
 
         if ($route_is_exists) {
             $url = self::$routes[$name]['url'];
-            foreach ($data as $key => $val) $url = str_replace("{" . $key . "}", $val, $url);
+            foreach ($data as $key => $val) $url = str_replace(["{" . $key . "}", "{?" . $key . "}"], $val, $url);
 
-            $return = (host() . script_name()) . $url;
+            while (strstr($url, '//')) $url = str_replace(['//'], ['/'], $url);
+
+            $return = (host() . script_name()) . rtrim($url, '/');
         }
 
         if ($return_bool) return $route_is_exists;
@@ -35,7 +37,7 @@ class Route
 
     public static function name($name)
     {
-        self::$routes[self::nameOrganize(@self::$groups['pre'] . $name)] = array_pop(self::$routes);
+        self::$routes[self::nameOrganize(@self::$groups['pre'] . "/$name")] = array_pop(self::$routes);
         return new self();
     }
 
@@ -109,8 +111,11 @@ class Route
 
     private static function dispatch($method, $args)
     {
+        while (strstr($args[0], '//')) $args[0] = str_replace(['//'], ['/'], $args[0]);
+
+
         $method = mb_strtoupper($method);
-        $URI    = explode('/', substr($_SERVER['REQUEST_URI'], 1));
+        $URI    = explode('/', substr(strtok($_SERVER['REQUEST_URI'], '?'), 1));
         $URL    = explode('/', substr($args[0], 1));
 
         self::$routes[] = [
@@ -135,9 +140,28 @@ class Route
             } else {
                 if ($column == $row) $match++;
             }
+
+            if (empty($URL[$key]) && count($URL) != 1) unset($URL[$key]);
         }
 
-        $match = ((empty($method) || $method == method()) && ($match > 0 && (count($URL) - count($URI) == 0))) ? 1 : 0;
+        $URI = array_values($URI);
+        $URL = array_values($URL);
+
+        $match = ((empty($method) || $method == method()) && $URI == $URL ? 1 : 0); #($match > 0 && (count($URL) - count($URI) == 0))) ? 1 : 0;
+
+        // echo "<pre>";
+        // echo "\n";
+        // print_r("Method: $method = " . method() . "\n");
+        // print_r("Match: $match\n");
+        // echo "URI:";
+        // print_r($URI);
+        // echo "URL:";
+        // print_r($URL);
+        // echo "original URL:";
+        // print_r($args[0]);
+        // var_dump($URI == $URL);
+        // echo str_repeat('-', 50);
+        // echo "</pre>";
 
         return compact('match', 'parameters', 'URI', 'URL');
     }
@@ -159,7 +183,7 @@ class Route
 
     public static function run()
     {
-        if (self::$calledRoute === null) die(http_response_code(404));
+        if (self::$calledRoute === null) abort(404);
 
         $callback = self::$calledRoute['callback'];
         if (!in_array(gettype($callback), ['object', 'array', 'string'])) throw new \Exception('This type not valid.');
