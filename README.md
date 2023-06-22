@@ -93,17 +93,17 @@ You can read detailed documention(only Turkish) or read here.
    
     Resource Route list:
    
-    |------------------------------------------------------------|
-    | URL                                          | METHOD          | Callback Function | Route Name  |
-    | -------------------------------------------- | --------------- | ----------------- |
-    | /                                            | GET             | index()           | home.index  |
-    | /                                            | POST            | store()           | home.store  |
-    | /{id}                                        | GET             | show($id)         | home.show   |
-    | /{id}/edit                                   | GET             | edit($id)         | home.edit   |
-    | /create                                      | GET             | create()          | home.create |
-    | /{id}                                        | PUT/PATCH       | update($id)       | home.update |
-    | /{id}                                        | DELETE          | delete($id)       | home.delete |
-    | -------------------------------------------- | --------------- |
+    |----------------------------------------------------------------|
+    | URL        | METHOD          | Callback Function | Route Name  |
+    | -------------------------------------------------------------- |
+    | /          | GET             | index()           | home.index  |
+    | /          | POST            | store()           | home.store  |
+    | /{id}      | GET             | show($id)         | home.show   |
+    | /{id}/edit | GET             | edit($id)         | home.edit   |
+    | /create    | GET             | create()          | home.create |
+    | /{id}      | PUT/PATCH       | update($id)       | home.update |
+    | /{id}      | DELETE          | delete($id)       | home.delete |
+    | -------------------------------------------------------------- |
 
 
     # if you wanna simple use route names for resource

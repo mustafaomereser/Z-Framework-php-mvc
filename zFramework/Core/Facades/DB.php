@@ -9,6 +9,7 @@ class DB
 {
     use RelationShips;
 
+    private $driver;
     /**
      * Options parameters
      */
@@ -63,6 +64,9 @@ class DB
         }
 
         foreach ($parameters['options'] ?? [] as $option) $databases[$this->db]->setAttribute($option[0], $option[1]);
+
+        $this->driver = $databases[$this->db]->getAttribute(\PDO::ATTR_DRIVER_NAME);
+
         return $databases[$this->db];
     }
 
