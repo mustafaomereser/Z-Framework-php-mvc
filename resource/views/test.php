@@ -1,6 +1,10 @@
-Users From Provider:
+Users From Provider: (<?= base_path(findFile('ViewProvider', 'php', 'App')) ?>)
 <pre>
-<?php print_r($users) ?>
+users[0] Posts:
+    <?php print_r($users[0]['posts']()) ?>
+
+all users.
+    <?php print_r($users) ?>
 </pre>
 
 User From WS:

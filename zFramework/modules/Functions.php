@@ -143,9 +143,9 @@ function findFile($file, $ext = null, $path = null)
 {
     if ($path) $path .= "\\";
 
-    $dirTree = array_values(array_diff(scandir(base_path($path)), ['.', '..']));
+    @$dirTree = array_values(array_diff(scandir(base_path($path)), ['.', '..']));
     $dirs = [];
-    foreach ($dirTree as $name) {
+    foreach ($dirTree ?? [] as $name) {
         $full_path = $path . $name;
         if (is_file(base_path($full_path)) && strstr($name, "$file.$ext")) return $full_path;
         else $dirs[] = $full_path;
