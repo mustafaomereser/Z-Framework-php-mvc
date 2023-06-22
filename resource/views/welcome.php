@@ -58,10 +58,15 @@ you can read more information in github repository page.
             </div>
         </div>
 
-        <div class="text-lg-end text-center">
-            <small>
-                <b>zFramework</b> v<?= FRAMEWORK_VERSION ?> | <b>PHP</b> v<?= PHP_VERSION ?> | <b>APP</b> v<?= config('app.version') ?>
-            </small>
+        <div class="row text-center">
+            <div class="col-lg-6 col-12 text-lg-start">
+                <a href="<?= route('test') ?>">Tests</a>
+            </div>
+            <div class="col-lg-6 col-12 text-lg-end">
+                <small>
+                    <b>zFramework</b> v<?= FRAMEWORK_VERSION ?> | <b>PHP</b> v<?= PHP_VERSION ?> | <b>APP</b> v<?= config('app.version') ?>
+                </small>
+            </div>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>

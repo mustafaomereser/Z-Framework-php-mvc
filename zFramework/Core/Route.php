@@ -37,7 +37,10 @@ class Route
 
     public static function name($name)
     {
-        self::$routes[self::nameOrganize(@self::$groups['pre'] . "/$name")] = array_pop(self::$routes);
+        $name = self::nameOrganize(@self::$groups['pre'] . "/$name");
+        $old_key = @end(array_keys(self::$routes));
+        self::$routes[$name] = array_pop(self::$routes);
+        if (self::$calledRoute['name'] == $old_key) self::$calledRoute['name'] = $name;
         return new self();
     }
 
@@ -175,7 +178,7 @@ class Route
         if (!Csrf::check($options['no-csrf'] ?? isset(self::$groups['no-csrf']))) abort(406, Lang::get('errors.csrf.no-verify'));
 
         self::$calledRoute = [
-            'url'        => $dispatch['URL'],
+            'name'       => @end(array_keys(self::$routes)),
             'callback'   => $args[1],
             'parameters' => $dispatch['parameters']
         ];

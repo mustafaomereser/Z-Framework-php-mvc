@@ -7,14 +7,14 @@ use App\Controllers\HomeController;
 // Route::get('/', [HomeController::class, 'index']);
 // Route::get('/', 'HomeController@index')->name('index');
 
-// Route::get('/test', function () {
-//     return view('test');
-// })->name('test');
+Route::get('/test', function () {
+    return view('test');
+})->name('test');
 
-// Route::get('/language/{lang}', function ($lang) {
-//     zFramework\Core\Facades\Lang::locale($lang);
-//     back();
-// })->name('language');
+Route::get('/language/{lang}', function ($lang) {
+    zFramework\Core\Facades\Lang::locale($lang);
+    back();
+})->name('language');
 
 
 Route::resource('/', HomeController::class);

@@ -56,7 +56,12 @@ class DB
         // For WebSocket api
         if (gettype($parameters) == 'object') return $databases[$this->db];
 
-        $databases[$this->db] = new \PDO($parameters[0], $parameters[1], ($parameters[2] ?? null));
+        try {
+            $databases[$this->db] = new \PDO($parameters[0], $parameters[1], ($parameters[2] ?? null));
+        } catch (\PDOException $err) {
+            die(errorHandler($err));
+        }
+
         foreach ($parameters['options'] ?? [] as $option) $databases[$this->db]->setAttribute($option[0], $option[1]);
         return $databases[$this->db];
     }
