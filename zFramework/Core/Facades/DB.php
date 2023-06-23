@@ -415,21 +415,22 @@ class DB
         return $limit ? " LIMIT $limit " : null;
     }
 
-    public function join($type = null, $model = null, $onArray = [])
+    public function join($type = null, $model = null, $on = [])
     {
         if (!$model) new \Exception('Model can not be empty!');
         if ($type) $type = strtoupper($type);
+
+        if (gettype($on) === 'array') $on = implode(' ', $on);
 
         $model = new $model();
         $table = $model->table;
 
         if (!in_array($type, [null, 'LEFT', 'LEFT OUTER', 'OUTER', 'RIGHT', 'RIGHT OUTER', 'FULL', 'FULL OUTER ', 'INNER'])) throw new \Throwable('This not acceptable join type.');
-        $this->buildQuery['joins'][] = ($type ? "$type " : null) . "JOIN $table" . ($model->as ? " AS $model->as" : null) . " ON " . $onArray[0] . " " . $onArray[1] . " " . $onArray[2];
+        $this->buildQuery['joins'][] = ($type ? "$type " : null) . "JOIN $table" . ($model->as ? " AS $model->as" : null) . " ON $on";
 
 
         // get table's info
-        $getinfo = new DB;
-        $getinfo = $getinfo->table($table);
+        $getinfo = (new DB)->table($table);
         $this->buildQuery['automatic_select_builder'][$table] = [
             'as'      => ($model->as ? $model->as : $table),
             'columns' => array_diff($getinfo->attributes, ($model->guard ?? []))

@@ -310,6 +310,9 @@ ALSO you can normal query like /1?test=true
 
     // Joins example
     $user->join('LEFT|RIGHT|OUTER|FULL|NULL', App\Models\User::class, ['table_name.id', '=', 'this_table.id'])->get();
+    
+    // OR Joins example
+    $user->join('LEFT|RIGHT|OUTER|FULL|NULL', App\Models\User::class, ['table_name.id = this_table.id'])->get();
 
     // retrn class output
     $...->get(true);
