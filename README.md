@@ -508,7 +508,7 @@ ALSO you can normal query like /1?test=true
     ]);
 
 
-    $api = ...... (#output: status = 0)
+    $api = ...... #(output: status = 0)
 
     if($api->status) {
         $this->user->commit();
