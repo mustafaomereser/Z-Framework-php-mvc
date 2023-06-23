@@ -107,8 +107,8 @@ class Make
         @mkdir($to, 0777, true);
         $save_to = "$to\\$name.php";
 
-        if (file_exists($save_to)) return Terminal::text("This is already exists. $save_to", 'red');
+        if (file_exists($save_to)) return Terminal::text("[color=red]This is already exists. $save_to" . "[/color]");
         file_put_contents($save_to, $content);
-        Terminal::text("Asset is created to $save_to", 'green');
+        Terminal::text("[color=green]Asset is created to $save_to" . "[/color]");
     }
 }

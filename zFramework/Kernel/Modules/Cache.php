@@ -18,14 +18,14 @@ class Cache
         $option = Terminal::$commands[2];
 
         $list = array_values(array_diff(scandir($storage_path), ['.', '..']));
-        if (!in_array($option, $list)) return Terminal::text("Wrong Option!\nOptions: " . implode(', ', $list) . ".", 'red');
+        if (!in_array($option, $list)) return Terminal::text("[color=red]Wrong Option!\nOptions: " . implode(', ', $list) . ".[/color]");
 
-        Terminal::text("Processing...", 'yellow');
+        Terminal::text("[color=yellow]Processing...[/color]");
 
         $dir = glob($storage_path . "/$option/*");
         foreach ($dir as $unlink) unlink($unlink);
 
         Terminal::clear();
-        Terminal::text("$option (" . count($list) . " qty) caches cleared!", 'green');
+        Terminal::text("[color=green]$option (" . count($list) . " qty) caches cleared![/color]");
     }
 }

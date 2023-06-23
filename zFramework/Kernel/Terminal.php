@@ -18,7 +18,7 @@ class Terminal
             return self::parseCommands(implode(' ', $args));
         }
 
-        self::text('Terminal fired.');
+        self::text('[color=red]Terminal fired.[/color]');
         self::clear();
 
         echo "Usable Modules:" . PHP_EOL . PHP_EOL;
@@ -73,7 +73,7 @@ class Terminal
             $module = "\zFramework\Kernel\Modules\\" . ucfirst(mb_strtolower(self::$commands[0]));
             $module::begin();
         } catch (\Throwable $e) {
-            self::text($e->getMessage(), 'yellow');
+            self::text("[color=yellow]" . $e->getMessage() . "[/color]");
         }
 
         if (self::$terminate) return null;
@@ -92,7 +92,7 @@ class Terminal
      * @param string $color
      * @return void
      */
-    public static function text(string $text, string $color = 'default'): void
+    public static function text(string $text): void
     {
         $colors = [
             'default'       => 39,
@@ -114,6 +114,18 @@ class Terminal
             'light-cyan'    => 96,
         ];
 
-        echo "\e[" . $colors[$color] . "m$text\n\e[" . $colors['default'] . "m";
+        while (true) {
+            preg_match_all('#\[color=(.+?)\](.+?)\[/color\]#si', $text, $matches);
+            if (!$matches[0]) break;
+
+            foreach ($matches[0] as $key => $match) {
+                $color   = $matches[1][$key];
+                $content = $matches[2][$key];
+                $text    = str_replace($match, "\e[" . $colors[$color] . "m$content" . "\e[" . $colors['default'] . "m", $text);
+            }
+        }
+
+        echo $text . "\n\e";
+        // echo "\e[" . $colors[$color] . "m$text\n\e[" . $colors['default'] . "m";
     }
 }

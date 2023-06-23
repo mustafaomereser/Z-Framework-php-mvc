@@ -49,8 +49,8 @@ class Db
         $path       = Terminal::$parameters['path'] ?? null;
         $migrations = glob(BASE_PATH . '\database\migrations\\' . ($path ? "$path\\" : null) . '*.php');
         if (!count($migrations)) {
-            Terminal::text("You haven't a migration.", 'red');
-            if ($path) Terminal::text("in $path", 'yellow');
+            Terminal::text("[color=red]You haven't a migration.[/color]");
+            if ($path) Terminal::text("[color=yellow]in " . $path . "[/color]");
             return false;
         }
 
@@ -60,12 +60,12 @@ class Db
             $class = str_replace(['.php', BASE_PATH], '', ucfirst(@end(explode('\\', $migration))));
             // control
             if (!class_exists($class)) {
-                Terminal::text("There are not a $class migrate class.", 'red');
+                Terminal::text("[color=red]There are not a $class migrate class.[/color]");
                 continue;
             }
 
             if (!isset($databases[$class::$db])) {
-                Terminal::text($class::$db . " database is not exists.", 'red');
+                Terminal::text("[color=red]" . $class::$db . " database is not exists.[/color]");
                 continue;
             }
             # connect to model's database
@@ -102,7 +102,7 @@ class Db
             //
 
             echo str_repeat(PHP_EOL, 2);
-            Terminal::text("`$table` migrating:", 'green');
+            Terminal::text("[color=green]`$table` migrating:[/color]");
 
             $drop_columns = [];
 
@@ -111,7 +111,7 @@ class Db
             if (!$migrate_fresh && !self::table_exists($table)) $migrate_fresh = true;
 
             if ($migrate_fresh) {
-                Terminal::text('Info: Migrate forcing.', 'blue');
+                Terminal::text('[color=blue]Info: Migrate forcing.[/color]');
 
                 $init_column_name = "table_initilazing";
                 try {
@@ -260,7 +260,7 @@ class Db
                                 break;
 
                             default:
-                                Terminal::text('Unkown Error: ' . $e->getMessage(), 'red');
+                                Terminal::text('[color=red]Unkown Error: ' . $e->getMessage() . '[/color]');
                                 $while['loop'] = false;
                                 continue;
                         }
@@ -268,7 +268,7 @@ class Db
                 }
 
                 $types = [3 => ['not changed.', 'dark-gray'], 1 => ['added', 'green'], 2 => ['modified', 'yellow']];
-                Terminal::text("-> `$column` " . $types[$while['status']][0], $types[$while['status']][1]);
+                Terminal::text("[color=" . $types[$while['status']][1] . "]-> `$column` " . $types[$while['status']][0] . "[/color]");
 
 
                 $last_column = $column;
@@ -278,17 +278,17 @@ class Db
             foreach ($drop_columns as $drop) {
                 try {
                     self::$db->prepare("ALTER TABLE $table DROP COLUMN $drop");
-                    Terminal::text("Dropped column: $drop", 'yellow');
+                    Terminal::text("[color=yellow]Dropped column: $drop" . "[/color]", 'yellow');
                 } catch (\PDOException $e) {
-                    Terminal::text("Error: Column is can not drop: $drop", 'red');
+                    Terminal::text("[color=red]Error: Column is can not drop: $drop" . "[/color]");
                 }
             }
 
             # update storage engine.
             self::$db->prepare("ALTER TABLE $table ENGINE = '$storageEngine'");
-            Terminal::text("`$table` storage engine is `$storageEngine`.", 'yellow');
+            Terminal::text("[color=yellow]`$table` storage engine is[/color] [color=blue]`$storageEngine`[/color]");
 
-            Terminal::text("`$table` migrate complete.", 'green');
+            Terminal::text("[color=green]`$table` migrate complete.[/color]");
         }
 
 
@@ -298,12 +298,12 @@ class Db
     public static function seed()
     {
         $seeders = glob(BASE_PATH . '\database\seeders\*.php');
-        if (!count($seeders)) return Terminal::text("You haven't any seeder.", 'red');
+        if (!count($seeders)) return Terminal::text("[color=red]You haven't any seeder.[/color]");
         foreach ($seeders as $inc) {
             if (!in_array($inc, \zFramework\Run::$included)) \zFramework\Run::includer($inc);
             $className = ucfirst(str_replace(['.php', BASE_PATH], '', $inc));
             (new $className())->destroy()->seed();
-            Terminal::text("$className seeded.", 'green');
+            Terminal::text("[color=green]$className seeded.[/color]");
         }
 
         return true;
