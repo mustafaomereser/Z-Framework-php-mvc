@@ -44,7 +44,7 @@ class DB
         if (isset($this->observe)) return call_user_func_array([new $this->observe(), 'router'], [$name, $args]);
     }
 
-    private function db()
+    public function db()
     {
         global $connected_databases, $databases;
 
@@ -85,10 +85,16 @@ class DB
         try {
             $dbname = $this->prepare('SELECT DATABASE()')->fetchColumn();
 
-            $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
-            foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
-            $GLOBALS["DB_TABLES"][$dbname]  = $tables;
-            $GLOBALS["DB_NAMES"][$this->db] = $dbname;
+            $engines = [];
+            $tables  = $this->prepare("SELECT TABLE_NAME, ENGINE FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
+            foreach ($tables as $key => $table) {
+                $tables[$key] = $table['TABLE_NAME'];
+                $engines[$table['TABLE_NAME']] = $table['ENGINE'];
+            }
+
+            $GLOBALS["DB_TABLES"][$dbname]         = $tables;
+            $GLOBALS["DB_TABLE_ENGINES"][$dbname]  = $engines;
+            $GLOBALS["DB_NAMES"][$this->db]        = $dbname;
             return $tables;
         } catch (\Throwable $e) {
             return false;
@@ -112,65 +118,12 @@ class DB
         return $this;
     }
 
-    // public function tables()
-    // {
-    //     // $dbname = $this->prepare('select database()')->fetchColumn();
-    //     // $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
-    //     // foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
-    //     // return $tables;
-    //     try {
-    //         $dbname = $this->prepare('SELECT DATABASE()')->fetchColumn();
-    //         if (isset($GLOBALS['DB_TABLES'][$dbname])) return $GLOBALS['DB_TABLES'][$dbname];
-
-    //         $tables = $this->prepare("SELECT TABLE_NAME FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
-    //         foreach ($tables as $key => $table) $tables[$key] = $table['TABLE_NAME'];
-
-    //         $GLOBALS["DB_TABLES"][$dbname] = $tables;
-    //         return $tables;
-    //     } catch (\Throwable $e) {
-    //         return false;
-    //     }
-    // }
-
-    // public function table($table)
-    // {
-    //     # replaced to new
-    //     # if (!in_array($table, $this->tables())) throw new \Exception("$table is not exists in tables list.");
-    //     # $this->table = $table;
-    //     # Table columns
-    //     # $this->attributes = $this->prepare("DESCRIBE $this->table")->fetchAll(\PDO::FETCH_COLUMN);
-    //     # $this->attrCount = count($this->attributes);
-    //     # return $this;
-
-    //     $tables = $this->tables();
-    //     if (is_array($tables) && !strstr($table, ' ')) {
-    //         if (!in_array($table, $tables)) throw new \Exception("$table is not exists in tables list.");
-    //         // Table columns
-    //         $this->attributes = $this->prepare("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
-    //         $this->attrCount = count($this->attributes);
-    //     }
-
-    //     $this->table = $table;
-
-    //     return $this;
-    // }
-
     // Query methods
     public function insert(array $data)
     {
         $this->__call(__FUNCTION__);
-        // if (array_search($this->created_at, $this->attributes)) $data[$this->created_at] = Date::timestamp();
-        // if (array_search($this->updated_at, $this->attributes)) $data[$this->updated_at] = Date::timestamp();
 
         try {
-            // $insert = $this->prepare("INSERT INTO $this->table(" . implode(', ', $keys) . ") VALUES (:" . implode(', :', $keys) . ")", $data)->rowCount();
-            // if ($insert) {
-            //     $this->lastID = $this->db()->lastInsertId();
-            //     $this->__call('inserted', ['id' => $this->lastID]);
-
-            //     return $this->where('id', '=', $this->lastID)->first();
-            // }
-
             $sql_sets = [];
             $sql_keys = [];
             foreach ($data as $key => $_) {
@@ -201,7 +154,6 @@ class DB
 
     public function update(array $sets)
     {
-        // if (array_search($this->updated_at, $this->attributes)) $sets[$this->updated_at] = Date::timestamp();
         $observe_data = ['where' => $this->buildQuery['where'] ?? [], 'sets' => $sets];
 
         $this->__call(__FUNCTION__, $observe_data);
@@ -240,8 +192,6 @@ class DB
         $delete = $this->isSoftDelete(function () {
             return $this->run('delete') ? true : false;
         }, function () {
-            // $this->buildQuery['data']['current'] = Date::timestamp();
-            // return $this->prepare("UPDATE $this->table SET $this->deleted_at = :current" . $this->getWhere())->rowCount();
             return $this->update([$this->deleted_at => Date::timestamp()]);
         });
         if ($delete) $this->__call('deleted', array_merge($observe_data, ['softDelete' => $this->softDelete]));
@@ -592,5 +542,33 @@ class DB
             $result = $this->prepare(implode(';', $this->queue['sql']), $this->queue['data'])->rowCount();
             return $result;
         }
+    }
+
+
+    private function checkisInnoDB()
+    {
+        if (empty($this->table)) throw new \Exception('This table is not defined.');
+        if ($GLOBALS['DB_TABLE_ENGINES'][$GLOBALS["DB_NAMES"][$this->db]][$this->table] == 'InnoDB') return true;
+        throw new \Exception('This table is not InnoDB. If you want to use transaction system change store engine to InnoDB.');
+    }
+
+    public function beginTransaction()
+    {
+        $this->checkisInnoDB();
+
+        $this->db()->beginTransaction();
+        return $this;
+    }
+
+    public function rollback()
+    {
+        $this->db()->rollBack();
+        return $this;
+    }
+
+    public function commit()
+    {
+        $this->db()->commit();
+        return $this;
     }
 }

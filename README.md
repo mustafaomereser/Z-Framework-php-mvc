@@ -25,6 +25,7 @@ You can read detailed documention(only Turkish) or read here.
   - [2.2. Observers](#22-observers)
   - [2.3. Database Migrate](#23-database-migrate)
   - [2.4. Database Seeders](#24-database-seeders)
+  - [2.5. Transaction](#25-transaction)
 - [3. Date](#3-date)
 - [4. Mail](#4-mail)
 - [5. Controller](#5-controller)
@@ -94,15 +95,15 @@ You can read detailed documention(only Turkish) or read here.
     Resource Route list:
    
     |----------------------------------------------------------------|
-    | URL        | METHOD          | Callback Function | Route Name  |
+    | URL                                                            | METHOD    | Callback Function | Route Name  |
     | -------------------------------------------------------------- |
-    | /          | GET             | index()           | home.index  |
-    | /          | POST            | store()           | home.store  |
-    | /{id}      | GET             | show($id)         | home.show   |
-    | /{id}/edit | GET             | edit($id)         | home.edit   |
-    | /create    | GET             | create()          | home.create |
-    | /{id}      | PUT/PATCH       | update($id)       | home.update |
-    | /{id}      | DELETE          | delete($id)       | home.delete |
+    | /                                                              | GET       | index()           | home.index  |
+    | /                                                              | POST      | store()           | home.store  |
+    | /{id}                                                          | GET       | show($id)         | home.show   |
+    | /{id}/edit                                                     | GET       | edit($id)         | home.edit   |
+    | /create                                                        | GET       | create()          | home.create |
+    | /{id}                                                          | PUT/PATCH | update($id)       | home.update |
+    | /{id}                                                          | DELETE    | delete($id)       | home.delete |
     | -------------------------------------------------------------- |
 
 
@@ -420,6 +421,7 @@ ALSO you can normal query like /1?test=true
     // (Folder path)/Users.php
     class Users
     {
+        static $storageEngine = "InnoDB"; // you can change that what are you want to store your sql engine.
         static $charset = "utf8_general_ci"; // set default charset for table (so that effect all columns)
         static $table = "users"; // create table name
         static $db = 'local'; // db key from database/connections.php
@@ -492,6 +494,29 @@ ALSO you can normal query like /1?test=true
     }
 
     // Like that.
+```
+### 2.5. Transaction
+```php
+    If you wanna use that system, your table's store engine is must InnoDB.
+
+    $this->user = new User;
+    $this->user->beginTransaction();
+    $this->user->insert([
+        'username' => 'admin',
+        'password' => .....,
+        .......
+    ]);
+
+
+    $api = ...... (#output: status = 0)
+
+    if($api->status) {
+        $this->user->commit();
+        echo "Successfully done.";
+    }else {
+        $this->user->rollback();
+        echo "Process fail, rollbacked.";
+    }
 ```
 
 ## 3. Date

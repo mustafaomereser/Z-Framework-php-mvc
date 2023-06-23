@@ -1,10 +1,11 @@
 <?php
 class {name}
 {
-    static $charset = "utf8mb4_general_ci";
-    static $table   = "{table}";
-    static $db      = "{dbname}";
-    static $prefix  = "";
+    static $storageEngine = "InnoDB";
+    static $charset       = "utf8mb4_general_ci";
+    static $table         = "{table}";
+    static $db            = "{dbname}";
+    static $prefix        = "";
 
     public static function columns()
     {

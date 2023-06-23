@@ -96,8 +96,9 @@ class Db
             }
             #
 
-            $charset = $class::$charset ?? null;
-            $table   = $class::$table;
+            $storageEngine = $class::$storageEngine ?? 'InnoDB';
+            $charset       = $class::$charset ?? null;
+            $table         = $class::$table;
             //
 
             echo str_repeat(PHP_EOL, 2);
@@ -282,6 +283,10 @@ class Db
                     Terminal::text("Error: Column is can not drop: $drop", 'red');
                 }
             }
+
+            # update storage engine.
+            self::$db->prepare("ALTER TABLE $table ENGINE = '$storageEngine'");
+            Terminal::text("`$table` storage engine is `$storageEngine`.", 'yellow');
 
             Terminal::text("`$table` migrate complete.", 'green');
         }
