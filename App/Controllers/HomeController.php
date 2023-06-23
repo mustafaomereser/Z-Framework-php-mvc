@@ -50,38 +50,13 @@ class HomeController extends Controller
         abort(404);
     }
 
-    private function convertBash($string)
-    {
-        $colors = [
-            '/\[0;30m(.*?)\[0m/s' => '<span class="black">$1</span>',
-            '/\[0;31m(.*?)\[0m/s' => '<span class="red">$1</span>',
-            '/\[0;32m(.*?)\[0m/s' => '<span class="green">$1</span>',
-            '/\[0;33m(.*?)\[0m/s' => '<span class="brown">$1</span>',
-            '/\[0;34m(.*?)\[0m/s' => '<span class="blue">$1</span>',
-            '/\[0;35m(.*?)\[0m/s' => '<span class="purple">$1</span>',
-            '/\[0;36m(.*?)\[0m/s' => '<span class="cyan">$1</span>',
-            '/\[0;37m(.*?)\[0m/s' => '<span class="light-gray">$1</span>',
-
-            '/\[1;30m(.*?)\[0m/s' => '<span class="dark-gray">$1</span>',
-            '/\[1;31m(.*?)\[0m/s' => '<span class="light-red">$1</span>',
-            '/\[1;32m(.*?)\[0m/s' => '<span class="light-green">$1</span>',
-            '/\[1;33m(.*?)\[0m/s' => '<span class="yellow">$1</span>',
-            '/\[1;34m(.*?)\[0m/s' => '<span class="light-blue">$1</span>',
-            '/\[1;35m(.*?)\[0m/s' => '<span class="light-purple">$1</span>',
-            '/\[1;36m(.*?)\[0m/s' => '<span class="light-cyan">$1</span>',
-            '/\[1;37m(.*?)\[0m/s' => '<span class="white">$1</span>',
-        ];
-
-        return preg_replace(array_keys($colors), $colors, $string);
-    }
-
     /** POST page | POST: /
      * @return mixed
      */
     public function store()
     {
         $command = Validator::validate($_REQUEST, ['command' => ['required']])['command'];
-        $message = self::convertBash(shell_exec("php " . base_path('terminal') . " $command"));
+        $message = shell_exec("php " . base_path('terminal') . " $command --web");
         echo $message;
     }
 

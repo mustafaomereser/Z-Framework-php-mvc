@@ -94,7 +94,9 @@ class Terminal
      */
     public static function text(string $text): void
     {
-        $colors = [
+        $cli = !in_array('--web', self::$parameters);
+
+        $colors = $cli ? [
             'default'       => 39,
             'white'         => 97,
             'black'         => 30,
@@ -112,6 +114,24 @@ class Terminal
             'light-blue'    => 94,
             'light-magenta' => 95,
             'light-cyan'    => 96,
+        ] : [
+            'default'       => "#adbac7",
+            'white'         => "#cdd9e5",
+            'black'         => "#848a93",
+            'red'           => "#f47067",
+            'green'         => "#57ab5a",
+            'yellow'        => "#c69026",
+            'blue'          => "#539bf5",
+            'magenta'       => "#b083f0",
+            'cyan'          => "#39c5cf",
+            'light-gray'    => "#8dbac7",
+            'dark-gray'     => "#818a95",
+            'light-red'     => "#ff938a",
+            'light-green'   => "#6bc46d",
+            'light-yellow'  => "#daaa3f",
+            'light-blue'    => "#6cb6ff",
+            'light-magenta' => "#dcbdfb",
+            'light-cyan'    => "#56d4dd",
         ];
 
         while (true) {
@@ -121,11 +141,11 @@ class Terminal
             foreach ($matches[0] as $key => $match) {
                 $color   = $matches[1][$key];
                 $content = $matches[2][$key];
-                $text    = str_replace($match, "\e[" . $colors[$color] . "m$content" . "\e[" . $colors['default'] . "m", $text);
+
+                $text = str_replace($match, $cli ? ("\e[" . $colors[$color] . "m$content" . "\e[" . $colors['default'] . "m") : ("<font color='$color'>$content</font>"), $text);
             }
         }
 
-        echo $text . "\n\e";
-        // echo "\e[" . $colors[$color] . "m$text\n\e[" . $colors['default'] . "m";
+        echo $text . PHP_EOL;
     }
 }
