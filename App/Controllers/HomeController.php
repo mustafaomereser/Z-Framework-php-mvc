@@ -4,8 +4,6 @@ namespace App\Controllers;
 
 use App\Models\User;
 use zFramework\Core\Abstracts\Controller;
-use zFramework\Core\Crypter;
-use zFramework\Core\Facades\Str;
 use zFramework\Core\Validator;
 
 class HomeController extends Controller
@@ -13,13 +11,12 @@ class HomeController extends Controller
 
     public function __construct($method)
     {
-        $this->user = new User;
     }
 
     /** Index page | GET: /
      * @return mixed
      */
-    public function index()
+    public function index(User $user)
     {
         return view('welcome');
     }

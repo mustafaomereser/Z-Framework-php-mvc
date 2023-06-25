@@ -3,6 +3,7 @@
 use zFramework\Core\Route;
 
 use App\Controllers\HomeController;
+use App\Models\User;
 
 // Route::get('/', [HomeController::class, 'index']);
 // Route::get('/', 'HomeController@index')->name('index');

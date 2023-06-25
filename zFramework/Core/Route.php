@@ -2,6 +2,8 @@
 
 namespace zFramework\Core;
 
+use ReflectionFunction;
+use ReflectionMethod;
 use zFramework\Core\Facades\Lang;
 
 class Route
@@ -40,7 +42,7 @@ class Route
         $name = self::nameOrganize(@self::$groups['pre'] . "/$name");
         $old_key = @end(array_keys(self::$routes));
         self::$routes[$name] = array_pop(self::$routes);
-        if (self::$calledRoute['name'] == $old_key) self::$calledRoute['name'] = $name;
+        if (@self::$calledRoute['name'] == $old_key) self::$calledRoute['name'] = $name;
         return new self();
     }
 
@@ -175,7 +177,7 @@ class Route
 
         $dispatch = self::dispatch($method, $args);
         if (self::$calledRoute != null || !$dispatch['match']) return;
-        if (!Csrf::check($options['no-csrf'] ?? isset(self::$groups['no-csrf']))) abort(406, Lang::get('errors.csrf.no-verify'));
+        if (!Csrf::check(isset(self::$groups['no-csrf']))) abort(406, Lang::get('errors.csrf.no-verify'));
 
         self::$calledRoute = [
             'name'       => @end(array_keys(self::$routes)),
@@ -200,6 +202,20 @@ class Route
             case 'array':
                 $callback = [new $callback[0]($callback[1]), $callback[1]];
                 break;
+        }
+
+        try {
+            $reflection = new ReflectionMethod($callback[0], $callback[1]);
+        } catch (\Throwable $e) {
+            $reflection = new ReflectionFunction($callback);
+        }
+
+        $parameters = $reflection->getParameters();
+        foreach ($parameters as $parameter) {
+            $name       = $parameter->getName();
+            $dependence = (string) $parameter->getType();
+            if (!empty(self::$calledRoute['parameters'][$name]) || !class_exists($dependence)) continue;
+            self::$calledRoute['parameters'][$name] = new $dependence;
         }
 
         echo call_user_func_array($callback, self::$calledRoute['parameters']);

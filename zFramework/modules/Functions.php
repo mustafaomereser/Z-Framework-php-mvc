@@ -143,7 +143,12 @@ function findFile($file, $ext = null, $path = null)
 {
     if ($path) $path .= "\\";
 
-    @$dirTree = array_values(array_diff(scandir(base_path($path)), ['.', '..']));
+
+    try {
+        @$dirTree = array_values(array_diff(scandir(base_path($path)), ['.', '..']));
+    } catch (\Throwable $e) {
+    }
+
     $dirs = [];
     foreach ($dirTree ?? [] as $name) {
         $full_path = $path . $name;
@@ -160,10 +165,10 @@ function findFile($file, $ext = null, $path = null)
 // Get Client's browser details.
 function getBrowser()
 {
-    $u_agent = $_SERVER['HTTP_USER_AGENT'];
-    $bname = 'Unknown';
+    $u_agent  = $_SERVER['HTTP_USER_AGENT'];
+    $bname    = 'Unknown';
     $platform = 'Unknown';
-    $version = "";
+    $version  = "";
 
     if (preg_match('/linux/i', $u_agent)) $platform = 'linux';
     elseif (preg_match('/macintosh|mac os x/i', $u_agent)) $platform = 'mac';
@@ -196,7 +201,7 @@ function getBrowser()
     }
 
     // finally get the correct version number
-    $known = array('Version', $ub, 'other');
+    $known   = array('Version', $ub, 'other');
     $pattern = '#(?<browser>' . join('|', $known) .
         ')[/ ]+(?<version>[0-9.|a-zA-Z.]*)#';
     preg_match_all($pattern, $u_agent, $matches);
