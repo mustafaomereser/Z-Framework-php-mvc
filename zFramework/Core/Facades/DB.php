@@ -130,8 +130,11 @@ class DB
                 $replaced_key = $key . "_" . uniqid();
                 $sql_keys[] = $key;
                 $sql_sets[] = $replaced_key;
+
+                if (gettype($_) == 'array') $_ = json_encode($_, JSON_UNESCAPED_UNICODE);
                 $this->buildQuery['data'][$replaced_key] = $_;
             }
+
             $this->buildQuery['sets'] = "(" . implode(', ', $sql_keys) . ") VALUES (:" . implode(', :', $sql_sets) . ")";
 
             $insert = $this->run('insert');
@@ -163,6 +166,9 @@ class DB
             $replaced_key = $key . "_" . uniqid();
 
             $sql_sets[] = "$key = :$replaced_key";
+
+            if (gettype($_) == 'array') $_ = json_encode($_, JSON_UNESCAPED_UNICODE);
+
             $this->buildQuery['data'][$replaced_key] = $_;
         }
         $this->buildQuery['sets'] = " SET " . implode(', ', $sql_sets) . " ";
@@ -288,28 +294,18 @@ class DB
         $url = "?" . http_build_query($queryString);
 
         $return = [
-            'items' => $row_count ? self::limit($start_count, $per_page_count)->get($class) : [],
-            'item_count' => $row_count,
-            'shown' => ($start_count + 1) . " / " . (($per_page_count * $current_page) >= $row_count ? $row_count : ($per_page_count * $current_page)),
-            'start' => ($start_count + 1),
+            'items'          => $row_count ? self::limit($start_count, $per_page_count)->get($class) : [],
+            'item_count'     => $row_count,
+            'shown'          => ($start_count + 1) . " / " . (($per_page_count * $current_page) >= $row_count ? $row_count : ($per_page_count * $current_page)),
+            'start'          => ($start_count + 1),
 
-            'per_page' => $per_page_count,
+            'per_page'       => $per_page_count,
             'max_page_count' => $max_page_count,
-            'current_page' => $current_page,
+            'current_page'   => $current_page,
 
-            'links' => function ($view) use ($max_page_count, $current_page, $url, $uniqueID) {
-                if ($view) return view($view, compact('max_page_count', 'current_page', 'url', 'uniqueID'));
-?>
-            <ul class="pagination">
-                <?php for ($x = 1; $x <= $max_page_count; $x++) : ?>
-                    <li class="<?= $x == $current_page ? 'active' : null ?>">
-                        <a href="<?= str_replace("%7Bchange_page_$uniqueID%7D", $x, $url) ?>">
-                            <?= $x ?>
-                        </a>
-                    </li>
-                <?php endfor; ?>
-            </ul>
-<?php
+            'links'          => function ($view = null) use ($max_page_count, $current_page, $url, $uniqueID) {
+                if (!$view) $view = 'layouts.pagination.default';
+                return view($view, compact('max_page_count', 'current_page', 'url', 'uniqueID'));
             }
         ];
 
@@ -495,7 +491,6 @@ class DB
         }
 
         $sql = trim(str_replace(['  '], [' '], "$type $this->table" . ($as ? " AS $as " : null) . @$sets . $this->getJoins() . $this->getWhere($select_type) . $this->getGroupBy() . $this->getOrderBy() . $this->getLimit()));
-        // echo "$sql <br>";
         return $sql;
     }
 
@@ -545,7 +540,7 @@ class DB
         }
     }
 
-
+    # Transaction
     private function checkisInnoDB()
     {
         if (empty($this->table)) throw new \Exception('This table is not defined.');
@@ -572,4 +567,5 @@ class DB
         $this->db()->commit();
         return $this;
     }
+    #
 }
