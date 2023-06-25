@@ -1,0 +1,19 @@
+<?php
+namespace App\Requests{namespace};
+
+use zFramework\Core\Abstracts\Request;
+
+class {name} extends Request 
+{
+
+    public function __construct()
+    {
+        $this->authorize = false;
+    }
+
+    public function columns(){
+        return [
+
+        ];
+    }
+}

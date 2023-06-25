@@ -2,9 +2,8 @@
 
 namespace App\Controllers;
 
-use App\Models\User;
+use App\Requests\Welcome\CommandRequest;
 use zFramework\Core\Abstracts\Controller;
-use zFramework\Core\Validator;
 
 class HomeController extends Controller
 {
@@ -16,7 +15,7 @@ class HomeController extends Controller
     /** Index page | GET: /
      * @return mixed
      */
-    public function index(User $user)
+    public function index()
     {
         return view('welcome');
     }
@@ -50,9 +49,9 @@ class HomeController extends Controller
     /** POST page | POST: /
      * @return mixed
      */
-    public function store()
+    public function store(CommandRequest $command)
     {
-        $command = Validator::validate($_REQUEST, ['command' => ['required']])['command'];
+        $command = $command->validated()['command'];
         $message = shell_exec("php " . base_path('terminal') . " $command --web");
         echo $message;
     }

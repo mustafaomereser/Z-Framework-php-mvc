@@ -668,6 +668,15 @@ Run project.
     # Model                   # what are u want
     > php terminal make model Test/Test
     
+
+
+    # Request for methods.      # what are u want
+    > php terminal make request Users/StoreRequest
+
+    # Usage:
+        function($id, $vars = null, StoreRequest $request){...}
+
+
     # Observer                   # what are u want
     > php terminal make observer Test/TestObserver
     
@@ -679,6 +688,7 @@ Run project.
 
     # Database Seeder          # what are u want
     > php terminal make seeder UsersSeeder
+    
 
 
     # Database Migrator:

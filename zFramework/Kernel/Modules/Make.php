@@ -53,6 +53,11 @@ class Make
         return self::{$method}($make);
     }
 
+    private static function request($make)
+    {
+        return self::save('App\Requests', $make);
+    }
+
     private static function controller($make)
     {
         return self::save('App\Controllers', $make);
@@ -80,7 +85,6 @@ class Make
     {
         return self::save('database\seeders', $make);
     }
-
 
     private static function model($make)
     {
