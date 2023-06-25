@@ -674,7 +674,9 @@ Run project.
     > php terminal make request Users/StoreRequest
 
     # Usage:
-        function($id, $vars = null, StoreRequest $request){...}
+        function($id, $vars = null, StoreRequest $request){
+            $request = $request->validated();
+        }
 
 
     # Observer                   # what are u want
