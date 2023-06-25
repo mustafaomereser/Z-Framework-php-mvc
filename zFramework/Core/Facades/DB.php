@@ -21,11 +21,11 @@ class DB
         'sql'  => [],
         'data' => []
     ];
-    public $data = null;
+    public $data   = null;
     public $lastID = 0;
 
     public $attributes = [];
-    public $attrCount = 0;
+    public $attrCount  = 0;
 
     /**
      * Initial, Select Database.
