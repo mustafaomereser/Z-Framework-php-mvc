@@ -40,7 +40,7 @@ class Make
     private static function do()
     {
         $method = Terminal::$commands[1];
-        @$make = self::$assets[$method];
+        @$make  = self::$assets[$method];
         if (!$make) return Terminal::text('This is not makeable. List:' . implode(', ', array_keys(self::$assets)));
 
         if (in_array('--resource', Terminal::$parameters)) $make .= "_resource";

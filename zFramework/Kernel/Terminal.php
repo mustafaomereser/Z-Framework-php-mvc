@@ -94,7 +94,7 @@ class Terminal
      */
     public static function text(string $text): void
     {
-        $cli = !in_array('--web', self::$parameters);
+        $cli = !in_array('--web', self::$parameters ?? []);
 
         $colors = $cli ? [
             'default'       => 39,

@@ -27,6 +27,10 @@ class Run
             $server = ($localAddr ?? '127.0.0.1');
         }
 
+        while (true) if (!@fsockopen($server, $port, $errno, $errstr, 2)) break;
+        else Terminal::text("[color=red]$port is already using,[/color][color=yellow] new port is " . (++$port) . ".[/color]");
+
+
         shell_exec("start http://$server:$port");
 
         Terminal::clear();

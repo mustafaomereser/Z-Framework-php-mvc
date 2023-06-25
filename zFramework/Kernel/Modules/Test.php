@@ -6,8 +6,7 @@ use zFramework\Kernel\Terminal;
 
 class Test
 {
-
-    public function begin()
+    public static function begin()
     {
         foreach ([
             'default',
