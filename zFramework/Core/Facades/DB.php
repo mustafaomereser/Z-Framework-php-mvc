@@ -130,9 +130,10 @@ class DB
                 $replaced_key = $key . "_" . uniqid();
                 $sql_keys[] = $key;
                 $sql_sets[] = $replaced_key;
-
+                #
                 if (gettype($_) == 'array') $_ = json_encode($_, JSON_UNESCAPED_UNICODE);
                 $this->buildQuery['data'][$replaced_key] = $_;
+                #
             }
 
             $this->buildQuery['sets'] = "(" . implode(', ', $sql_keys) . ") VALUES (:" . implode(', :', $sql_sets) . ")";
@@ -167,9 +168,10 @@ class DB
 
             $sql_sets[] = "$key = :$replaced_key";
 
+            #
             if (gettype($_) == 'array') $_ = json_encode($_, JSON_UNESCAPED_UNICODE);
-
             $this->buildQuery['data'][$replaced_key] = $_;
+            #
         }
         $this->buildQuery['sets'] = " SET " . implode(', ', $sql_sets) . " ";
 
@@ -401,14 +403,24 @@ class DB
 
     public function limit(int $startPoint = 0, $getCount = null)
     {
-        $this->buildQuery['limit'] = $startPoint . ($getCount ? ", $getCount" : null);
+        // $this->buildQuery['limit'] = $startPoint . ($getCount ? ", $getCount" : null);
+        $this->buildQuery['limit'] = [$startPoint, $getCount];
         return $this;
     }
 
     private function getLimit()
     {
         $limit = @$this->buildQuery['limit'];
-        return $limit ? " LIMIT $limit " : null;
+        switch ($this->driver) {
+            case 'mysql':
+                return $limit ? " LIMIT " . ($limit[0] . ($limit[1] ? ", " . $limit[1] : null)) : null;
+                break;
+
+            case 'sqlsrv':
+                if (!$this->buildQuery['orderBy']) $this->buildQuery['orderBy'] = ['id' => ''];
+                return $limit ? " OFFSET " . (is_null($limit[1]) ? 0 : $limit[0]) . " ROWS FETCH NEXT " . (is_null($limit[1]) ? $limit[0] : $limit[1]) . " ROWS ONLY" : null;
+                break;
+        }
     }
 
     public function join($type = null, $model = null, $on = [])
@@ -490,7 +502,8 @@ class DB
                 abort(400, 'something wrong, buildSQL invalid type.');
         }
 
-        $sql = trim(str_replace(['  '], [' '], "$type $this->table" . ($as ? " AS $as " : null) . @$sets . $this->getJoins() . $this->getWhere($select_type) . $this->getGroupBy() . $this->getOrderBy() . $this->getLimit()));
+        $getLimit = $this->getLimit();
+        $sql      = trim(str_replace(['  '], [' '], "$type $this->table" . ($as ? " AS $as " : null) . @$sets . $this->getJoins() . $this->getWhere($select_type) . $this->getGroupBy() . $this->getOrderBy() . $getLimit));
         return $sql;
     }
 

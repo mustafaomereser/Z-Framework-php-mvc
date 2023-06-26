@@ -2,7 +2,6 @@
 
 namespace App\Controllers;
 
-use App\Models\User;
 use App\Requests\Welcome\CommandRequest;
 use zFramework\Core\Abstracts\Controller;
 
@@ -16,11 +15,8 @@ class HomeController extends Controller
     /** Index page | GET: /
      * @return mixed
      */
-    public function index(User $user)
+    public function index()
     {
-        print_r($user->paginate(1)['links']());
-        exit;
-
         return view('welcome');
     }
 
