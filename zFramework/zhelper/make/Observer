@@ -9,9 +9,13 @@ class {name} extends Observer
     /**
      * Insert before run that
      */
-    public function oninsert()
+    public function oninsert($data)
     {
         echo "inserting";
+
+        // $data['example_data'] = number_format($data['example_data'], 2);
+
+        return $data;
     }
 
     /**

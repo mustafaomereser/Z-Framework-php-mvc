@@ -121,7 +121,9 @@ class DB
     // Query methods
     public function insert(array $data)
     {
-        $this->__call(__FUNCTION__);
+        $call = $this->__call(__FUNCTION__, $data);
+
+        if (!empty($call)) $data = $call;
 
         try {
             $sql_sets = [];
@@ -158,9 +160,8 @@ class DB
 
     public function update(array $sets)
     {
-        $observe_data = ['where' => $this->buildQuery['where'] ?? [], 'sets' => $sets];
-
-        $this->__call(__FUNCTION__, $observe_data);
+        $call = $this->__call(__FUNCTION__, $sets);
+        if (!empty($call)) $sets = $call;
 
         $sql_sets = [];
         foreach ($sets as $key => $_) {
@@ -178,7 +179,7 @@ class DB
         $update = $this->run('update');
         if (!$this->queue['mode']) {
             $update = $update->rowCount();
-            if ($update) $this->__call('updated', $observe_data);
+            if ($update) $this->__call('updated', ['where' => $this->buildQuery['where'] ?? [], 'sets' => $sets]);
             return $update;
         }
     }

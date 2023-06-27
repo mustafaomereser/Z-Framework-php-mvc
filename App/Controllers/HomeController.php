@@ -2,8 +2,11 @@
 
 namespace App\Controllers;
 
+use App\Models\User;
 use App\Requests\Welcome\CommandRequest;
 use zFramework\Core\Abstracts\Controller;
+use zFramework\Core\Crypter;
+use zFramework\Core\Facades\Str;
 
 class HomeController extends Controller
 {
@@ -15,8 +18,14 @@ class HomeController extends Controller
     /** Index page | GET: /
      * @return mixed
      */
-    public function index()
+    public function index(User $user)
     {
+        $user->update([
+            'password'  => Crypter::encode(Str::rand()),
+        ]);
+
+        exit;
+
         return view('welcome');
     }
 
