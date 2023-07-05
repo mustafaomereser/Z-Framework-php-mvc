@@ -122,7 +122,6 @@ class DB
     public function insert(array $data)
     {
         $call = $this->__call(__FUNCTION__, $data);
-
         if (!empty($call)) $data = $call;
 
         try {
