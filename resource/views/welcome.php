@@ -1,9 +1,10 @@
-<?php
-
+@php
 use zFramework\Core\Facades\Lang;
-?>
+$lang_list = Lang::list();
+@endphp
+
 <!DOCTYPE html>
-<html lang="<?= Lang::$locale ?>" data-bs-theme="dark">
+<html lang="{{ Lang::$locale }}" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -22,12 +23,12 @@ use zFramework\Core\Facades\Lang;
             <div class="float-end">
                 <div class="btn-group">
                     <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100px">
-                        <?= _l('lang.languages') ?>
+                        {{ _l('lang.languages') }}
                     </button>
                     <ul class="dropdown-menu">
-                        <?php foreach (Lang::list() as $lang) : ?>
-                            <li><a class="dropdown-item <?= Lang::currentLocale() == $lang ? 'active' : null ?>" href="<?= route('language', ['lang' => $lang]) ?>"><?= config("languages.$lang") ?></a></li>
-                        <?php endforeach ?>
+                        @foreach($lang_list as $lang)
+                        <li><a class="dropdown-item {{ Lang::currentLocale() == $lang ? 'active' : null  }}" href="{{ route('language', ['lang' => $lang]) }}">{{ config("languages.$lang") }}</a></li>
+                        @endforeach
                     </ul>
                 </div>
             </div>
@@ -35,7 +36,7 @@ use zFramework\Core\Facades\Lang;
 
         <div class="my-5">
             <div class="text-center mb-4">
-                <h1><?= _l('lang.welcome') ?></h1>
+                <h1>{{ _l('lang.welcome') }}</h1>
             </div>
             <div class="card rounded-0">
                 <pre class="card-body" style="height: 400px; overflow-y: auto;" id="terminal-body">
@@ -52,7 +53,7 @@ you can read more information in github repository page.
             </div>
             <div class="form-group">
                 <form id="terminal-form">
-                    <?= csrf() ?>
+                    {{ csrf() }}
                     <input type="text" name="command" class="form-control rounded-0" placeholder="Command to Helper Terminal.">
                 </form>
             </div>
@@ -60,11 +61,11 @@ you can read more information in github repository page.
 
         <div class="row text-center">
             <div class="col-lg-6 col-12 text-lg-start">
-                <a href="<?= route('test') ?>">Tests</a>
+                <a href="{{ route('test') }}">Tests</a>
             </div>
             <div class="col-lg-6 col-12 text-lg-end">
                 <small>
-                    <b>zFramework</b> v<?= FRAMEWORK_VERSION ?> | <b>PHP</b> v<?= PHP_VERSION ?> | <b>APP</b> v<?= config('app.version') ?>
+                    <b>zFramework</b> v{{ FRAMEWORK_VERSION }} | <b>PHP</b> v{{ PHP_VERSION }} | <b>APP</b> v{{ config('app.version') }}
                 </small>
             </div>
         </div>
@@ -80,7 +81,7 @@ you can read more information in github repository page.
             $(this).find('[name]').each((index, item) => data[$(item).attr('name')] = item.value);
             $.ajax({
                 method: 'POST',
-                url: '<?= route('store') ?>',
+                url: '{{  route("store") }}',
                 data: data,
                 success: e => $('#terminal-body').html(e).scrollTop(99999999999),
                 error: e => $('#terminal-body').html(JSON.parse(e.responseText).message)

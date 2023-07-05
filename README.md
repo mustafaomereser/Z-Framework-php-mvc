@@ -561,25 +561,57 @@ ALSO you can normal query like /1?test=true
         }
         
         public function index() {
-            $hi = 'hey';                                    // resource/views/main.php template
-            return View::view('home.index', compact('hi'), 'main');
+            $hi = 'hey';                                  
+            return View::view('home.index', compact('hi');
         }
         
         public function show($id) {
-            return View::view('home.user', ['user' => $this->user->first()], 'main');
+            return View::view('home.user', ['user' => $this->user->first()]);
             //
-            return view('home.user', ['user' => $this->user->first()], 'main'); // also you can use that
+            return view('home.user', ['user' => $this->user->first()]); // also you can use that
         }
     }
 ```
 ## 6. View
 ```php
+
+    ### Currently directions like blade view engine.
+    - `@if`, `@elseif` and `@else`
+    - `@empty` and `@endempty`
+    - `@isset` and `@endisset`
+    - `@foreach` and `@endforeach`
+    - `@forelse`, `@empty` and `@endforelse`
+    - `@php` and `@endphp`
+    - `@json`
+    - `@dump` and `@dd`
+    - `@include`
+    - `@extends`, `@yield` and `@section`
+
+    # You can add custom direction
+    View::directive('style', function($href = null) {
+        if ($href) return '<link rel="stylesheet" type="text/css" href="' . $href . '" />';
+        return '<style>';
+    });
+
+    View::directive('endstyle', function() {
+        return '</style>';
+    });
+
+    View::directive('page', function($page) {
+        return '<?php if (isset($_GET["page"]) && $_GET["page"] === \'' . $page . '\'): ?>';
+    });
+
+    View::directive('endpage', function() {
+        return '<?php endif; ?>';
+    });
+
+
     // Use That
-    view('home.index', ['hi' => 'hey'], 'main');
+    view('home.index', ['hi' => 'hey']);
     
     // OR That
-    use Core\View;                     // resource/views/main.php template
-    echo View::view('home.index', ['hi' => 'hey'], 'main');
+    use Core\View;
+    echo View::view('home.index', ['hi' => 'hey']);
 
     // call in view. In home.index:
     <div>
