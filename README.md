@@ -94,7 +94,7 @@ You can read detailed documention(only Turkish) or read here.
    
     Resource Route list:
    
-    |------------|-----------|-------------------|-------------|
+    |--------------|-------------|---------------------|---------------|
     | URL          | METHOD      | Callback Function   | Route Name    |
     | ------------ | ----------- | ------------------- | ------------- |
     | /            | GET         | index()             | home.index    |
@@ -706,7 +706,7 @@ Run project.
     > php terminal make request Users/StoreRequest
 
     # Usage:
-        function($id, $vars = null, StoreRequest $request){
+        function($id, $vars = null, StoreRequest $request) {
             $request = $request->validated();
         }
 
