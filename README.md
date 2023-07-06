@@ -575,7 +575,7 @@ ALSO you can normal query like /1?test=true
 ## 6. View
 ```php
 
-    ### Currently directions like blade view engine.
+    ### Currently directions, like blade view engine.
     - `@if`, `@elseif` and `@else`
     - `@empty` and `@endempty`
     - `@isset` and `@endisset`

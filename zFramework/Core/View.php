@@ -192,7 +192,7 @@ class View
      * @param string $key
      * @param object $callback
      */
-    public static function directive(string $key, object $callback): void
+    public static function directive(string $key, $callback): void
     {
         self::$directives[$key] = $callback;
     }

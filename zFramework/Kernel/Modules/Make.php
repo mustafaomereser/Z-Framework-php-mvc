@@ -17,7 +17,7 @@ class Make
 
     private static function assets()
     {
-        self::$assets_path = FRAMEWORK_PATH . "\zhelper\make\\";
+        self::$assets_path = FRAMEWORK_PATH . "\Kernel\Includes\make\\";
         $assets = glob(self::$assets_path . "*");
         foreach ($assets as $key => $val) {
             unset($assets[$key]);
@@ -109,7 +109,7 @@ class Make
 
         $to = base_path("$to\\$namespace");
         @mkdir($to, 0777, true);
-        $save_to = "$to\\$name.php";
+        $save_to = $to . $name . ".php";
 
         if (file_exists($save_to)) return Terminal::text("[color=red]This is already exists. $save_to" . "[/color]");
         file_put_contents($save_to, $content);

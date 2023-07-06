@@ -1,12 +1,7 @@
 <?php
 
 use zFramework\Core\Route;
-
 use App\Controllers\HomeController;
-use App\Models\User;
-
-// Route::get('/', [HomeController::class, 'index']);
-// Route::get('/', 'HomeController@index')->name('index');
 
 Route::get('/test', function () {
     return view('test');
@@ -18,4 +13,6 @@ Route::get('/language/{lang}', function ($lang) {
 })->name('language');
 
 
+// Route::get('/', [HomeController::class, 'index']);
+// Route::get('/', 'HomeController@index')->name('index');
 Route::resource('/', HomeController::class);
