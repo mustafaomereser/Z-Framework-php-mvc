@@ -5,8 +5,6 @@ namespace App\Controllers;
 use App\Models\User;
 use App\Requests\Welcome\CommandRequest;
 use zFramework\Core\Abstracts\Controller;
-use zFramework\Core\Crypter;
-use zFramework\Core\Facades\Str;
 
 class HomeController extends Controller
 {
