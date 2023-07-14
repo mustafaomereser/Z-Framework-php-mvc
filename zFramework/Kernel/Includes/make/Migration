@@ -1,4 +1,5 @@
 <?php
+namespace Database\Migrations{namespace};
 class {name}
 {
     static $storageEngine = "InnoDB";
@@ -13,4 +14,16 @@ class {name}
             'id' => ['primary']
         ];
     }
+    
+    # e.g. a self seeder 
+    # public static function oncreateSeeder()
+    # {
+    #     $user = new User;
+    #     $user->insert([
+    #         'username'  => 'admin',
+    #         'password'  => Crypter::encode('admin'),
+    #         'email'     => Str::rand(15) . '@localhost.com',
+    #         'api_token' => Str::rand(60)
+    #     ]);
+    # }
 }

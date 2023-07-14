@@ -1,4 +1,7 @@
 <?php
+
+namespace Database\Migrations;
+
 class Test
 {
     static $charset = "utf8mb4_general_ci";
@@ -9,9 +12,9 @@ class Test
     public static function columns()
     {
         return [
-            'id' => ['primary'],
+            'id'    => ['primary'],
             'ehehe' => ['varchar'],
-            'test' => ['varchar'],
+            'test'  => ['varchar'],
             'timestamps',
             'softDelete',
         ];

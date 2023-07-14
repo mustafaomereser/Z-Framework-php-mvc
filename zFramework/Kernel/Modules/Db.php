@@ -55,9 +55,9 @@ class Db
         }
 
         foreach ($migrations as $migration) {
-            if (!in_array($migration, \zFramework\Run::$included)) \zFramework\Run::includer($migration);
+            // if (!in_array($migration, \zFramework\Run::$included)) \zFramework\Run::includer($migration);
 
-            $class = str_replace(['.php', BASE_PATH], '', ucfirst(@end(explode('\\', $migration))));
+            $class = str_replace(['.php', BASE_PATH], '', $migration);
             // control
             if (!class_exists($class)) {
                 Terminal::text("[color=red]There are not a $class migrate class.[/color]");
@@ -68,9 +68,9 @@ class Db
                 Terminal::text("[color=red]" . $class::$db . " database is not exists.[/color]");
                 continue;
             }
+
             # connect to model's database
             self::connectDB($class::$db);
-
             $columns = $class::columns();
 
             # setting prefix.
@@ -80,6 +80,7 @@ class Db
                 $columns[$name] = $val;
             }
             #
+
             # Setting consts
             $consts = config('model.consts');
             if (strlen($key = array_search('timestamps', $columns))) {
@@ -289,8 +290,13 @@ class Db
             Terminal::text("[color=yellow]`$table` storage engine is[/color] [color=blue]`$storageEngine`[/color]");
 
             Terminal::text("[color=green]`$table` migrate complete.[/color]");
-        }
 
+            if ($migrate_fresh && in_array('oncreateSeeder', get_class_methods($class))) {
+                Terminal::text("[color=green]Seeding.[/color]");
+                $class::oncreateSeeder();
+                Terminal::text("[color=green]Seeded.[/color]");
+            }
+        }
 
         if (in_array('--seed', Terminal::$parameters)) self::seed();
     }

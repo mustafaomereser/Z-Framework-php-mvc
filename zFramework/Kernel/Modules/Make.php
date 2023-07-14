@@ -103,13 +103,19 @@ class Make
         return self::save('App\Observers', $make);
     }
 
+    private static function clearPath($str)
+    {
+        if (!strstr($str, '\\\\')) return $str;
+        return self::clearPath(str_replace('\\\\', '\\', $str));
+    }
+
     private static function save($to, $content)
     {
         extract(self::parseName());
 
         $to = base_path("$to\\$namespace");
         @mkdir($to, 0777, true);
-        $save_to = $to . $name . ".php";
+        $save_to = self::clearPath($to . "\\" . $name . ".php");
 
         if (file_exists($save_to)) return Terminal::text("[color=red]This is already exists. $save_to" . "[/color]");
         file_put_contents($save_to, $content);

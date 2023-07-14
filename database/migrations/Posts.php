@@ -1,4 +1,7 @@
 <?php
+
+namespace Database\Migrations;
+
 class Posts
 {
     static $charset = "utf8mb4_general_ci";
