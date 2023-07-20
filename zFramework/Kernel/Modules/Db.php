@@ -208,6 +208,11 @@ class Db
                         case 'float':
                             $data['type'] = " FLOAT ";
                             break;
+
+                        case 'real':
+                            $data['type'] = " REAL ";
+                            break;
+
                             # INT: end
 
                             # Date: start
