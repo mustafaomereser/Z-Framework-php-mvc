@@ -42,7 +42,7 @@ class Route
         $name = self::nameOrganize(@self::$groups['pre'] . "/$name");
         $old_key = @end(array_keys(self::$routes));
         self::$routes[$name] = array_pop(self::$routes);
-        if (@self::$calledRoute['name'] == $old_key) self::$calledRoute['name'] = $name;
+        if (!is_null(self::$calledRoute) && @self::$calledRoute['name'] == $old_key) self::$calledRoute['name'] = $name;
         return new self();
     }
 
