@@ -475,7 +475,7 @@ class DB
 
     public function buildSQL($select_type = "select")
     {
-        $as = $this->as ? $this->as : $this->table;
+        @$as = $this->as ? $this->as : $this->table;
 
         switch ($select_type) {
             case 'select':

@@ -51,8 +51,8 @@ class Auth
     public static function logout(): bool
     {
         self::$user = null;
+        setcookie('auth_stay_in', null, time() - 60, '/');
         unset($_SESSION['user_id']);
-        setcookie('auth_stay_in', null, time() - 60);
         return true;
     }
 
@@ -103,9 +103,7 @@ class Auth
 
         if (@$user['id']) {
             $_SESSION['user_id'] = $user['id'];
-
-            if ($staymein) setcookie('auth_stay_in', Crypter::encode($user['api_token']), (time() + (86400 * 360)));
-
+            if ($staymein) setcookie('auth_stay_in', Crypter::encode($user['api_token']), (time() + (86400 * 360)), '/');
             return true;
         }
 

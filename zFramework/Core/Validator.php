@@ -114,8 +114,12 @@ class Validator
                         break;
 
                     case 'unique':
-                        $column = $parameters['key'] ?? $dataKey;
-                        if (!(new DB(@$parameters['db']))->table($val)->where($column, '=', $dataValue)->count()) $ok = true;
+                        if (empty($dataValue)) {
+                            $ok = true;
+                        } else {
+                            $column = $parameters['key'] ?? $dataKey;
+                            if (!(new DB(@$parameters['db']))->table($val)->where($column, '=', $dataValue)->count()) $ok = true;
+                        }
                         break;
 
                     default:
