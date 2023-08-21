@@ -9,13 +9,10 @@ class {name} extends Observer
     /**
      * Insert before run that
      */
-    public function oninsert(array $data)
+    public function oninsert(array $args)
     {
         echo "inserting";
-
-        // $data['example_data'] = number_format($data['example_data'], 2);
-
-        return $data;
+        return $args;
     }
 
     /**
@@ -29,12 +26,9 @@ class {name} extends Observer
     /**
      * Update before run that
      */
-    public function onupdate(array $data)
+    public function onupdate(array $args)
     {
         echo "updating:";
-
-        // $data['example_data'] = number_format($data['example_data'], 2);
-
         return $data;
     }
 

@@ -2,7 +2,7 @@
 
 namespace zFramework\Core\Facades;
 
-use zFramework\Core\Helpers\Date;
+use ReflectionClass;
 use zFramework\Core\Traits\DB\RelationShips;
 
 class DB
@@ -13,377 +13,311 @@ class DB
     /**
      * Options parameters
      */
-    private $table;
-    private $buildQuery = [];
-    private $cache = [];
-    private $queue = [
-        'mode' => 0,
-        'sql'  => [],
-        'data' => []
-    ];
-    public $data   = null;
-    public $lastID = 0;
-
-    public $attributes = [];
-    public $attrCount  = 0;
+    public $table;
+    public $buildQuery = [];
+    public $cache      = [];
 
     /**
      * Initial, Select Database.
+     * @param string @db
+     * @return mixed
      */
-    public function __construct($db = null)
+    public function __construct(string $db = null)
     {
         global $databases;
         if ($db && isset($databases[$db])) $this->db = $db;
         else $this->db = array_keys($databases)[0];
     }
 
-    public function __call(string $name, array $args = [])
-    {
-        if (!count($args)) $args = $this->cache['buildQuery']['data'] ?? [];
-        foreach ($this->buildQuery['data'] ?? [] as $key => $val) $args[$key] = $val;
-        if (isset($this->observe)) return call_user_func_array([new $this->observe(), 'router'], [$name, $args]);
-    }
-
+    /**
+     * Create database connection or return already current connection.
+     */
     public function db()
     {
         global $connected_databases, $databases;
 
         if (!isset($databases[$this->db])) die('Böyle bir veritabanı yok!');
-        if (in_array($this->db, $connected_databases)) return $databases[$this->db];
+        if (!in_array($this->db, $connected_databases)) {
+            $connected_databases[] = $this->db;
+            $parameters = $databases[$this->db];
 
-        $connected_databases[] = $this->db;
-        $parameters = $databases[$this->db];
+            # For WebSocket api
+            if (gettype($parameters) == 'object') return $databases[$this->db];
 
-        // For WebSocket api
-        if (gettype($parameters) == 'object') return $databases[$this->db];
+            try {
+                $databases[$this->db] = new \PDO($parameters[0], $parameters[1], ($parameters[2] ?? null));
+            } catch (\PDOException $err) {
+                die(errorHandler($err));
+            }
 
-        try {
-            $databases[$this->db] = new \PDO($parameters[0], $parameters[1], ($parameters[2] ?? null));
-        } catch (\PDOException $err) {
-            die(errorHandler($err));
+            foreach ($parameters['options'] ?? [] as $option) $databases[$this->db]->setAttribute($option[0], $option[1]);
         }
 
-        foreach ($parameters['options'] ?? [] as $option) $databases[$this->db]->setAttribute($option[0], $option[1]);
-
         $this->driver = $databases[$this->db]->getAttribute(\PDO::ATTR_DRIVER_NAME);
-
         return $databases[$this->db];
     }
 
-    // Execute
-    public function prepare($sql, $data = [])
+    /**
+     * Execute sql query.
+     * @param string $sql
+     * @param array $data
+     * @return array
+     */
+    public function execute(string $sql, array $data = [])
     {
         $e = $this->db()->prepare($sql);
-        $e->execute($this->buildQuery['data'] ?? ($data ?? []));
-        $this->data = $e;
+        $e->execute(count($data) ? $data : $this->buildQuery['data'] ?? []);
+        $this->reset();
         return $e;
     }
 
-    public function tables()
+    /**
+     * Select table.
+     * @param string $table
+     * @return self
+     */
+    public function table(string $table)
     {
-        if (@$tables = $GLOBALS['DB_TABLES'][$GLOBALS["DB_NAMES"][$this->db]]) return $tables;
-        try {
-            $dbname = $this->prepare('SELECT DATABASE()')->fetchColumn();
-
-            $engines = [];
-            $tables  = $this->prepare("SELECT TABLE_NAME, ENGINE FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
-            foreach ($tables as $key => $table) {
-                $tables[$key] = $table['TABLE_NAME'];
-                $engines[$table['TABLE_NAME']] = $table['ENGINE'];
-            }
-
-            $GLOBALS["DB_TABLES"][$dbname]         = $tables;
-            $GLOBALS["DB_TABLE_ENGINES"][$dbname]  = $engines;
-            $GLOBALS["DB_NAMES"][$this->db]        = $dbname;
-            return $tables;
-        } catch (\Throwable $e) {
-            return false;
-        }
-    }
-
-    public function table($table)
-    {
-        $tables = $this->tables();
-        if (is_array($tables) && !strstr($table, ' ')) {
-            if (!in_array($table, $tables)) throw new \Exception("$table is not exists in tables list.");
-            // Table columns
-            $this->attributes = $GLOBALS['DB_DESCRIBES'][$this->db][$table] ?? $this->prepare("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
-            $this->attrCount  = count($this->attributes);
-
-            $GLOBALS['DB_DESCRIBES'][$this->db][$table] = $this->attributes;
-        }
-
         $this->table = $table;
-
         return $this;
     }
 
-    // Query methods
-    public function insert(array $data)
+    #region Preparing
+    /**
+     * Observer trigger on CRUD methods.
+     * @param string $name
+     * @param array $args
+     * @return mixed
+     */
+    private function trigger(string $name, array $args = [])
     {
-        $call = $this->__call(__FUNCTION__, $data);
-        if (!empty($call)) $data = $call;
-
-        try {
-            $sql_sets = [];
-            $sql_keys = [];
-            foreach ($data as $key => $_) {
-                $replaced_key = $key . "_" . uniqid();
-                $sql_keys[] = $key;
-                $sql_sets[] = $replaced_key;
-                #
-                if (gettype($_) == 'array') $_ = json_encode($_, JSON_UNESCAPED_UNICODE);
-                $this->buildQuery['data'][$replaced_key] = $_;
-                #
-            }
-
-            $this->buildQuery['sets'] = "(" . implode(', ', $sql_keys) . ") VALUES (:" . implode(', :', $sql_sets) . ")";
-
-            $insert = $this->run('insert');
-
-            if (!$this->queue['mode']) {
-                $insert = $insert->rowCount();
-                if ($insert) {
-                    $this->lastID = $this->db()->lastInsertId();
-                    $this->__call('inserted', ['id' => $this->lastID]);
-                }
-                return in_array($this->primary, $this->attributes) && $insert ? $this->where($this->primary, '=', $this->lastID)->first() : false;
-            }
-        } catch (\PDOException $e) {
-            throw new \Exception($e->errorInfo[2]);
-        }
-
-        return false;
-        // throw new \Exception('Can not inserted.');
+        if (!isset($this->observe)) return false;
+        return call_user_func_array([new $this->observe(), 'router'], [$name, $args]);
     }
 
-    public function update(array $sets)
+    /**
+     * Reset build.
+     * @return self
+     */
+    private function resetBuild()
     {
-        $call = $this->__call(__FUNCTION__, $sets);
-        if (!empty($call)) $sets = $call;
-
-        $sql_sets = [];
-        foreach ($sets as $key => $_) {
-            $replaced_key = $key . "_" . uniqid();
-
-            $sql_sets[] = "$key = :$replaced_key";
-
-            #
-            if (gettype($_) == 'array') $_ = json_encode($_, JSON_UNESCAPED_UNICODE);
-            $this->buildQuery['data'][$replaced_key] = $_;
-            #
-        }
-        $this->buildQuery['sets'] = " SET " . implode(', ', $sql_sets) . " ";
-
-        $update = $this->run('update');
-        if (!$this->queue['mode']) {
-            $update = $update->rowCount();
-            if ($update) $this->__call('updated', ['where' => $this->buildQuery['where'] ?? [], 'sets' => $sets]);
-            return $update;
-        }
-    }
-
-    // Is it soft delete?
-    private function isSoftDelete($falseCallback = null, $trueCallback = null)
-    {
-        if (!isset($this->softDelete) || !@$this->softDelete) return $falseCallback ? $falseCallback() : null;
-        elseif (array_search($this->deleted_at, $this->attributes)) return $trueCallback ? $trueCallback() : null;
-        else throw new \Exception("Model haven't <b>$this->deleted_at</b> attribute.");
-    }
-
-    public function delete()
-    {
-        # feed observe
-        $observe_data = $this->buildQuery['where'] ?? [];
-        #
-        $this->__call(__FUNCTION__, $observe_data);
-        $delete = $this->isSoftDelete(function () {
-            return $this->run('delete') ? true : false;
-        }, function () {
-            return $this->update([$this->deleted_at => Date::timestamp()]);
-        });
-        if ($delete) $this->__call('deleted', array_merge($observe_data, ['softDelete' => $this->softDelete]));
-        return $delete;
-    }
-    //
-
-    // SELECT METHODS
-    public function find($find, $class = false, $column_name = null)
-    {
-        return $this->resetBuild()->where($column_name ?? $this->attributes[0], '=', $find)->first($class);
-    }
-
-    public function findSlug($slug)
-    {
-        $find = $this->find($slug, true, 'slug');
-        if (@$find->id) $slug .= rand(0, 100);
-        return $slug;
-    }
-
-
-    public function first($class = false)
-    {
-        return self::limit(1)->get($class)[0] ?? null;
-    }
-
-    public function firstOrFail($action = null)
-    {
-        $row = call_user_func_array([$this, 'first'], func_get_args()) ?? [];
-        if (count((array) $row)) return $row;
-
-        if (gettype($action) == 'object') return $action();
-        abort(404, $action);
-    }
-
-    public function get($class = false)
-    {
-        $fetch = \PDO::FETCH_ASSOC;
-        if ($class) $fetch = \PDO::FETCH_CLASS;
-
-        $get = self::run()->fetchAll($fetch);
-
-        if (count($this->closures)) foreach ($get as $key => $val) foreach ($this->closures as $name => $closure) {
-            $closure = function () use ($val, $closure) {
-                return $closure($val);
-            };
-
-            if ($class) $get[$key]->$name = $closure;
-            else $get[$key][$name] = $closure;
-        }
-
-
-        // foreach ($get as $key => $val) {
-        //     $get[$key]['test'] = function () use ($val) {
-        //         echo $val['id'];
-        //     };
-        // }
-
-        return $get;
-    }
-
-    public function count()
-    {
-        return self::run()->rowCount();
-    }
-
-    public function againSameQuery()
-    {
-        if (isset($this->cache['buildQuery'])) $this->buildQuery = $this->cache['buildQuery'];
-        return $this;
-    }
-
-    public function paginate($per_page_count = 20, $page_request_name = 'page', $class = false)
-    {
-        $row_count = self::count();
-
-        $uniqueID = uniqid();
-        $current_page = (request($page_request_name) ?? 1);
-        $max_page_count = ceil($row_count / $per_page_count);
-
-        if ($current_page > $max_page_count) $current_page = $max_page_count;
-        elseif ($current_page <= 0) $current_page = 1;
-
-
-        # Again reload same query
-        $this->againSameQuery();
-
-
-        $start_count = ($per_page_count * ($current_page - 1));
-        if (!$row_count) $start_count = -1;
-
-        parse_str(@$_SERVER['QUERY_STRING'], $queryString);
-        $queryString[$page_request_name] = "{change_page_$uniqueID}";
-        $url = "?" . http_build_query($queryString);
-
-        $return = [
-            'items'          => $row_count ? self::limit($start_count, $per_page_count)->get($class) : [],
-            'item_count'     => $row_count,
-            'shown'          => ($start_count + 1) . " / " . (($per_page_count * $current_page) >= $row_count ? $row_count : ($per_page_count * $current_page)),
-            'start'          => ($start_count + 1),
-
-            'per_page'       => $per_page_count,
-            'max_page_count' => $max_page_count,
-            'current_page'   => $current_page,
-
-            'links'          => function ($view = null) use ($max_page_count, $current_page, $url, $uniqueID) {
-                if (!$view) $view = 'layouts.pagination.default';
-                return view($view, compact('max_page_count', 'current_page', 'url', 'uniqueID'));
-            }
+        $this->cache['buildQuery'] = $this->buildQuery;
+        $this->buildQuery = [
+            'select'  => [],
+            'join'    => [],
+            'where'   => [],
+            'orderBy' => [],
+            'groupBy' => [],
+            'limit'   => [],
+            'sets'    => ""
         ];
-
-        return $class ? (object) $return : $return;
+        return $this;
     }
 
-    public function getPrimary()
+    /**
+     * Model's relatives.
+     * @return self
+     */
+    private function closures()
     {
-        if (@$primary = $this->data[$this->primary]) return $primary;
-        return new \Exception("This object haven't a primary key.");
+        $closures = [];
+        foreach ((new ReflectionClass($this))->getMethods() as $closure) if (strstr($closure->class, 'Models') && !in_array($closure->name, $this->not_closures)) $closures[] = $closure->name;
+        $this->closures = $closures;
+        return $this;
     }
 
-    // Build
-    public function select($select)
+    /**
+     * Reset all data.
+     * @return self
+     */
+    public function reset()
+    {
+        $this->resetBuild();
+        $this->closures();
+        if (method_exists($this, 'beginQuery')) $this->beginQuery();
+        return $this;
+    }
+
+    /**
+     * Emre UZUN was here.
+     * Added hash for unique key.
+     * @param string $key
+     * @return string
+     */
+    public function hashedKey(string $key): string
+    {
+        return uniqid(str_replace(".", "_", $key) . "_");
+    }
+    #endregion
+
+    #region BUILD QUERIES
+    /**
+     * Set Select
+     * @param array $select
+     * @return self
+     */
+    public function select(array $select = [])
     {
         $this->buildQuery['select'] = $select;
         return $this;
     }
 
-    public function selectAutoBuild()
+    /**
+     * Get Select
+     * @return null|string
+     */
+    private function getSelect()
     {
-        $select = "";
+        if (!count($this->buildQuery['select'])) return null;
+        return implode(', ', $this->buildQuery['select']);
+    }
 
-        $this->buildQuery['automatic_select_builder'][$this->table] = [
-            'as'      => ($this->as ? $this->as : $this->table),
-            'columns' => array_diff($this->attributes, ($this->guard ?? []))
-        ];
+    /**
+     * add a join
+     * @param string $type
+     * @param string $model
+     * @param string $on
+     * @return self
+     */
+    public function join(string $type, string $model, string $on = "")
+    {
+        $this->buildQuery['join'][] = [$type, $model, $on];
+        return $this;
+    }
 
-        foreach ($this->buildQuery['automatic_select_builder'] as $table => $data) {
-            $as = $data['as'];
-            foreach ($data['columns'] as $column) $select .= "$as.$column AS " . $column . "_$as, ";
+    /**
+     * get joins output
+     * @return string
+     */
+    private function getJoin(): string
+    {
+        $output = "";
+        foreach ($this->buildQuery['join'] as $join) {
+            $model = new $join[1]();
+            $output .= " " . $join[0] . " JOIN $model->table ON " . $join[2] . " ";
+        }
+        return $output;
+    }
+
+
+    /**
+     * add a where
+     * @return self
+     */
+    public function where()
+    {
+        $parameters = func_get_args();
+        if (gettype($parameters[0]) == 'array') {
+            $type    = 'group';
+            $queries = [];
+            foreach ($parameters[0] as $query) {
+                $prepare = $this->prepareWhere($query);
+                $queries[] = [
+                    'key'      => $prepare['key'],
+                    'operator' => $prepare['operator'],
+                    'value'    => $prepare['value'],
+                    'prev'     => $prepare['prev']
+                ];
+            }
+        } else {
+            $type    = 'row';
+            $prepare = $this->prepareWhere($parameters);
+            $queries = [
+                [
+                    'key'      => $prepare['key'],
+                    'operator' => $prepare['operator'],
+                    'value'    => $prepare['value'],
+                    'prev'     => $prepare['prev']
+                ]
+            ];
         }
 
-        $this->buildQuery['select'] = rtrim($select, ', ');
+        $this->buildQuery['where'][] = [
+            'type'     => $type,
+            'queries'  => $queries
+        ];
 
         return $this;
     }
 
-    public function where($key, $operator, $value = null, $prev = "AND")
+    // public function whereIn($column, $in = [])
+    // {
+    //   $this->whereIn('sto_kod', [$sto_kod1, $sto_kod2]);
+    // }
+
+    /**
+     * Prepare where
+     * @param array $data
+     */
+    private function prepareWhere(array $data)
     {
-        $replaced_key = str_replace(".", "_", $key) . "_" . uniqid();
+        $key      = $data[0];
+        $prev     = "AND";
+        $operator = "=";
+        $value    = null;
 
-        if (strlen((string) @$this->buildQuery['where']) == 0) $trim = true;
-        @$this->buildQuery['where'] .= " $prev " . (!strstr($key, '.') ? ($this->as ? $this->as : $this->table) . "." : null) . "$key $operator " . ($value ? ":$replaced_key" : (string) $value);
-        if (@$trim) @$this->buildQuery['where'] = ltrim($this->buildQuery['where'], " $prev");
+        $count    = count($data);
 
-        if (!empty($value)) $this->buildQuery['data'][$replaced_key] = $value;
-        return $this;
+        if ($count == 2) {
+            $value = $data[1];
+        } elseif ($count >= 3) {
+            $operator = $data[1];
+            $value    = $data[2];
+        }
+
+        if ($count > 3) $prev = $data[3];
+
+        return compact('key', 'operator', 'value', 'prev');
     }
 
-    public function whereRaw($sql, $data = [], $prev = "AND")
+    /**
+     * Parse and get where.
+     * @return void|string
+     */
+    private function getWhere()
     {
-        // @$this->buildQuery['where'] .= " $sql ";
+        if (!count($this->buildQuery['where'])) return;
 
-        $this->buildQuery['data'] = array_merge(($this->buildQuery['data'] ?? []), $data);
+        if (isset($this->softDelete)) $this->buildQuery['where'][] = [
+            'type'     => 'row',
+            'queries'  => [
+                [
+                    'key'      => $this->deleted_at,
+                    'operator' => 'IS NULL',
+                    'value'    => null,
+                    'prev'     => "AND"
+                ]
+            ]
+        ];
 
-        $this->where('', $sql, '', $prev);
-        return $this;
+        $output = "";
+        foreach ($this->buildQuery['where'] as $where_key => $where) {
+            $response = "";
+            foreach ($where['queries'] as $query_key => $query) {
+                $hashed_key = $this->hashedKey($query['key']);
+
+                if (count($where['queries']) == 1) $prev = ($where_key + $query_key > 0) ? $query['prev'] . " " : null;
+                else $prev = ($query_key > 0) ? $query['prev'] . " " : null;
+
+                $response .= $prev . $query['key'] . " " . $query['operator'] . " " . (strlen($query['value']) > 0 ? ":$hashed_key " : null);
+                if (strlen($query['value']) > 0) $this->buildQuery['data'][$hashed_key] = $query['value'];
+            }
+
+            if ($where['type'] == 'group') $response = $where['queries'][0]['prev'] . " (" . rtrim($response) . ")";
+            $output .= $response;
+        }
+
+        return " WHERE $output ";
     }
 
-    private function getWhere($type = null)
+    /**
+     * Set Order By
+     * @param array $data
+     * @return self
+     */
+    public function orderBy(array $data = [])
     {
-        if ($type == 'insert') return null;
-
-        // init search for softDelete
-        $this->isSoftDelete(null, function () {
-            if (!isset($this->buildQuery['where']) || !strstr($this->buildQuery['where'], $this->deleted_at)) $this->where(($this->as ? $this->as : $this->table) . ".$this->deleted_at", 'IS NULL');
-        });
-
-        $where = @$this->buildQuery['where'];
-        return $where ? " WHERE $where " : null;
-    }
-
-    public function orderBy(array $array)
-    {
-        $this->buildQuery['orderBy'] = $array;
+        $this->buildQuery['orderBy'] = $data;
         return $this;
     }
 
@@ -401,9 +335,31 @@ class DB
         return null;
     }
 
+    /**
+     * Set Group By
+     * @param array $data
+     * @return self
+     */
+    public function groupBy(array $data = [])
+    {
+        $this->buildQuery['groupBy'] = $data;
+        return $this;
+    }
+
+
+    private function getGroupBy()
+    {
+        return @$this->buildQuery['groupBy'] ? " GROUP BY " . implode(", ", $this->buildQuery['groupBy']) : null;
+    }
+
+    /**
+     * Set limit
+     * @param int $startPoint
+     * @param mixed $getCount
+     * @return self
+     */
     public function limit(int $startPoint = 0, $getCount = null)
     {
-        // $this->buildQuery['limit'] = $startPoint . ($getCount ? ", $getCount" : null);
         $this->buildQuery['limit'] = [$startPoint, $getCount];
         return $this;
     }
@@ -411,75 +367,148 @@ class DB
     private function getLimit()
     {
         $limit = @$this->buildQuery['limit'];
-        switch ($this->driver) {
-            case 'mysql':
-                return $limit ? " LIMIT " . ($limit[0] . ($limit[1] ? ", " . $limit[1] : null)) : null;
-                break;
+        return $limit ? " LIMIT " . ($limit[0] . ($limit[1] ? ", " . $limit[1] : null)) : null;
+    }
+    #endregion
 
-            case 'sqlsrv':
-                if (!$this->buildQuery['orderBy']) $this->buildQuery['orderBy'] = ['id' => ''];
-                return $limit ? " OFFSET " . (is_null($limit[1]) ? 0 : $limit[0]) . " ROWS FETCH NEXT " . (is_null($limit[1]) ? $limit[0] : $limit[1]) . " ROWS ONLY" : null;
-                break;
-        }
+    #region CRUD Proccesses
+
+    /**
+     * get rows with query string
+     * @return array
+     */
+    public function get()
+    {
+        $rows = $this->run()->fetchAll(\PDO::FETCH_ASSOC);
+        foreach ($rows as $key => $row) foreach ($this->closures as $closure) $rows[$key][$closure] = function () use ($row, $closure) {
+            return $this->{$closure}($row);
+        };
+
+        return $rows;
     }
 
-    public function join($type = null, $model = null, $on = [])
+    /**
+     * get one row in rows
+     * @return array 
+     */
+    public function first()
     {
-        if (!$model) new \Exception('Model can not be empty!');
-        if ($type) $type = strtoupper($type);
+        return $this->limit(1)->get()[0] ?? [];
+    }
 
-        if (gettype($on) === 'array') $on = implode(' ', $on);
+    /**
+     * paginate
+     * @param int $per_count
+     * @param string $page_name
+     * @return array
+     */
+    public function paginate($per_count = 20, $page_name = 'page')
+    {
+        $rows      = $this->get();
+        $row_count = count($rows);
 
-        $model = new $model();
-        $table = $model->table;
+        $uniqueID = uniqid();
+        $current_page = (request($page_name) ?? 1);
+        $max_page_count = ceil($row_count / $per_count);
 
-        if (!in_array($type, [null, 'LEFT', 'LEFT OUTER', 'OUTER', 'RIGHT', 'RIGHT OUTER', 'FULL', 'FULL OUTER ', 'INNER'])) throw new \Throwable('This not acceptable join type.');
-        $this->buildQuery['joins'][] = ($type ? "$type " : null) . "JOIN $table" . ($model->as ? " AS $model->as" : null) . " ON $on";
+        if ($current_page > $max_page_count) $current_page = $max_page_count;
+        elseif ($current_page <= 0) $current_page = 1;
 
+        $start_count = ($per_count * ($current_page - 1));
+        if (!$row_count) $start_count = -1;
 
-        // get table's info
-        $getinfo = (new DB)->table($table);
-        $this->buildQuery['automatic_select_builder'][$table] = [
-            'as'      => ($model->as ? $model->as : $table),
-            'columns' => array_diff($getinfo->attributes, ($model->guard ?? []))
+        parse_str(@$_SERVER['QUERY_STRING'], $queryString);
+        $queryString[$page_name] = "{change_page_$uniqueID}";
+        $url = "?" . http_build_query($queryString);
+
+        $return = [
+            'items'          => $row_count ? array_slice($rows, $start_count, $per_count, true) : [],
+            'item_count'     => $row_count,
+            'shown'          => ($start_count + 1) . " / " . (($per_count * $current_page) >= $row_count ? $row_count : ($per_count * $current_page)),
+            'start'          => ($start_count + 1),
+
+            'per_page'       => $per_count,
+            'max_page_count' => $max_page_count,
+            'current_page'   => $current_page,
+
+            'links'          => function ($view = null) use ($max_page_count, $current_page, $url, $uniqueID) {
+                if (!$view) $view = 'layouts.pagination.default';
+                return view($view, compact('max_page_count', 'current_page', 'url', 'uniqueID'));
+            }
         ];
-        $getinfo = null;
-        //
 
-        return $this;
+        return $return;
     }
 
-    private function getJoins()
+    /**
+     * Insert a row to database
+     * @param array $sets
+     * @return self
+     */
+    public function insert(array $sets = [])
     {
-        $joins = $this->buildQuery['joins'] ?? [];
+        $this->resetBuild();
 
-        if (count($joins)) {
-            $joinStr = '';
-            foreach ($joins as $join) $joinStr .= " $join ";
-            return " $joinStr ";
+        $hashed_keys = [];
+        foreach ($sets as $key => $val) {
+            $hashed_key =  $this->hashedKey($key);
+            $hashed_keys[] = $hashed_key;
+            $this->buildQuery['data'][$hashed_key] = $val;
         }
 
-        return null;
+        $this->buildQuery['sets'] = " (" . implode(', ', array_keys($sets)) . ") VALUES (:" . implode(', :', $hashed_keys) . ") ";
+
+        $this->trigger('insert', $sets);
+        $insert = $this->run(__FUNCTION__);
+        if ($insert) $this->trigger('inserted', $this->resetBuild()->where('id', $this->db()->lastInsertId())->first() ?? []);
+
+        return $insert;
     }
 
-    public function groupBy($column)
+    /**
+     * Update row(s) in database
+     * @param array $sets
+     * @return self
+     */
+    public function update(array $sets = [])
     {
-        $this->buildQuery['groupBy'] = $column;
-        return $this;
+        $this->buildQuery['sets'] = " SET ";
+        foreach ($sets as $key => $val) {
+            $hashed_key = $this->hashedKey($key);
+            $this->buildQuery['data'][$hashed_key] = $val;
+            $this->buildQuery['sets'] .= "$key = :$hashed_key, ";
+        }
+        $this->buildQuery['sets'] = rtrim($this->buildQuery['sets'], ', ');
+
+        $this->trigger('update');
+        $update = $this->run(__FUNCTION__);
+        if ($update) $this->trigger('updated');
+
+        return $update;
     }
 
-    private function getGroupBy()
+    /**
+     * Delete row(s) in database
+     * @return self
+     */
+    public function delete()
     {
-        return @$this->buildQuery['groupBy'] ? " GROUP BY " . $this->buildQuery['groupBy'] : null;
+        $this->trigger('delete');
+        if (!isset($this->softDelete)) $delete = $this->run(__FUNCTION__);
+        else $delete = $this->update([$this->deleted_at => date('Y-m-d H:i:s')]);
+        $this->trigger('deleted');
+
+        return $delete;
     }
+    #endregion
 
-    public function buildSQL($select_type = "select")
+    #region BUILD & Execute
+    public function buildSQL($type = 'select')
     {
-        @$as = $this->as ? $this->as : $this->table;
-
-        switch ($select_type) {
+        $limit = $this->getLimit();
+        switch ($type) {
             case 'select':
-                $select = $this->buildQuery['select'] ?? ("$as." . implode(", $as.", array_diff($this->attributes, $this->guard ?? [])));
+                $select = $this->getSelect() ?? '*'; # ?? implode(", ", array_diff($this->columns, $this->guard ?? []));
                 $type = "SELECT $select FROM";
                 break;
 
@@ -489,7 +518,6 @@ class DB
 
             case 'insert':
                 $type = "INSERT INTO";
-                $as   = null;
                 $sets = $this->buildQuery['sets'];
                 break;
 
@@ -499,86 +527,16 @@ class DB
                 break;
 
             default:
-                abort(400, 'something wrong, buildSQL invalid type.');
+                throw new \Exception('something wrong, buildSQL invalid type.');
         }
 
-        $getLimit = $this->getLimit();
-        $sql      = trim(str_replace(['  '], [' '], "$type $this->table" . ($as ? " AS $as " : null) . @$sets . $this->getJoins() . $this->getWhere($select_type) . $this->getGroupBy() . $this->getOrderBy() . $getLimit));
+        $sql = "$type $this->table" . @$sets . $this->getJoin() . $this->getWhere() . $this->getGroupBy() . $this->getOrderBy() . $limit;
         return $sql;
     }
 
-    private function resetBuild()
+    public function run($type = 'select')
     {
-        $this->cache['buildQuery'] = $this->buildQuery;
-        $this->buildQuery = []; // reset buildQuery
-        return $this;
+        return $this->execute($this->buildSQL($type));
     }
-
-    public function reset()
-    {
-        $this->resetBuild();
-        $this->beginQuery();
-        $this->closures();
-        return $this;
-    }
-
-    private function run($type = "select")
-    {
-        $sql = self::buildSQL($type);
-
-        $queue_mode = $this->queue['mode'] && $type != 'select';
-
-        if (!$queue_mode) $result = self::prepare($sql);
-        $this->resetBuild();
-        if ($queue_mode) {
-            $this->queue['sql'][] = $sql;
-            $this->queue['data'] = array_merge($this->cache['buildQuery']['data'] ?? [], $this->queue['data']);
-            $result = 'queued';
-        }
-
-        return $result;
-    }
-
-    public function queue()
-    {
-        $this->queue['mode'] = $this->queue['mode'] ? 0 : 1;
-        if ($this->queue['mode']) {
-            $this->queue['sql']  = [];
-            $this->queue['data'] = [];
-            return 'queue mode on';
-        } else {
-            if (!count($this->queue['sql'])) return false;
-            $result = $this->prepare(implode(';', $this->queue['sql']), $this->queue['data'])->rowCount();
-            return $result;
-        }
-    }
-
-    # Transaction
-    private function checkisInnoDB()
-    {
-        if (empty($this->table)) throw new \Exception('This table is not defined.');
-        if ($GLOBALS['DB_TABLE_ENGINES'][$GLOBALS["DB_NAMES"][$this->db]][$this->table] == 'InnoDB') return true;
-        throw new \Exception('This table is not InnoDB. If you want to use transaction system change store engine to InnoDB.');
-    }
-
-    public function beginTransaction()
-    {
-        $this->checkisInnoDB();
-
-        $this->db()->beginTransaction();
-        return $this;
-    }
-
-    public function rollback()
-    {
-        $this->db()->rollBack();
-        return $this;
-    }
-
-    public function commit()
-    {
-        $this->db()->commit();
-        return $this;
-    }
-    #
+    #endregion
 }

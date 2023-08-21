@@ -9,9 +9,16 @@ abstract class Request
 {
     public $authorize = false;
 
-    public function validated()
+    /**
+     * Validate from extends.
+     * @param array $attributeNames
+     * @return array
+     */
+    public function validated(array $attributeNames = [], bool $htmlspecialchars = false)
     {
         if ($this->authorize && !Auth::check()) abort(401);
-        return Validator::validate($_REQUEST, $this->columns());
+        $validate = Validator::validate($_REQUEST, $this->columns(), $attributeNames);
+        if ($htmlspecialchars) foreach ($validate as $key => $val) if (gettype($val) == 'string') $validate[$key] = htmlspecialchars($val);
+        return $validate;
     }
 }

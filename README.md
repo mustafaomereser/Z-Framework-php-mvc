@@ -319,17 +319,6 @@ ALSO you can normal query like /1?test=true
     $...->first(true);
     $...->paginate(..., ..., true);
 
-
-    // FOR PERFORMANCE MANY SQL QUERY
-    $user->queue(); // begin queue mode
-    
-    $user->insert([....]);
-    $user->update([....]);
-    $user->insert([....]);
-    $user->insert([....]);
-    
-    $result = $user->queue(); // end queue mode and execute all same time.
-
     var_dump($result); // row count
 ```
 

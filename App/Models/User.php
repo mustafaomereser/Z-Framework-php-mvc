@@ -10,16 +10,15 @@ class User extends Model
 {
     use softDelete;
 
-    // public $observe  = UserObserver::class;
+    public $observe  = UserObserver::class;
 
     public $table    = "users";
-    public $as       = "users_table";
     public $guard    = ['password', 'api_token', 'deleted_at', 'created_at'];
 
     # everytime set query begin.
     // public function beginQuery()
     // {
-    //     return $this->where('id', '=', 1);
+    //     return $this->where('id', 1);
     // }
 
     /**
@@ -31,22 +30,8 @@ class User extends Model
      *   foreach ($users as $user) $user['posts']()->get();
      * *****
      */
-    public function closures()
+    public function posts($values)
     {
-        $this->closures = [
-            'posts' => function ($values) {
-                return $this->hasMany(Posts::class, $values['id'], 'user_id');
-            }
-        ];
-    }
-
-    public function friends()
-    {
-        return $this->getPrimary();
-    }
-
-    public function getAttributes()
-    {
-        return [$this->attributes, $this->attrCount];
+        return $this->hasMany(Posts::class, $values['id'], 'user_id');
     }
 }

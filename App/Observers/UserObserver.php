@@ -9,12 +9,11 @@ class UserObserver extends Observer
     /**
      * Insert before run that
      */
-    public function oninsert($data)
+    public function oninsert(array $args)
     {
         echo "inserting";
-        // print_r($data);
-        // $data['username'] = 'naberrr';
-        return $data;
+        print_r($args);
+        return $args;
     }
 
     /**
@@ -22,7 +21,8 @@ class UserObserver extends Observer
      */
     public function oninserted(array $args)
     {
-        echo "inserted: " . $args['id'];
+        echo "inserted: ";
+        print_r($args);
     }
 
     /**
