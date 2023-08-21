@@ -8,7 +8,9 @@ class {name} extends Request
 
     public function __construct()
     {
-        $this->authorize = false;
+        $this->authorize      = false;
+        $this->htmlencode     = false;
+        $this->attributeNames = [];
     }
 
     public function columns(){

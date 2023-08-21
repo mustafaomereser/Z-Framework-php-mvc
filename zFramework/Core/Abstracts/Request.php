@@ -7,18 +7,19 @@ use zFramework\Core\Validator;
 
 abstract class Request
 {
-    public $authorize = false;
+    public $authorize      = false;
+    public $htmlencode     = false;
+    public $attributeNames = [];
 
     /**
      * Validate from extends.
-     * @param array $attributeNames
      * @return array
      */
-    public function validated(array $attributeNames = [], bool $htmlspecialchars = false)
+    public function validated()
     {
         if ($this->authorize && !Auth::check()) abort(401);
-        $validate = Validator::validate($_REQUEST, $this->columns(), $attributeNames);
-        if ($htmlspecialchars) foreach ($validate as $key => $val) if (gettype($val) == 'string') $validate[$key] = htmlspecialchars($val);
+        $validate = Validator::validate($_REQUEST, $this->columns(), $this->attributeNames);
+        if ($this->htmlencode) foreach ($validate as $key => $val) if (gettype($val) == 'string') $validate[$key] = htmlspecialchars($val);
         return $validate;
     }
 }
