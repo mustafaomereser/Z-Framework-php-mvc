@@ -688,7 +688,7 @@ class DB
     private function checkisInnoDB()
     {
         if (empty($this->table)) throw new \Exception('This table is not defined.');
-        if ($GLOBALS['DB_TABLE_ENGINES'][$GLOBALS["DB"]["NAMES"][$this->db]][$this->table] == 'InnoDB') return true;
+        if ($GLOBALS["DB"]["TABLE_ENGINES"][$GLOBALS["DB"]["NAMES"][$this->db]][$this->table] == 'InnoDB') return true;
         throw new \Exception('This table is not InnoDB. If you want to use transaction system change store engine to InnoDB.');
     }
 
