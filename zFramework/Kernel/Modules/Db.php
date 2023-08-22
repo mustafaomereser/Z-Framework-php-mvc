@@ -276,7 +276,6 @@ class Db
                 $types = [3 => ['not changed.', 'dark-gray'], 1 => ['added', 'green'], 2 => ['modified', 'yellow']];
                 Terminal::text("[color=" . $types[$while['status']][1] . "]-> `$column` " . $types[$while['status']][0] . "[/color]");
 
-
                 $last_column = $column;
             }
             #
@@ -284,7 +283,7 @@ class Db
             foreach ($drop_columns as $drop) {
                 try {
                     self::$db->prepare("ALTER TABLE $table DROP COLUMN $drop");
-                    Terminal::text("[color=yellow]Dropped column: $drop" . "[/color]", 'yellow');
+                    Terminal::text("[color=yellow]Dropped column: $drop" . "[/color]");
                 } catch (\PDOException $e) {
                     Terminal::text("[color=red]Error: Column is can not drop: $drop" . "[/color]");
                 }
