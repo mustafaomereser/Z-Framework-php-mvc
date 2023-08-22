@@ -216,11 +216,13 @@ ALSO you can normal query like /1?test=true
     });
 
     // if you want use route with middleware and name still findable.
-    Route::middleware([Auth::class, Admin::class], function($declines) { # Optional callback method.
+    Route::pre('/admin')->middleware([Auth::class, Admin::class], function($declines) { # Optional callback method.
         abort(403, 'Access Forbidden');
     })->group(function() {
         Route::get('/dashboard')->name('dashboard');
     });
+
+    echo route('admin.dashboard'); # i can still find route but i cant access with out middlewares verify.
 
     Route::pre('/admin')->group(function() {
         Route::get('/any-page', AnyController::class)->name('any-page');
