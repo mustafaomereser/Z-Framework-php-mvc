@@ -8,10 +8,26 @@ use zFramework\Core\Facades\Lang;
 
 class Route
 {
+    /**
+     * Route parameters
+     */
     static $routes      = [];
     static $calledRoute = null;
 
-    public static function findRoute($name, $data = [], $return_bool = false)
+    /**
+     * Group parameters.
+     */
+    static $groups      = [];
+    static $add_groups  = [];
+
+    /**
+     * Find was setted route.
+     * @param string $name
+     * @param array $array
+     * @param bool $return_bool
+     * @return string|bool
+     */
+    public static function findRoute(string $name, array $data = [], bool $return_bool = false)
     {
         $route_is_exists = true;
         $return = $name;
@@ -30,14 +46,24 @@ class Route
         return $return;
     }
 
-    private static function nameOrganize($val)
+    /**
+     * Organize and clear route name.
+     * @param string $name
+     * @return string|\Closure
+     */
+    private static function nameOrganize(string $name)
     {
-        $name = str_replace("..", ".", rtrim(ltrim(str_replace('/', '.', $val), '.'), '.'));
+        $name = str_replace("..", ".", rtrim(ltrim(str_replace('/', '.', $name), '.'), '.'));
         if (strstr($name, '..')) return self::nameOrganize($name);
         return $name;
     }
 
-    public static function name($name)
+    /**
+     * set name for route.
+     * @param string $name
+     * @return self
+     */
+    public static function name(string $name)
     {
         $name = self::nameOrganize(@self::$groups['pre'] . "/$name");
         $old_key = @end(array_keys(self::$routes));
@@ -46,7 +72,13 @@ class Route
         return new self();
     }
 
-    public static function redirect($url, $to)
+    /**
+     * Quick redirect.
+     * @param $url
+     * @param $to
+     * @return self
+     */
+    public static function redirect(string $url, string $to)
     {
         self::any($url, function () use ($to) {
             http_response_code(302);
@@ -55,43 +87,74 @@ class Route
         return new self();
     }
 
+    /**
+     * Method Any
+     * @return self
+     */
     public static function any()
     {
         self::call(null, func_get_args());
         return new self();
     }
 
+    /**
+     * Method Get
+     * @return self
+     */
     public static function get()
     {
         self::call(__FUNCTION__, func_get_args());
         return new self();
     }
 
+    /**
+     * Method Post
+     * @return self
+     */
     public static function post()
     {
         self::call(__FUNCTION__, func_get_args());
         return new self();
     }
 
+    /**
+     * Method Patch
+     * @return self
+     */
     public static function patch()
     {
         self::call(__FUNCTION__, func_get_args());
         return new self();
     }
 
+    /**
+     * Method Put
+     * @return self
+     */
     public static function put()
     {
         self::call(__FUNCTION__, func_get_args());
         return new self();
     }
 
+    /**
+     * Method Delete
+     * @return self
+     */
     public static function delete()
     {
         self::call(__FUNCTION__, func_get_args());
         return new self();
     }
 
-    public static function ws($method = 'GET', $url, $callback)
+    /**
+     * Web socket
+     * @param string $method
+     * @param string $url
+     * @param \Closure $callback
+     * @return self
+     */
+    public static function ws(string $method = 'GET', string $url, \Closure $callback)
     {
         self::pre('/ws')->group(function () use ($method, $url, $callback) {
             self::call($method, [$url, $callback]);
@@ -100,24 +163,35 @@ class Route
         return new self();
     }
 
-    public static function resource($url, $callback, $options = [])
+    /**
+     * Set a resource scheme.
+     * @param string $url
+     * @param string $callback
+     * @return self
+     */
+    public static function resource(string $url, string $callback)
     {
-        self::get($url, [$callback, 'index'], $options)->name("$url.index");
-        self::post($url, [$callback, 'store'], $options)->name("$url.store");
-        self::get("$url/create", [$callback, 'create'], $options)->name("$url.create");
-        self::get("$url/{id}", [$callback, 'show'], $options)->name("$url.show");
-        self::get("$url/{id}/edit", [$callback, 'edit'], $options)->name("$url.edit");
-        self::patch("$url/{id}", [$callback, 'update'], $options)->name("$url.update");
-        self::put("$url/{id}", [$callback, 'update'], $options)->name("$url.update");
-        self::delete("$url/{id}", [$callback, 'delete'], $options)->name("$url.delete");
+        self::get($url, [$callback, 'index'])->name("$url.index");
+        self::post($url, [$callback, 'store'])->name("$url.store");
+        self::get("$url/create", [$callback, 'create'])->name("$url.create");
+        self::get("$url/{id}", [$callback, 'show'])->name("$url.show");
+        self::get("$url/{id}/edit", [$callback, 'edit'])->name("$url.edit");
+        self::patch("$url/{id}", [$callback, 'update'])->name("$url.update");
+        self::put("$url/{id}", [$callback, 'update'])->name("$url.update");
+        self::delete("$url/{id}", [$callback, 'delete'])->name("$url.delete");
 
         return new self();
     }
 
-    private static function dispatch($method, $args)
+    /**
+     * Dispatch Route.
+     * @param string $method
+     * @param array $args
+     * @return array
+     */
+    private static function dispatch(string $method, array $args): array
     {
         while (strstr($args[0], '//')) $args[0] = str_replace(['//'], ['/'], $args[0]);
-
 
         $method = mb_strtoupper($method);
         $URI    = explode('/', substr(strtok($_SERVER['REQUEST_URI'], '?'), 1));
@@ -171,7 +245,12 @@ class Route
         return compact('match', 'parameters', 'URI', 'URL');
     }
 
-    public static function call($method, $args)
+    /**
+     * Call a route.
+     * @param string|null $method
+     * @param array $args
+     */
+    public static function call($method, array $args): void
     {
         $args[0] = @self::$groups['pre'] . $args[0];
 
@@ -196,7 +275,10 @@ class Route
         ];
     }
 
-    public static function run()
+    /**
+     * Run route with options.
+     */
+    public static function run(): void
     {
         if (self::$calledRoute === null) abort(404);
 
@@ -231,29 +313,44 @@ class Route
         echo call_user_func_array($callback, self::$calledRoute['parameters']);
     }
 
-    # Groups: Start
-    static $groups     = [];
-    static $add_groups = [];
-
+    #region Groups
+    /**
+     * Don't check csrf token
+     */
     public static function noCSRF()
     {
         self::$add_groups['no-csrf'] = true;
         return new self();
     }
 
-    public static function pre($prefix)
+    /**
+     * Set prefix.
+     * @param string $prefix
+     * @return self
+     */
+    public static function pre(string $prefix)
     {
         self::$add_groups['pre'] = @self::$groups['pre'] . $prefix;
         return new self();
     }
 
+    /**
+     * Set route's middlewares.
+     * @param array $list
+     * @param \Closure|null $callback
+     */
     public static function middleware(array $list, $callback = null)
     {
         self::$add_groups['middlewares'] = [$list, $callback];
         return new self();
     }
 
-    public static function group($callback)
+    /**
+     * Group routes with group options
+     * @param \Closure $callback
+     * @return mixed
+     */
+    public static function group(\Closure $callback)
     {
         $groupsReverse = [];
         foreach (self::$add_groups as $key => $setting) {
@@ -265,5 +362,5 @@ class Route
         self::$add_groups = [];
         return $callback;
     }
-    # Groups: End
+    #endregion
 }
