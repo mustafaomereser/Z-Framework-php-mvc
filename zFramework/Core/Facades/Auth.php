@@ -94,7 +94,7 @@ class Auth
         if (self::check()) return false;
 
         $user = new User;
-        $user = $user->select('id, api_token');
+        $user = $user->select(['id', 'api_token']);
         foreach ($fields as $key => $val) {
             if ($key == 'password') $val = Crypter::encode($val);
             $user->where($key, '=', $val);

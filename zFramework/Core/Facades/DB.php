@@ -27,6 +27,9 @@ class DB
         global $databases;
         if ($db && isset($databases[$db])) $this->db = $db;
         else $this->db = array_keys($databases)[0];
+
+        $this->tables();
+        $this->reset();
     }
 
     /**
@@ -63,7 +66,7 @@ class DB
      * @param array $data
      * @return array
      */
-    public function execute(string $sql, array $data = [])
+    public function prepare(string $sql, array $data = [])
     {
         $e = $this->db()->prepare($sql);
         $e->execute(count($data) ? $data : $this->buildQuery['data'] ?? []);
@@ -80,6 +83,33 @@ class DB
     {
         $this->table = $table;
         return $this;
+    }
+
+    /**
+     * Fetch all tables in database.
+     * @return array
+     */
+    public function tables()
+    {
+        if (@$tables = $GLOBALS['DB']['TABLES'][$GLOBALS["NAMES"][$this->db]]) return $tables;
+        try {
+            $dbname = $this->prepare('SELECT DATABASE()')->fetchColumn();
+
+            $engines = [];
+            $tables  = $this->prepare("SELECT TABLE_NAME, ENGINE FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
+            foreach ($tables as $key => $table) {
+                $tables[$key] = $table['TABLE_NAME'];
+                $engines[$table['TABLE_NAME']] = $table['ENGINE'];
+            }
+
+            $GLOBALS["DB"]["TABLES"][$dbname]         = $tables;
+            $GLOBALS["DB"]["TABLE_ENGINES"][$dbname]  = $engines;
+            $GLOBALS["DB"]["NAMES"][$this->db]        = $dbname;
+            return $tables;
+        } catch (\Throwable $e) {
+            errorHandler($e);
+            return false;
+        }
     }
 
     #region Preparing
@@ -240,10 +270,63 @@ class DB
         return $this;
     }
 
-    // public function whereIn($column, $in = [])
-    // {
-    //   $this->whereIn('sto_kod', [$sto_kod1, $sto_kod2]);
-    // }
+    /**
+     * Where In sql build.
+     * @param string $column
+     * @param array $in
+     * @param string $prev
+     * @return self
+     */
+    public function whereIn(string $column, array $in = [], string $prev = "AND")
+    {
+        $hashed_keys = [];
+        foreach ($in as $val) {
+            $hashed_key    = $this->hashedKey($column);
+            $hashed_keys[] = $hashed_key;
+            $this->buildQuery['data'][$hashed_key] = $val;
+        }
+
+        $this->buildQuery['where'][] = [
+            'type'     => 'row',
+            'queries'  => [
+                [
+                    'raw'      => true,
+                    'key'      => $column,
+                    'operator' => 'IN',
+                    'value'    => '(:' . implode(', :', $hashed_keys) . ')',
+                    'prev'     => $prev
+                ]
+            ]
+        ];
+
+        return $this;
+    }
+
+    /**
+     * Raw where query sql build.
+     * @param string $sql
+     * @param array $data
+     * @param string $prev
+     * @return self
+     */
+    public function whereRaw(string $sql, array $data = [], string $prev = "AND")
+    {
+        $this->buildQuery['where'][] = [
+            'type'     => 'row',
+            'queries'  => [
+                [
+                    'raw'      => true,
+                    'key'      => null,
+                    'operator' => $sql,
+                    'value'    => null,
+                    'prev'     => $prev
+                ]
+            ]
+        ];
+        foreach ($data as $key => $val) $this->buildQuery['data'][$key] = $val;
+
+        return $this;
+    }
 
     /**
      * Prepare where
@@ -294,13 +377,22 @@ class DB
         foreach ($this->buildQuery['where'] as $where_key => $where) {
             $response = "";
             foreach ($where['queries'] as $query_key => $query) {
-                $hashed_key = $this->hashedKey($query['key']);
+
+                if (!isset($query['raw'])) if (strlen($query['value']) > 0) {
+                    $hashed_key = $this->hashedKey($query['key']);
+                    $this->buildQuery['data'][$hashed_key] = $query['value'];
+                }
+
 
                 if (count($where['queries']) == 1) $prev = ($where_key + $query_key > 0) ? $query['prev'] . " " : null;
-                else $prev = ($query_key > 0) ? $query['prev'] . " " : null;
+                else $prev = ($query_key > 0) ? $query['prev'] : null;
 
-                $response .= $prev . $query['key'] . " " . $query['operator'] . " " . (strlen($query['value']) > 0 ? ":$hashed_key " : null);
-                if (strlen($query['value']) > 0) $this->buildQuery['data'][$hashed_key] = $query['value'];
+                $response .= implode(" ", [
+                    $prev,
+                    $query['key'],
+                    $query['operator'],
+                    (isset($query['raw']) ? $query['value'] . " " : (strlen($query['value']) > 0 ? ":$hashed_key " : null))
+                ]);
             }
 
             if ($where['type'] == 'group') $response = $where['queries'][0]['prev'] . " (" . rtrim($response) . ")";
@@ -503,7 +595,13 @@ class DB
     #endregion
 
     #region BUILD & Execute
-    public function buildSQL($type = 'select')
+    /**
+     * Build a sql query for execute.
+     * @param string $type
+     * @param bool $debug_output
+     * @return string
+     */
+    public function buildSQL(string $type = 'select', bool $debug_output = false): string
     {
         $limit = $this->getLimit();
         switch ($type) {
@@ -534,9 +632,14 @@ class DB
         return $sql;
     }
 
-    public function run($type = 'select')
+    /**
+     * Run created sql query.
+     * @param string $type
+     * @return mixed
+     */
+    public function run(string $type = 'select')
     {
-        return $this->execute($this->buildSQL($type));
+        return $this->prepare($this->buildSQL($type));
     }
     #endregion
 }

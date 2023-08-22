@@ -179,6 +179,16 @@ class Route
         if (self::$calledRoute != null || !$dispatch['match']) return;
         if (!Csrf::check(isset(self::$groups['no-csrf']))) abort(406, Lang::get('errors.csrf.no-verify'));
 
+        if (@self::$groups['middlewares']) {
+            $middleware = Middleware::middleware(self::$groups['middlewares'][0], function ($declines) {
+                if (!count($declines)) return true;
+                if (self::$groups['middlewares'][1]) self::$groups['middlewares'][1]($declines);
+                return false;
+            });
+
+            if (!$middleware) return;
+        }
+
         self::$calledRoute = [
             'name'       => @end(array_keys(self::$routes)),
             'callback'   => $args[1],
@@ -234,6 +244,12 @@ class Route
     public static function pre($prefix)
     {
         self::$add_groups['pre'] = @self::$groups['pre'] . $prefix;
+        return new self();
+    }
+
+    public static function middleware(array $list, $callback = null)
+    {
+        self::$add_groups['middlewares'] = [$list, $callback];
         return new self();
     }
 

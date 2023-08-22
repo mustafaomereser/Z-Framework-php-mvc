@@ -12,7 +12,11 @@ Route::get('/language/{lang}', function ($lang) {
     back();
 })->name('language');
 
+Route::middleware([App\Middlewares\Auth::class])->group(function () {
+    // middleware route example
+});
 
 // Route::get('/', [HomeController::class, 'index']);
 // Route::get('/', 'HomeController@index')->name('index');
+
 Route::resource('/', HomeController::class);
