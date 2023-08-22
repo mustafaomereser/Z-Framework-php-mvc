@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\User;
 use App\Requests\Welcome\CommandRequest;
 use zFramework\Core\Abstracts\Controller;
 
@@ -10,7 +11,15 @@ class HomeController extends Controller
 
     public function __construct($method)
     {
-        //
+        echo "<pre>";
+
+        // $user = (new User)->where('users.id', 1)->where('users.id', '=', 1, 'OR')->where([['users.id', 1], ['users.id', '=', 2, 'OR']])->first();
+        // print_r($user);
+        // print_r($user['posts']()->get());
+
+        print_r((new User)->whereIn('id', [5, 6, 9])->buildSQL());
+
+        exit;
     }
 
     /** Index page | GET: /

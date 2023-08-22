@@ -157,27 +157,27 @@ You can read detailed documention(only Turkish) or read here.
 
     <!-- for store() method -->
     <form method="POST">
-        <?= Csrf::csrf() ?>
+        {{ Csrf::csrf() }}
         <input type="submit">
     </form>
 
     <!-- for update() method -->
     <form action="/1" method="POST">
-        <?= Csrf::csrf() ?>
-        <?= inputMethod('PATCH') ?>
+        {{ Csrf::csrf() }}
+        {{ inputMethod('PATCH') }}
         <input type="submit">
     </form>
 
     <!-- for delete() method -->
     <form action="/1" method="POST">
-        <?= Csrf::csrf() ?>
-        <?= inputMethod('DELETE') ?>
+        {{ Csrf::csrf() }}
+        {{ inputMethod('DELETE') }}
         <input type="submit">
     </form>
 
     Also you can use `csrf()` method
     <form method="POST">
-        <?= csrf() ?>
+        {{ csrf() }}
         ...
     </form>
 ```
@@ -204,12 +204,7 @@ ALSO you can normal query like /1?test=true
 
 ### 1.2. Route Options
 ```php                                                  
-                                                        // Last array is Options
-    Route::post('/store', [TestController::class, 'store'], [
-        'name' => 'store',
-        'no-csrf' => true,
-        'middlewares' => [Auth::class]
-    ]);
+    Route::post('/store', [TestController::class, 'store']);
 
     // Other way for middleware (if you use that way you can not find route name.)
     Middleware::middleware([Auth::class, Guest::class], function ($declined) {
@@ -217,27 +212,32 @@ ALSO you can normal query like /1?test=true
         
         Route::get('/test', function () {
             return "Hey 👋";
-        }, [
-            'name' => 'test' // if middleware not verify you can not find that name.
-        ]);
+        })->name('test'); // if middleware not verify you can not find that name.
     });
 
-    // if you want set name equivalent you can use ->name()
-    Route::get('/about', function(){...})->name('about');
-    // you can find that
-    Route::findRoute('about'); // output: www.host.com/about
+    // if you want use route with middleware and name still findable.
+    Route::middleware([Auth::class, Admin::class], function($declines) { # Optional callback method.
+        abort(403, 'Access Forbidden');
+    })->group(function() {
+        Route::get('/dashboard')->name('dashboard');
+    });
+
+    Route::pre('/admin')->group(function() {
+        Route::get('/any-page', AnyController::class)->name('any-page');
+        Route::resource('/', DashboardController::class);
+    });
 ```
 ### 1.3. Find Route's Url
 ```php
     // Route/web.php
     Route::get('/test/{id}/{username}', function ($id, $username) {
         echo "$id - $username";
-    }, [
-        'name' => 'test'
-    ]);
+    })->name('test');
 
     // Usage:
-    echo Route::findRoute('test', ['id' => 1, 'username' => 'Admin']); // output: /test/1/Admin
+    echo Route::findRoute('test', ['id' => 1, 'username' => 'Admin']); // output: www.host.com/test/1/Admin
+    # or
+    echo route('test', ['id' => 1, 'username' => 'Admin']) // same output.
 ```
 
 ## 2. Model
@@ -246,23 +246,20 @@ ALSO you can normal query like /1?test=true
         use softDelete; // (optional) if you are need soft delete a table's row use this. that mean delete you can not seen but not delete in db.
 
         public $table = "users";
-        public $as    = "user_table"; // set new usable short or what are you want name.
         public $db    = "local"; // (optional) if you do not write that it's connect your first connection.
 
-
         // do not show that columns but if you use ->select('guarded_column_name') you can see it
-        public $guard = ['password', 'api_token', 'deleted_at', 'created_at'];
+        public $guard = ['password', 'api_token'];
 
 
-        public $primary = "column_name" // (optional) select table primary key it's default = id
+        public $primary    = "column_name" // (optional) select table primary key it's default is null and select automatic primary key
         public $updated_at = "custom_updated_at_name" // (optional) if you use updated_at attribute it's default = updated_at
         public $created_at = "custom_created_at_name" // (optional) if you use created_at attribute it's default = created_at
         public $deleted_at = "custom_deleted_at_name" // (optional) if you use deleted_at attribute it's default = deleted_at
     }
     
     // if you wanna see your deleted_at items
-    $users = new DB;
-    $users = $users->table('users')->get(); // return with deleted_at items.
+    $users = (new DB)->table('users')->get(); // return with deleted_at items.
 
     // Usage:
     
@@ -270,19 +267,14 @@ ALSO you can normal query like /1?test=true
     $user = new User;
     echo "<pre>";
     print_r([
-        "get" => $user->get(),
-        "first" => $user->where('id', '=', 1)->first(),
+        "get"         => $user->get(),
+        "count"       => $user->count(),
+        "first"       => $user->where('id', 1)->first(),
         "firstOrFail" => $user->where('id', '=', 1)->firstOrFail(), // If can not find a row abort 404
-        "count" => $user->count(),
-        "insert" => $user->insert([
-            'username' => 'username',
-            'password' => 'password',
-            'email' => 'email@mail.com'
-        ]),
-        "update" => $user->where('id', '=', 1)->update([
-            'email' => 'test@mail.com'
-        ]),
-        "delete" => $user->where('id', '>', 0)->delete()
+        "paginate"    => $user->paginate(20, 'page_request_name'),
+        "insert"      => $user->insert(['username' => 'username', 'password' => 'password','email' => 'email@mail.com']),
+        "update"      => $user->where('id', 1)->update(['email' => 'test@mail.com']),
+        "delete"      => $user->where('id', '>', 2)->delete()
     ]);
 
     // if you wanna get type class = ->get(true) | ->first(true);
@@ -291,7 +283,7 @@ ALSO you can normal query like /1?test=true
     $user->where('id', '=', 1)->where('email', '=', 'test@mail.com', 'OR')->get();
     
     // Find example that is for first key my users table's first key is id
-    $user->find(1, true|false);
+    $user->find(1);
 
     // Select example
     $user->select('id, username')->get();
@@ -313,11 +305,6 @@ ALSO you can normal query like /1?test=true
     
     // OR Joins example
     $user->join('LEFT|RIGHT|OUTER|FULL|NULL', App\Models\User::class, ['table_name.id = this_table.id'])->get();
-
-    // retrn class output
-    $...->get(true);
-    $...->first(true);
-    $...->paginate(..., ..., true);
 
     var_dump($result); // row count
 ```
@@ -357,48 +344,65 @@ ALSO you can normal query like /1?test=true
         }
     }
 
-    // zhelper
-    > php zhelper make observer UserObserver
+    // create observer
+    > php terminal make observer UserObserver
 
     // created a observer like that
     class UserObserver extends Observer
     {
-        public function oninsert()
+        /**
+         * Insert before run that
+         */
+        public function oninsert(array $args)
         {
-            // Insert before run that
             echo "inserting";
+            print_r($args);
+            return $args;
         }
 
+        /**
+         * Insert after run that
+         */
         public function oninserted(array $args)
         {
-            // Insert after run that
-            echo "inserted: " . $args['id'];
+            echo "inserted: ";
+            print_r($args);
         }
 
+        /**
+         * Update before run that
+         */
         public function onupdate(array $args)
         {
-            // Update before run that
-            echo "updating: " . $args['id'];
+            echo "updating:";
+            var_dump($args);
         }
 
+        /**
+         * Update after run that
+         */
         public function onupdated(array $args)
         {
-            // Update after run that
             echo "updated:";
-            print_r($args);
+            var_dump($args);
         }
 
+        /**
+         * Delete before run that
+         */
         public function ondelete(array $args)
         {
-            // Delete before run that
-            echo "deleting: " . $args['id'];
+            echo "deleting:";
+            var_dump($args);
         }
 
+        /**
+         * Delete after run that
+         */
         public function ondeleted(array $args)
         {
-            // Delete after run that
             echo "deleted:";
-            print_r($args);
+            var_dump($args);
         }
     }
 ```
@@ -414,18 +418,18 @@ ALSO you can normal query like /1?test=true
     class Users
     {
         static $storageEngine = "InnoDB"; // you can change that what are you want to store your sql engine.
-        static $charset = "utf8_general_ci"; // set default charset for table (so that effect all columns)
-        static $table = "users"; // create table name
-        static $db = 'local'; // db key from database/connections.php
+        static $charset       = "utf8_general_ci"; // set default charset for table (so that effect all columns)
+        static $table         = "users"; // create table name
+        static $db            = "local"; // db key from database/connections.php
 
         public static function columns() // Insert columns
         {
             return [
-                'id' => ['primary'],
-                'username' => ['varchar:50', 'charset:utf8mb4_general_ci'],
-                'password' => ['varchar:50', 'charset:utf8mb4_general_ci'],
-                'email' => ['varchar:50', 'charset:utf8mb4_general_ci', 'unique'],
-                'api_token' => ['varchar:60', 'required', 'charset:utf8mb4_general_ci'],
+                'id'         => ['primary'],
+                'username'   => ['varchar:50', 'charset:utf8mb4_general_ci'],
+                'password'   => ['varchar:50', 'charset:utf8mb4_general_ci'],
+                'email'      => ['varchar:50', 'charset:utf8mb4_general_ci', 'unique'],
+                'api_token'  => ['varchar:60', 'required', 'charset:utf8mb4_general_ci'],
                 'timestamps', // create updated_at, created_at columns
                 'softDelete' // Use soft delete column
             ];
@@ -477,9 +481,9 @@ ALSO you can normal query like /1?test=true
         public function seed()
         {
             $this->user->insert([
-                'username' => 'admin',
-                'password' => Crypter::encode('admin'),
-                'email' => 'admin@localhost.com',
+                'username'  => 'admin',
+                'password'  => Crypter::encode('admin'),
+                'email'     => 'admin@localhost.com',
                 'api_token' => Str::rand(60)
             ]); 
         }
@@ -517,7 +521,7 @@ ALSO you can normal query like /1?test=true
     Date::locale(); // return Europe/Istanbul
     Date::format(time()|date(), 'd.m.Y H:i');
     Date::now(); // d.m.Y H:i
-    Date::timestamp(); // For mysql TIMESTAMP
+    Date::timestamp(); // current TIMESTAMP
 ```
 
 ## 4. Mail
@@ -605,8 +609,8 @@ ALSO you can normal query like /1?test=true
     // call in view. In home.index:
     <div>
         List:
-        <?= view('home.list', $view_parameters); ?> // Output: echo $hi; = hey       // SAME
-        <?= View::view('home.list', $view_parameters); ?> // Output: echo $hi; = hey // RESULT
+        {{ view('home.list', $view_parameters) }}       // Output: echo $hi; = hey  // SAME
+        {{ View::view('home.list', $view_parameters) }} // Output: echo $hi; = hey // RESULT
     </div>
 ```
 ### 6.1. ViewProvider
@@ -812,8 +816,8 @@ Run project.
 ```html
     <!-- shown alerts example bootstrap -->
     <?php foreach(Alerts::get() as $alert): ?>
-        <div class="alert alert-<?= $alert[0] ?>">
-            <?= $alert[0] ?>: <?= $alert[1] ?>
+        <div class="alert alert-{{ $alert[0] }}">
+            {{ $alert[0] }}: {{ $alert[1] }}
         </div>
     <?php endforeach; ?>
 ```
@@ -856,11 +860,10 @@ Run project.
     }
 
     // Usage:
-    Middleware::middleware([Auth::class, Guest::class]); // output: false
+    Middleware::middleware([Auth::class, Guest::class]); #              # output: false
     Middleware::middleware([Auth::class]); // if you are logged in      # output: true 
     Middleware::middleware([Guest::class]); // if you are not logged in # output: true 
     
-
     Middleware::middleware([Auth::class, Guest::class], function($declined) {
         print_r($declined);
     }); // if you are logged in     # output: Array ('Guest::class')
@@ -871,8 +874,7 @@ Run project.
 ```php
     // Parameters: cache name, what it storage, seconds type timeout
     $users = Cache::cache('users', function() {
-        $users = new User;
-        return $users->get();
+        return (new User)->get();
     }, (10 * 60));
 
     print_r($users);
@@ -899,13 +901,13 @@ Run project.
 
     # add a database
     $databases = [
-        'test' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123'],
+        'test'   => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123'],
         'test_2' => ['mysql:host=localhost;dbname=test_2;charset=utf8mb4', 'root', '123123'],
     ];
 
     # use options
     $databases = [
-        'test' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123',, 'options' => [
+        'test' => ['mysql:host=localhost;dbname=test;charset=utf8mb4', 'root', '123123', 'options' => [
             [\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION] // for try catch PDOException
         ],
         'test_2' => ['mysql:host=localhost;dbname=test_2;charset=utf8mb4', 'root', '123123'],
@@ -921,12 +923,12 @@ Run project.
 
     # Folder config/app.php
     // Usage Crypter
-    'key' => 'cryptkey',
+    'key'  => 'cryptkey',
     'salt' => 'ThisSaltIsSecret',
 
     # if you change that your hash encode's will change, and all hash need be unique for security.
     # example
-    'key' => '82FDFE2976AC2C8B8EBD5A5737118',
+    'key'  => '82FDFE2976AC2C8B8EBD5A5737118',
     'salt' => '4ljd5AyZc9',
 
     # it is so secure. crypter make passwords or etc.
@@ -992,13 +994,13 @@ Run project.
     // For one
     File::upload('/uploads', $_FILES['file'], [ // settings is optional
         'accept' => ['jpg', 'jpeg', 'png'],
-        'size' => 300000 # byte
+        'size'   => 300000 # byte
     ]); // return /uploads/image.ext
 
     // For multip
     File::upload('/uploads', $_FILES['files'], [ // settings is optional
         'accept' => ['jpg', 'jpeg', 'png'],
-        'size' => 300000 # byte
+        'size'   => 300000 # byte
     ]); // return array('/uploads/image.ext', '/uploads/image.ext');
 
                                 # width, height

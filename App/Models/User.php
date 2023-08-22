@@ -13,7 +13,7 @@ class User extends Model
     public $observe  = UserObserver::class;
 
     public $table    = "users";
-    public $guard    = ['password', 'api_token', 'deleted_at', 'created_at'];
+    public $guard    = ['password', 'api_token'];
 
     # everytime set query begin.
     // public function beginQuery()

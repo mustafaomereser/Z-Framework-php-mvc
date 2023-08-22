@@ -9,7 +9,7 @@ abstract class Model extends DB
     /**
      * Usual Parameters for organize.
      */
-    public $primary      = "id";
+    public $primary      = null;
     public $as           = "";
     public $guard        = [];
     public $closures     = [];

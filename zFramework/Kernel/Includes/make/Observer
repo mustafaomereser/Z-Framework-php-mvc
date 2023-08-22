@@ -8,6 +8,8 @@ class {name} extends Observer
 {
     /**
      * Insert before run that
+     * @param array $args
+     * @return array
      */
     public function oninsert(array $args)
     {
@@ -17,6 +19,7 @@ class {name} extends Observer
 
     /**
      * Insert after run that
+     * @param array $args
      */
     public function oninserted(array $args)
     {
@@ -25,15 +28,18 @@ class {name} extends Observer
 
     /**
      * Update before run that
+     * @param array $args
+     * @return array
      */
     public function onupdate(array $args)
     {
         echo "updating:";
-        return $data;
+        return $args;
     }
 
     /**
      * Update after run that
+     * @param array $args
      */
     public function onupdated(array $args)
     {
@@ -43,6 +49,7 @@ class {name} extends Observer
 
     /**
      * Delete before run that
+     * @param array $args
      */
     public function ondelete(array $args)
     {
@@ -52,6 +59,7 @@ class {name} extends Observer
 
     /**
      * Delete after run that
+     * @param array $args
      */
     public function ondeleted(array $args)
     {

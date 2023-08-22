@@ -89,7 +89,7 @@ class DB
      * Fetch all tables in database.
      * @return array
      */
-    public function tables()
+    private function tables()
     {
         if (@$tables = $GLOBALS['DB']['TABLES'][$GLOBALS["NAMES"][$this->db]]) return $tables;
         try {
@@ -102,6 +102,14 @@ class DB
                 $engines[$table['TABLE_NAME']] = $table['ENGINE'];
             }
 
+            foreach ($tables as $table) {
+                $columns = $this->prepare("SELECT COLUMN_NAME, CHARACTER_MAXIMUM_LENGTH, COLUMN_TYPE, COLUMN_KEY FROM information_schema.columns where table_schema = DATABASE() AND table_name = :table", ['table' => $table])->fetchAll(\PDO::FETCH_ASSOC);
+                $GLOBALS["DB"]["TABLE_COLUMNS"][$table] = [
+                    'primary' => $columns[array_search("PRI", array_column($columns, 'COLUMN_KEY'))]['COLUMN_NAME'],
+                    'columns' => $columns
+                ];
+            }
+
             $GLOBALS["DB"]["TABLES"][$dbname]         = $tables;
             $GLOBALS["DB"]["TABLE_ENGINES"][$dbname]  = $engines;
             $GLOBALS["DB"]["NAMES"][$this->db]        = $dbname;
@@ -110,6 +118,15 @@ class DB
             errorHandler($e);
             return false;
         }
+    }
+
+    /**
+     * Get primary key.
+     */
+    private function getPrimary()
+    {
+        if (!$this->table) throw new \Exception('firstly you must select a table for get primary key.');
+        return $this->primary ?? $GLOBALS["DB"]["TABLE_COLUMNS"][$this->table]['primary'];
     }
 
     #region Preparing
@@ -480,12 +497,31 @@ class DB
     }
 
     /**
+     * Row count
+     * @return int
+     */
+    public function count(): int
+    {
+        return $this->run()->rowCount();
+    }
+
+    /**
      * get one row in rows
      * @return array 
      */
     public function first()
     {
         return $this->limit(1)->get()[0] ?? [];
+    }
+
+    /**
+     * Find row by primary key
+     * @param string $value
+     * @return array 
+     */
+    public function find(string $value)
+    {
+        return $this->where($this->getPrimary(), $value)->first();
     }
 
     /**
@@ -606,7 +642,7 @@ class DB
         $limit = $this->getLimit();
         switch ($type) {
             case 'select':
-                $select = $this->getSelect() ?? '*'; # ?? implode(", ", array_diff($this->columns, $this->guard ?? []));
+                $select = $this->getSelect() ?? implode(", ", array_diff(array_column($GLOBALS["DB"]["TABLE_COLUMNS"][$this->table]['columns'], 'COLUMN_NAME'), $this->guard ?? []));
                 $type = "SELECT $select FROM";
                 break;
 
@@ -640,6 +676,48 @@ class DB
     public function run(string $type = 'select')
     {
         return $this->prepare($this->buildSQL($type));
+    }
+    #endregion
+
+    #region Transaction
+
+    /**
+     * Check table is using InnoDB engine.
+     * @return bool
+     */
+    private function checkisInnoDB()
+    {
+        if (empty($this->table)) throw new \Exception('This table is not defined.');
+        if ($GLOBALS['DB_TABLE_ENGINES'][$GLOBALS["DB_NAMES"][$this->db]][$this->table] == 'InnoDB') return true;
+        throw new \Exception('This table is not InnoDB. If you want to use transaction system change store engine to InnoDB.');
+    }
+
+    /**
+     * Begin transaction.
+     */
+    public function beginTransaction()
+    {
+        $this->checkisInnoDB();
+        $this->db()->beginTransaction();
+        return $this;
+    }
+
+    /**
+     * Rollback changes.
+     */
+    public function rollback()
+    {
+        $this->db()->rollBack();
+        return $this;
+    }
+
+    /**
+     * Save all changes.
+     */
+    public function commit()
+    {
+        $this->db()->commit();
+        return $this;
     }
     #endregion
 }
