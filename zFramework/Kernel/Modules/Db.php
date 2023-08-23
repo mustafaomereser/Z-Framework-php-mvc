@@ -126,6 +126,11 @@ class Db
             }
             #
 
+            # detect dropped columns
+            $tableColumns = self::$db->prepare("DESCRIBE $table")->fetchAll(\PDO::FETCH_COLUMN);
+            foreach ($tableColumns as $column) if (!isset($columns[$column])) $drop_columns[] = $column;
+            #
+
             # Migrate stuff
             $last_column = null;
             foreach ($columns as $column => $parameters) {

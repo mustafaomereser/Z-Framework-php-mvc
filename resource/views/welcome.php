@@ -81,7 +81,7 @@ you can read more information in github repository page.
             $(this).find('[name]').each((index, item) => data[$(item).attr('name')] = item.value);
             $.ajax({
                 method: 'POST',
-                url: '{{  route("store") }}',
+                url: '{{ route("store") }}',
                 data: data,
                 success: e => $('#terminal-body').html(e).scrollTop(99999999999),
                 error: e => $('#terminal-body').html(JSON.parse(e.responseText).message)
