@@ -131,6 +131,20 @@ class Db
             foreach ($tableColumns as $column) if (!isset($columns[$column])) $drop_columns[] = $column;
             #
 
+            # detect indexes and remove
+            $indexes = array_column(self::$db->prepare("SHOW INDEX FROM $table")->fetchAll(\PDO::FETCH_ASSOC), 'Key_name');
+            unset($indexes[array_search('PRIMARY', $indexes)]);
+            foreach ($indexes as $index) {
+                try {
+                    self::$db->prepare("ALTER TABLE $table DROP INDEX " . $index);
+                    Terminal::text("[color=yellow]-> `$index`[/color] [color=dark-gray]cleared index key[/color]");
+                } catch (\PDOException $e) {
+                    Terminal::text('[color=red]' . $e->getMessage() . '[/color]');
+                }
+            }
+            if (count($indexes)) Terminal::text('[color=black]' . str_repeat('.', 30) . '[/color]');
+            #
+
             # Migrate stuff
             $last_column = null;
             foreach ($columns as $column => $parameters) {
@@ -285,7 +299,7 @@ class Db
             }
             #
 
-            foreach ($drop_columns as $drop) {
+            foreach (array_unique($drop_columns) as $drop) {
                 try {
                     self::$db->prepare("ALTER TABLE $table DROP COLUMN $drop");
                     Terminal::text("[color=yellow]Dropped column: $drop" . "[/color]");

@@ -142,7 +142,7 @@ class Terminal
                 $color   = $matches[1][$key];
                 $content = $matches[2][$key];
 
-                $text = str_replace($match, $cli ? ("\e[" . $colors[$color] . "m$content" . "\e[" . $colors['default'] . "m") : ("<font color='$color'>$content</font>"), $text);
+                $text = str_replace($match, $cli ? ("\e[" . $colors[$color] . "m$content" . "\e[" . $colors['default'] . "m") : ("<font color='" . $colors[$color] . "'>$content</font>"), $text);
             }
         }
 

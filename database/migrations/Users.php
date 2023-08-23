@@ -16,7 +16,7 @@ class Users
     {
         return [
             'id'        => ['primary'],
-            'username'  => ['varchar:51'],
+            'username'  => ['varchar:51', 'unique'],
             'password'  => ['varchar:50'],
             'email'     => ['varchar:50', 'unique'],
             'api_token' => ['varchar:60', 'required'],
