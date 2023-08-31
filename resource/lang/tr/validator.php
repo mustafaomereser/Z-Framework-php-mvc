@@ -16,6 +16,7 @@ return [
         'username'    => 'Kullanıcı adı',
         'password'    => 'Şifre',
         're-password' => 'Tekrar Şifre',
-        'email'       => 'E-Posta'
+        'email'       => 'E-Posta',
+        'terms'       => 'Kullanıcı Sözleşmesi Politikası'
     ]
 ];

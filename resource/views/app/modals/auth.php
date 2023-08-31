@@ -23,19 +23,22 @@
             <form id="signin-form">
                 {{ csrf() }}
                 <div class="form-group mb-2">
-                    <input type="email" class="form-control" name="email" placeholder="E-mail" required>
+                    <input type="email" class="form-control" name="email"
+                        placeholder="{{ _l('lang.email') }}" required>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" name="password" placeholder="Password" required>
+                    <input type="password" class="form-control" name="password"
+                        placeholder="{{ _l('lang.password') }}" required>
                 </div>
 
                 <div class="my-3">
                     <input type="checkbox" name="keep-logged-in" id="keep-logged-in" class="form-check-input">
-                    <label for="keep-logged-in">Keep logged in</label>
+                    <label for="keep-logged-in">{{ _l('lang.keep-logged-in') }}</label>
                 </div>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-sm btn-primary w-100">{{ _l('lang.signin') }}</button>
+                    <button type="submit"
+                        class="btn btn-sm btn-primary w-100">{{ _l('lang.signin') }}</button>
                 </div>
             </form>
         </div>
@@ -44,33 +47,38 @@
             <form id="signup-form">
                 {{ csrf() }}
                 <div class="form-group mb-2">
-                    <input type="text" class="form-control" name="username" placeholder="Username" required>
+                    <input type="text" class="form-control" name="username"
+                        placeholder="{{ _l('lang.username') }}" required>
                 </div>
 
                 <div class="form-group mb-2">
-                    <input type="email" class="form-control" name="email" placeholder="E-mail" required>
+                    <input type="email" class="form-control" name="email"
+                        placeholder="{{ _l('lang.email') }}" required>
                 </div>
 
                 <div class="row">
                     <div class="col-6">
                         <div class="form-group">
-                            <input type="password" class="form-control" name="password" placeholder="Password" required>
+                            <input type="password" class="form-control" name="password"
+                                placeholder="{{ _l('lang.password') }}" required>
                         </div>
                     </div>
                     <div class="col-6">
                         <div class="form-group">
-                            <input type="password" class="form-control" name="re-password" placeholder="Repeat Password" required>
+                            <input type="password" class="form-control" name="re-password"
+                                placeholder="{{ _l('lang.re-password') }}" required>
                         </div>
                     </div>
                 </div>
 
                 <div class="my-3">
                     <input type="checkbox" name="terms" id="terms" class="form-check-input">
-                    <label for="terms">Terms</label>
+                    <label for="terms">{{ _l('lang.terms') }}</label>
                 </div>
 
                 <div class="form-group">
-                    <button type="submit" class="btn btn-sm btn-primary w-100">{{ _l('lang.signup') }}</button>
+                    <button type="submit"
+                        class="btn btn-sm btn-primary w-100">{{ _l('lang.signup') }}</button>
                 </div>
             </form>
         </div>
