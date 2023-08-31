@@ -185,11 +185,11 @@ class Route
 
     /**
      * Dispatch Route.
-     * @param string $method
+     * @param string|null $method
      * @param array $args
      * @return array
      */
-    private static function dispatch(string $method, array $args): array
+    private static function dispatch($method, array $args): array
     {
         while (strstr($args[0], '//')) $args[0] = str_replace(['//'], ['/'], $args[0]);
 

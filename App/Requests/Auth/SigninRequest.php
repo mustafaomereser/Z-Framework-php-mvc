@@ -1,9 +1,10 @@
 <?php
-namespace App\Requests{namespace};
+
+namespace App\Requests\Auth;
 
 use zFramework\Core\Abstracts\Request;
 
-class {name} extends Request 
+class SigninRequest extends Request
 {
 
     public function __construct()
@@ -16,7 +17,9 @@ class {name} extends Request
     public function columns()
     {
         return [
-
+            'email'          => ['required', 'email'],
+            'password'       => ['required'],
+            'keep-logged-in' => ['nullable']
         ];
     }
 }

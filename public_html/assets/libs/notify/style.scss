@@ -1,0 +1,41 @@
+.custom-notify {
+    display: flex;
+    align-items: center;
+    color: var(--bs-light);
+    width: 20vw;
+
+    position: fixed;
+    right: 5px;
+    z-index: 2000;
+    bottom: 0;
+
+    padding: 7px;
+    border-radius: 5px;
+
+    transition: 200ms bottom ease-in, 100ms width ease-in;
+
+    .icon {
+        color: #fff;
+        font-size: 16pt;
+        margin: 0 15px;
+    }
+
+    .text {
+        color: #fff;
+        padding-right: 20px;
+    }
+
+    .close {
+        cursor: pointer;
+        user-select: none;
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+}
+
+@media screen and (max-width: 980px) {
+    .custom-notify {
+        width: 97vw;
+    }
+}
