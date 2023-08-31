@@ -459,8 +459,13 @@ $.system = {
     }
 };
 
+function initTooltips() {
+    $('[data-toggle="tooltip"]').tooltip();
+}
+
 function init() {
     initModals();
+    $(() => initTooltips());
 }
 
 $.system.loadAuthContent();

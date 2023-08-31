@@ -16,6 +16,7 @@ $lang_list = Lang::list();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="/assets/libs/notify/style.css" />
     <link rel="stylesheet" href="/assets/css/style.css" />
+    
 </head>
 
 <body>
@@ -45,14 +46,14 @@ $lang_list = Lang::list();
                 </div>
             </div>
         </div>
+
         
 <div class="my-5">
     <div class="text-center mb-4">
         <h1><?=_l('lang.welcome')?></h1>
     </div>
     <div class="card rounded-0">
-        <pre class="card-body" style="height: 400px; overflow-y: auto;"
-            id="terminal-body">you can read more information in github repository page.</pre>
+        <pre class="card-body" style="height: 400px; overflow-y: auto;" id="terminal-body">you can read more information in github repository page.</pre>
     </div>
     <div class="form-group">
         <form id="terminal-form">
@@ -62,16 +63,15 @@ $lang_list = Lang::list();
     </div>
 </div>
 
+
         <div class="row text-center">
             <div class="col-lg-6 col-12 text-lg-start">
-                <a href="<?=route('test')?>">Tests</a>
+                <a href="/api/v1">API</a>
             </div>
             <div class="col-lg-6 col-12 text-lg-end">
-                <small>
-                    <b>zFramework</b> v<?=FRAMEWORK_VERSION?>
-                    | <b>PHP</b> v<?=PHP_VERSION?>
-                    | <b>APP</b> v<?=config('app.version')?>
-                </small>
+                <small data-toggle="tooltip" title="zFramework Version"><b>zFramework</b> v<?=FRAMEWORK_VERSION?></small>
+                <small data-toggle="tooltip" title="PHP Version">| <b>PHP</b> v<?=PHP_VERSION?></small>
+                <small data-toggle="tooltip" title="Current Project Version">| <b>APP</b> v<?=config('app.version')?></small>
             </div>
         </div>
     </div>
@@ -84,20 +84,22 @@ $lang_list = Lang::list();
     <script src="/assets/js/main.js"></script>
     <script src="/assets/libs/notify/script.js"></script>
 
-    <script>
-        $('#terminal-form').on('submit', function(e) {
-            e.preventDefault();
-            let data = {};
-            $(this).find('[name]').each((index, item) => data[$(item).attr('name')] = item.value);
-            $.ajax({
-                method: 'POST',
-                url: '<?=route("store")?>',
-                data: data,
-                success: e => $('#terminal-body').html(e).scrollTop(99999999999),
-                error: e => $('#terminal-body').html(JSON.parse(e.responseText).message)
-            });
+    
+<script>
+    $('#terminal-form').on('submit', function(e) {
+        e.preventDefault();
+        let data = {};
+        $(this).find('[name]').each((index, item) => data[$(item).attr('name')] = item.value);
+        $.ajax({
+            method: 'POST',
+            url: '<?=route("store")?>',
+            data: data,
+            success: e => $('#terminal-body').html(e).scrollTop(99999999999),
+            error: e => $('#terminal-body').html(JSON.parse(e.responseText).message)
         });
-    </script>
+    });
+</script>
+
 </body>
 
 </html>
