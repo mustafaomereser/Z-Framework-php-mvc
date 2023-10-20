@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.15.4/css/all.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #e5e7eb;
+        }
+
+        .btn {
+            text-decoration: none;
+        }
+
+        [onclick] {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container mt-2">
+        <div class="clearfix mb-3">
+            <div class="float-start">
+                <button class="btn btn-sm btn-link fw-bold">STACK</button>
+                <button class="btn btn-sm btn-link fw-bold">CONTEXT</button>
+                <button class="btn btn-sm btn-link fw-bold">SHARE</button>
+            </div>
+            <div class="float-end">
+                <button class="btn btn-sm btn-link fw-bold">DOCS</button>
+                <button class="btn btn-sm btn-link fw-bold"><i class="fa fa-cog"></i></button>
+            </div>
+        </div>
+
+        <section class="mb-3">
+            <div class="row">
+                <div class="col-7 pe-1" id="error-message">
+                    <div class="h-100 bg-body-tertiary border rounded-3 position-relative">
+                        <div class="d-flex align-items-center gap-2 text-muted position-absolute"
+                            style="top: 5px; right: 10px;">
+                            <div><i class="fab fa-lg fa-php"></i> 8.1.0</div>
+                            <div><i class="fab fa-lg fa-sketch"></i> 1.0.0</div>
+                        </div>
+
+                        <div class="p-5">
+                            <h5>E:\a-projects\zFramework\ws\routes.php:9</h5>
+                            <div class="text-muted">
+                                syntax error, unexpected '::' (T_PAAMAYIM_NEKUDOTAYIM)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-5 ps-1" id="did-you-mean">
+                    <div class="border rounded-3 h-100 position-relative" style="background: #6ee7b7;">
+                        <div class="text-end position-absolute" style="top: 5px; right: 10px;"
+                            onclick="$('#did-you-mean').remove(); $('#error-message').removeClass('col-7').addClass('col-12');">
+                            <i class="fa fa-times text-muted"></i>
+                        </div>
+                        <div class="p-5">
+                            <div>
+                                <h4>Bad Method Call</h4>
+                            </div>
+                            <div>
+                                did you mean App\Models\Post::query() ?
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="bg-body-tertiary rounded-3">
+                <div class="row">
+                    <div class="col-4 border-end pe-0">
+                        <div>
+                            <div class="p-2 w-100 text-break border">
+                                /home/ucrmanit/app.ucrm.com.tr/zFramework/Core/Facades/DB.php
+                            </div>
+                            <div class="list-group">
+                                <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+                                    Line: <b>3</b>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        // code block
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js">
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
+</body>
+
+</html>

@@ -147,7 +147,7 @@ function errorHandler($data)
                     <?= $data[3] . ":" . $data[4] ?>
                 </a>
             </div>
-            <small style=" color: gray;"><?= $message ?></small>
+            <small style="color: gray;"><?= $message ?></small>
             <div style="margin-top: 20px;">
                 <div style="margin-bottom: 10px;">
                     IDE will open when you click on the error.

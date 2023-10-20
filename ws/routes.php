@@ -1,9 +1,8 @@
 <?php
-// Proje içi kullanım sağlıklı değildir, fakat yine de kullanım desteklenmektedir.
+// WS Proje içi kullanım sağlıklı değildir, fakat yine de kullanım desteklenmektedir.
 
 use zFramework\Core\Route;
 use zFramework\Core\Ws;
-
 
 Route::ws('get', '/test', function () {
     return Ws::send('test', null, function ($data) {

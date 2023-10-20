@@ -122,7 +122,12 @@ class Mail
         foreach ($data['attachements'] ?? [] as $attach) self::$mail->addAttachment($attach);
 
         self::$toMail = [];
-        if (self::$mail->send()) return true;
-        return false;
+        $status = self::$mail->send();
+
+        self::$mail->clearAllRecipients();
+        self::$mail->clearReplyTos();
+        self::$mail->clearAttachments();
+
+        return $status;
     }
 }
