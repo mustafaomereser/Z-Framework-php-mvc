@@ -5,7 +5,7 @@
         <h1>{{ _l('lang.welcome') }}</h1>
     </div>
     <div class="card rounded-0">
-        <pre class="card-body" style="height: 400px; overflow-y: auto;" id="terminal-body">you can read more information in github repository page.</pre>
+        <pre class="card-body" style="height: 400px; overflow-y: auto;" id="terminal-body">you can read for more information documention.</pre>
     </div>
     <div class="form-group">
         <form id="terminal-form">

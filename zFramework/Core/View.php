@@ -34,9 +34,10 @@ class View
     /**
      * Dispatch view
      * @param string $view_name
-     * @param array $view_name
+     * @param array $data
+     * @return string
      */
-    public static function view(string $view_name, array $data = []): void
+    public static function view(string $view_name, array $data = [])
     {
         if (isset(self::$binds[$view_name])) $data = array_merge(self::$binds[$view_name](), $data);
 
@@ -50,9 +51,14 @@ class View
         // if (!file_exists($cache) || filemtime($cache) < filemtime($view_path)) 
         file_put_contents($cache, self::$view);
 
+        ob_start();
         extract($data);
-        include $cache;
+        include($cache);
+        $output = ob_get_clean();
         self::reset();
+
+        echo $output;
+        // return $output;
     }
 
     /** 

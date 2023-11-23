@@ -42,6 +42,13 @@ class Run
         ob_start();
         $start = microtime();
         try {
+            # set view options
+            \zFramework\Core\View::settingUP([
+                'caches' => FRAMEWORK_PATH . '\storage\views',
+                'dir'    => BASE_PATH . '\resource\views',
+                'suffix' => ''
+            ]);
+
             // includes
             self::includer('..\zFramework\modules\error_handlers');
             self::includer('..\zFramework\modules', false);
@@ -56,12 +63,6 @@ class Run
             self::includer('..\ws\routes.php');
             // self::includer('..\zFramework\modules\error_http');
             @self::$loadtime = ((microtime() + 0.003) - $start);
-
-            \zFramework\Core\View::settingUP([
-                'caches' => FRAMEWORK_PATH . '\storage\views',
-                'dir'    => BASE_PATH . '\resource\views',
-                'suffix' => ''
-            ]);
 
             \zFramework\Core\Route::run();
             \zFramework\Core\Facades\Alerts::unset(); // forget alerts
