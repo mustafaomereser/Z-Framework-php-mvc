@@ -1,5 +1,6 @@
 <?php
 
+use zFramework\Core\Facades\Auth;
 use zFramework\Core\Facades\Config;
 
 function errorHandler($data)
@@ -14,28 +15,31 @@ function errorHandler($data)
 
     function getButtons($errors)
     {
-        foreach ($errors as $key => $val) :
+        foreach ($errors as $key => $val) {
             if (!is_numeric($key)) {
+                $id = uniqid("codeblock-");
 ?>
-                <div class="button-list">
-                    <div class="title">
-                        <?= $key ?>
+                <div class="accordion-item mb-2">
+                    <h2 class="accordion-header">
+                        <button class="accordion-button text-break" type="button" data-bs-toggle="collapse" data-bs-target="#<?= $id ?>" aria-expanded="true" aria-expanded="true" aria-controls="<?= $id ?>">
+                            <b><?= $key ?></b>
+                        </button>
+                    </h2>
+                    <div id="<?= $id ?>" class="accordion-collapse collapse show">
+                        <div class="list-group">
+                            <?= getButtons($val) ?>
+                        </div>
                     </div>
-                    <ul>
-                        <?= getButtons($val) ?>
-                    </ul>
                 </div>
             <?php
                 continue;
             }
             ?>
-            <li>
-                <button data-button>
-                    Line: <b><?= $val['line'] ?></b>
-                </button>
-            </li>
+            <a href="javascript:;" data-button class="list-group-item list-group-item-action">
+                Line: <b><?= $val['line'] ?></b>
+            </a>
         <?php
-        endforeach;
+        }
     }
 
     function getErrors($errors)
@@ -61,146 +65,275 @@ function errorHandler($data)
                     if ($line_start > $line_count) continue;
 
                     $str_line_count = $line_count;
-                    if (strlen($line_count) < 2) $str_line_count = "0$str_line_count";
 
-                    $caret = strlen($line);
-                    $line = "$str_line_count. " . htmlspecialchars($line);
+                    // $caret = strlen($line);
+                    $line = str_pad($str_line_count, 2, "0", STR_PAD_LEFT) . ". " . htmlspecialchars($line);
 
-                    if ($line_count == $val['line']) $code .= "<a href='javascript:goIDE(`" . str_replace("\\", "/", $val['file']) . "`, " . $val['line'] . ", $caret);' style='color: red; text-decoration: none;'>$line</a>";
-                    else $code .= $line;
+                    // if ($line_count == $val['line']) $code .= "<a href='javascript:goIDE(`" . str_replace("\\", "/", $val['file']) . "`, " . $val['line'] . ", $caret);' style='color: red; text-decoration: none;'>$line</a>";
+                    // else $code .= $line;
+
+                    $is_line = $line_count == $val['line'];
+
+                    $code .= ($is_line ? "!*" : null) . $line;
 
                     if ($line_count >= $line_end) break;
                 }
                 fclose($file);
             }
+
+            $id = uniqid();
         ?>
-            <div class="code-block">
-                <div style="border-bottom: 3px dotted #ddd; padding: 0 0 15px 0">
-                    <?php foreach (['Line' => $val['line'], 'Method' => @$val['class'] . @$val['type'] . @$val['function'], 'Arguments' => (@$val['args'] ? "<pre>" . var_export($val['args'], true) . "</pre>" : null)] as $title => $val) : if ($val) : ?>
-                            <div>
-                                <b><?= $title ?>: </b><code><?= $val ?></code>
-                            </div>
-                    <?php endif;
-                    endforeach; ?>
+
+            <div class="code-block d-none h-100">
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#<?= $id ?>-code-tab" type="button" role="tab" aria-controls="<?= $id  ?>-code-tab" aria-selected="true">Code</button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="<?= $id  ?>-arguments-tab-tab" data-bs-toggle="pill" data-bs-target="#<?= $id  ?>-arguments-tab" type="button" role="tab" aria-controls="<?= $id  ?>-arguments-tab" aria-selected="false">Arguments</button>
+                    </li>
+                </ul>
+                <div class="tab-content h-100">
+                    <div class="tab-pane fade show active h-100" id="<?= $id  ?>-code-tab" role="tabpanel">
+                        <div class="p-2">
+                            <b>Line: </b> <code><?= $val['line'] ?></code>
+                            <a href="javascript:goIDE(`<?= str_replace("\\", "/", $val['file']) ?>`, <?= $val['line'] ?>, 9999);" class="fw-bold">(Go to line)</a>
+                        </div>
+
+                        <pre class="language-js h-100"><code class="language-js h-100"><?= $code ?></code></pre>
+                    </div>
+                    <div class="tab-pane fade" id="<?= $id  ?>-arguments-tab" role="tabpanel">
+                        <div class="p-2">
+                            <?php foreach (['Line' => $val['line'], 'Method' => @$val['class'] . @$val['type'] . @$val['function'], 'Arguments' => (@$val['args'] ? "<pre>" . var_export($val['args'], true) . "</pre>" : null)] as $title => $error) : if (!$error) continue; ?>
+                                <div>
+                                    <b><?= $title ?>:</b> <code><?= $error ?></code>
+                                    <?php if ($title == 'Line') : ?>
+                                        <a href="javascript:goIDE(`<?= str_replace("\\", "/", $val['file']) ?>`, <?= $error ?>, 9999);" class="fw-bold">(Go to line)</a>
+                                    <?php endif ?>
+                                </div>
+                            <?php endforeach ?>
+                        </div>
+                    </div>
                 </div>
-                <pre><?= $code ?></pre>
             </div>
-    <?php endforeach;
-    }
-    ?>
+        <?php endforeach ?>
+    <?php } ?>
 
-    <style>
-        body {
-            background-color: #444;
-        }
+    <!DOCTYPE html>
+    <html lang="en">
 
-        .container {
-            margin: 5vw 17vw;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.15.4/css/all.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/themes/prism.min.css" />
 
-        .box {
-            width: 100%;
-            padding: 20px;
-            background-color: #fff;
-            border: 1px solid #eee;
-        }
-
-        .button-list {
-            background-color: #ddd;
-            word-wrap: break-word;
-        }
-
-        .button-list .title {
-            padding: 25px 10px;
-            font-size: 10pt;
-        }
-
-        .error-list button {
-            width: 100%;
-            background-color: #eee;
-            border: unset;
-            padding: 25px 10px;
-            word-wrap: break-word;
-            font-size: 9pt;
-            border: 2px solid #fff;
-            cursor: pointer;
-        }
-
-        .error-list button:hover,
-        .error-list button.active {
-            background-color: #ddd;
-        }
-
-        .code-block {
-            display: none;
-        }
-
-        .code-block.show {
-            display: block;
-        }
-    </style>
-
-    <div class="container">
-        <div class="box" style="width: 96.6%">
-            <div>
-                <a href='javascript:goIDE(`<?= str_replace("\\", "/", $data[3]) ?>`, <?= $data[4] ?>);' style="color: black;">
-                    <?= $data[3] . ":" . $data[4] ?>
-                </a>
-            </div>
-            <small style="color: gray;"><?= $message ?></small>
-            <div style="margin-top: 20px;">
-                <div style="margin-bottom: 10px;">
-                    IDE will open when you click on the error.
-                </div>
-                <select name="IDE" onchange="document.cookie = 'IDE=' + this.value + '; expires=Sun, 1 Jan <?= date('Y') + 1 ?> 00:00:00 UTC; path=/'">
-                    <?php foreach (['vscode' => 'Visual Studio Code', 'phpstorm' => 'PHPStorm'] as $val => $title) : ?>
-                        <option value="<?= $val ?>" <?= @$_COOKIE['IDE'] == $val ? ' selected' : null ?>><?= $title ?></option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-        </div>
-        <div style="display: flex; width: 100%">
-            <div class="box error-list" style="width: 20%; padding: 0;">
-                <?= getButtons($errors) ?>
-            </div>
-            <div class="box" style="width: 100%; overflow: auto;">
-                <?= getErrors($errors) ?>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        error_buttons = document.querySelectorAll('[data-button]');
-        codes = document.querySelectorAll('.code-block');
-
-        function selectError(id) {
-            error_buttons.forEach(item => item.classList.remove('active'));
-            codes.forEach(item => item.classList.remove('show'));
-            error_buttons[id].classList.add('active');
-            codes[id].classList.add('show');
-        }
-
-        error_buttons.forEach((item, index) => {
-            item.onclick = () => selectError(index);
-        });
-
-        selectError(0);
-
-        function goIDE(file, line, caret = 0) {
-            let val = document.querySelector('[name="IDE"]').value,
-                link = '#';
-
-            switch (val) {
-                case 'vscode':
-                    link = `vscode://file/${file}:${line}:${caret}`
-                    break;
-                case 'phpstorm':
-                    link = `phpstorm://open?url=${file}&line=${line}`;
-                    break;
+        <style>
+            body {
+                background: #e5e7eb;
             }
-            location.href = link;
-        }
-    </script>
+
+            .btn {
+                text-decoration: none;
+            }
+
+            [onclick] {
+                cursor: pointer;
+            }
+        </style>
+    </head>
+
+    <body>
+        <div class="container mt-2">
+            <div class="clearfix mb-3">
+                <div class="float-start">
+                    <button class="btn btn-sm btn-link fw-bold"><i class="fa fa-share"></i> SHARE</button>
+                </div>
+                <div class="float-end">
+                    <div class="d-flex align-items-center">
+                        <a href="https://github.com/mustafaomereser/Z-Framework-php-mvc" class="btn btn-sm btn-link fw-bold" target="_blank"><i class="fa fa-file-word"></i> DOCS</a>
+
+                        <div class="dropdown">
+                            <button class="btn btn-sm btn-link dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fa fa-cog"></i>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#">Action</a></li>
+                                <li><a class="dropdown-item" href="#">Another action</a></li>
+                                <li><a class="dropdown-item" href="#">Something else here</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <section class="mb-3">
+                <div class="row">
+                    <div class="col-7 pe-1" id="error-message">
+                        <div class="h-100 bg-body-tertiary border rounded-3 position-relative">
+                            <div class="d-flex align-items-center gap-2 text-muted position-absolute" style="top: 5px; right: 10px;">
+                                <div><i class="fab fa-lg fa-php"></i> <?= phpversion() ?></div>
+                                <div><i class="fab fa-lg fa-sketch"></i> <?= FRAMEWORK_VERSION ?></div>
+                            </div>
+
+                            <div class="p-5">
+                                <a href='javascript:goIDE(`<?= str_replace("\\", "/", $data[3]) ?>`, <?= $data[4] ?>);' style="color: black;">
+                                    <h5><?= $data[3] . ":" . $data[4] ?></h5>
+                                </a>
+                                <div class="text-muted"><?= $message ?></div>
+                            </div>
+
+                            <select name="IDE" onchange="document.cookie = 'IDE=' + this.value + '; expires=Sun, 1 Jan <?= date('Y') + 1 ?> 00:00:00 UTC; path=/'">
+                                <?php foreach (['vscode' => 'Visual Studio Code', 'phpstorm' => 'PHPStorm'] as $val => $title) : ?>
+                                    <option value="<?= $val ?>" <?= @$_COOKIE['IDE'] == $val ? ' selected' : null ?>><?= $title ?></option>
+                                <?php endforeach ?>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-5 ps-1" id="did-you-mean">
+                        <div class="border rounded-3 h-100 position-relative" style="background: #6ee7b7;">
+                            <div class="text-end position-absolute" style="top: 5px; right: 10px;" onclick="$('#did-you-mean').remove(); $('#error-message').removeClass('col-7').addClass('col-12');">
+                                <i class="fa fa-times text-muted"></i>
+                            </div>
+                            <div class="p-5">
+                                <div>
+                                    <h4>Bad Method Call</h4>
+                                </div>
+                                <div>
+                                    did you mean App\Models\Post::query() ?
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="mb-2">
+                <div class="bg-body-tertiary rounded-3">
+                    <div class="row" style="min-height: 700px">
+                        <div class="col-3 border-end pe-0">
+                            <div class="accordion">
+                                <?= getButtons($errors) ?>
+                            </div>
+                        </div>
+                        <div class="col-9 ps-0">
+                            <?= getErrors($errors) ?>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="fw-bold">User</div>
+                            <div>
+                                <pre><code><?php print_r(Auth::check() ? Auth::user() : []) ?></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="fw-bold">Requests</div>
+                            <div>
+                                <pre><code><?php print_r($_REQUEST) ?></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="fw-bold">Server</div>
+                            <div>
+                                <pre><code><?php print_r($_SERVER) ?></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="fw-bold">Globals</div>
+                            <div>
+                                <pre><code><?php print_r($GLOBALS) ?></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="fw-bold">Sessions</div>
+                            <div>
+                                <pre><code><?php print_r($_SESSION) ?></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="fw-bold">Cookies</div>
+                            <div>
+                                <pre><code><?php print_r($_COOKIE) ?></code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.15.0/prism.min.js"></script>
+
+        <script>
+            error_buttons = document.querySelectorAll('[data-button]');
+            codes = document.querySelectorAll('.code-block');
+
+            function selectError(id) {
+                error_buttons.forEach(item => item.classList.remove('active'));
+                codes.forEach(item => item.classList.add('d-none'));
+                error_buttons[id].classList.add('active');
+                codes[id].classList.remove('d-none');
+            }
+
+            error_buttons.forEach((item, index) => {
+                item.onclick = () => selectError(index);
+            });
+
+            selectError(0);
+
+            function goIDE(file, line, caret = 0) {
+                let val = document.querySelector('[name="IDE"]').value,
+                    link = '#';
+
+                switch (val) {
+                    case 'vscode':
+                        link = `vscode://file/${file}:${line}:${caret}`
+                        break;
+                    case 'phpstorm':
+                        link = `phpstorm://open?url=${file}&line=${line}`;
+                        break;
+                }
+                location.href = link;
+            }
+        </script>
+    </body>
+
+    </html>
 <?php
 }
 

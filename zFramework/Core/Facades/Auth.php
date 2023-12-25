@@ -39,8 +39,7 @@ class Auth
      */
     public static function token_login(string $token)
     {
-        $user = new User;
-        $user = $user->where('api_token', '=', $token)->first();
+        $user = (new User)->where('api_token', $token)->first();
         if (isset($user['id'])) self::login($user);
     }
 
@@ -74,10 +73,7 @@ class Auth
     {
         if (!isset($_SESSION['user_id'])) return false;
 
-        if (self::$user == null) {
-            $user = new User;
-            self::$user = $user->where('id', '=', $_SESSION['user_id'])->first(); // ->where('api_token', '=', 'test', 'OR')
-        }
+        if (self::$user == null) self::$user = (new User)->where('id', '=', $_SESSION['user_id'])->first(); // ->where('api_token', '=', 'test', 'OR')
         if (!@self::$user['id']) return self::logout();
 
         return self::$user;
@@ -93,12 +89,8 @@ class Auth
     {
         if (self::check()) return false;
 
-        $user = new User;
-        $user = $user->select(['id', 'api_token']);
-        foreach ($fields as $key => $val) {
-            if ($key == 'password') $val = Crypter::encode($val);
-            $user->where($key, '=', $val);
-        }
+        $user = (new User)->select(['id', 'api_token']);
+        foreach ($fields as $key => $val) $user->where($key, ($key != 'password' ? $val : Crypter::encode($val)));
         $user = $user->first();
 
         if (@$user['id']) {
