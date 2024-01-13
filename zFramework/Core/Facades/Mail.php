@@ -12,6 +12,11 @@ class Mail
     static $toMail = [];
     static $cc     = [];
     static $bcc    = [];
+
+    private static $security = [
+        'tls' => PHPMailer::ENCRYPTION_STARTTLS,
+        'ssl' => PHPMailer::ENCRYPTION_SMTPS
+    ];
     /**
      * Initalize settings.
      */
@@ -22,18 +27,30 @@ class Mail
 
         self::$mail = new PHPMailer;
         self::$mail->isSMTP();
-        self::$mail->CharSet = 'utf-8';
 
         if (@$mailConfig['debug'] == true) self::$mail->SMTPDebug = SMTP::DEBUG_SERVER;
 
         self::$mail->Host = $mailConfig['mail'];
         self::$mail->Port = $mailConfig['port'];
+        if (!empty($mailConfig['security'])) self::$mail->SMTPSecure = self::$security[$mailConfig['security']];
 
         self::$mail->SMTPAuth = ($mailConfig['SMTPAuth'] ?? false);
         if (@$mailConfig['SMTPAuth'] === true) {
             self::$mail->Username = @$mailConfig['username'];
             self::$mail->Password = @$mailConfig['password'];
         }
+
+        self::$mail->SetLanguage("tr", "phpmailer/language");
+        self::$mail->CharSet  = "utf-8";
+        self::$mail->Encoding = "base64";
+
+        self::$mail->SMTPOptions = [
+            'ssl' => [
+                'verify_peer'       => false,
+                'verify_peer_name'  => false,
+                'allow_self_signed' => true
+            ]
+        ];
 
         if (isset($mailConfig['from'])) self::$mail->setFrom($mailConfig['from'][1], $mailConfig['from'][0]);
         if (isset($mailConfig['reply'])) self::$mail->addReplyTo($mailConfig['reply'][1], $mailConfig['reply'][0]);
