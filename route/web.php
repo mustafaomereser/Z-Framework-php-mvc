@@ -4,6 +4,13 @@ use App\Controllers\AuthController;
 use zFramework\Core\Route;
 use App\Controllers\HomeController;
 use App\Controllers\LanguageController;
+use App\Models\User;
+
+Route::get('/test', function(){
+    (new User)->update([
+        'username' => 'admin'
+    ]);
+});
 
 Route::get('/language/{lang}', [LanguageController::class, 'set'])->name('language');
 

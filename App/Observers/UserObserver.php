@@ -3,17 +3,21 @@
 namespace App\Observers;
 
 use zFramework\Core\Abstracts\Observer;
+use zFramework\Core\Crypter;
 
 class UserObserver extends Observer
 {
     /**
      * Insert before run that
      */
-    public function oninsert(array $args)
+    public function oninsert(array $sets)
     {
         echo "inserting";
-        print_r($args);
-        return $args;
+
+        if (isset($sets['username'])) $sets['username'] = ucfirst(strip_tags($sets['username']));
+        if (isset($sets['password'])) $sets['password'] = Crypter::encode($sets['password']);
+
+        return $sets;
     }
 
     /**
@@ -28,10 +32,14 @@ class UserObserver extends Observer
     /**
      * Update before run that
      */
-    public function onupdate(array $args)
+    public function onupdate(array $sets)
     {
         echo "updating:";
-        var_dump($args);
+
+        if (isset($sets['username'])) $sets['username'] = ucfirst(strip_tags($sets['username']));
+        if (isset($sets['password'])) $sets['password'] = Crypter::encode($sets['password']);
+
+        return $sets;
     }
 
     /**

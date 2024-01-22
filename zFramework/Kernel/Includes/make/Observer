@@ -11,10 +11,10 @@ class {name} extends Observer
      * @param array $args
      * @return array
      */
-    public function oninsert(array $args)
+    public function oninsert(array $sets)
     {
         echo "inserting";
-        return $args;
+        return $sets;
     }
 
     /**
@@ -31,10 +31,10 @@ class {name} extends Observer
      * @param array $args
      * @return array
      */
-    public function onupdate(array $args)
+    public function onupdate(array $sets)
     {
         echo "updating:";
-        return $args;
+        return $sets;
     }
 
     /**

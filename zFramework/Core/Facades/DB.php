@@ -577,6 +577,8 @@ class DB
     {
         $this->resetBuild();
 
+        if ($new_sets = $this->trigger('insert', $sets)) $sets = $new_sets;
+
         $hashed_keys = [];
         foreach ($sets as $key => $val) {
             $hashed_key =  $this->hashedKey($key);
@@ -586,7 +588,6 @@ class DB
 
         $this->buildQuery['sets'] = " (" . implode(', ', array_keys($sets)) . ") VALUES (:" . implode(', :', $hashed_keys) . ") ";
 
-        $this->trigger('insert', $sets);
         $insert = $this->run(__FUNCTION__);
         if ($insert) $this->trigger('inserted', $this->resetBuild()->where('id', $this->db()->lastInsertId())->first() ?? []);
 
@@ -601,15 +602,17 @@ class DB
     public function update(array $sets = [])
     {
         $this->buildQuery['sets'] = " SET ";
+
+        if ($new_sets = $this->trigger('update', $sets)) $sets = $new_sets;
+
         foreach ($sets as $key => $val) {
             $hashed_key = $this->hashedKey($key);
             $this->buildQuery['data'][$hashed_key] = $val;
             $this->buildQuery['sets'] .= "$key = :$hashed_key, ";
         }
-        $this->buildQuery['sets'] = rtrim($this->buildQuery['sets'], ', ');
 
-        $this->trigger('update');
-        $update = $this->run(__FUNCTION__);
+        $this->buildQuery['sets'] = rtrim($this->buildQuery['sets'], ', ');
+        $update = $this->run(__FUNCTION__)->rowCount();
         if ($update) $this->trigger('updated');
 
         return $update;

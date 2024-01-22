@@ -60,7 +60,6 @@ class Run
             self::includer('..\App\Middlewares\autoload.php');
             self::initProviders();
             self::includer('..\route');
-            self::includer('..\ws\routes.php');
             // self::includer('..\zFramework\modules\error_http');
             @self::$loadtime = ((microtime() + 0.003) - $start);
 

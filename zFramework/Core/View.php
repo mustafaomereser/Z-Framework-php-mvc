@@ -7,6 +7,7 @@ class View
 
     static $binds  = [];
     static $config = [];
+    static $renderMode = false;
     static $view;
     static $data;
     static $sections;
@@ -26,6 +27,7 @@ class View
      */
     private static function reset(): void
     {
+        self::$renderMode = false;
         self::$view       = null;
         self::$data       = null;
         self::$sections   = [];
@@ -57,8 +59,7 @@ class View
         $output = ob_get_clean();
         self::reset();
 
-        echo $output;
-        // return $output;
+        return $output;
     }
 
     /** 
@@ -159,8 +160,7 @@ class View
     public static function parseExtends(): void
     {
         self::$view = preg_replace_callback('/@extends\(\'(.*?)\'\)/', function ($viewName) {
-            self::view($viewName[1], self::$data, true);
-            return '';
+            return self::view($viewName[1], self::$data, true);
         }, self::$view);
     }
 
