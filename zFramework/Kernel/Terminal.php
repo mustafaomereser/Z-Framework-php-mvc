@@ -84,6 +84,7 @@ class Terminal
     public static function clear()
     {
         echo str_repeat(PHP_EOL, 50);
+        return new self();
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace zFramework\Kernel\Modules;
 
 use zFramework\Core\Facades\DB as FacadesDB;
+use zFramework\Kernel\Helpers\MySQLBackup;
 use zFramework\Kernel\Terminal;
 
 class Db
@@ -334,6 +335,50 @@ class Db
             (new $className())->destroy()->seed();
             Terminal::text("[color=green]$className seeded.[/color]");
         }
+
+        return true;
+    }
+
+    public static function backup()
+    {
+        $title = date('Y-m-d H-i-s');
+
+        $backup = (new MySQLBackup(self::$db->db(), [
+            'dir'      => base_path('/database/backups/' . self::$db->db),
+            'save_as'  => $title,
+            'compress' => in_array('--compress', Terminal::$parameters)
+        ]))->backup();
+        if ($backup) Terminal::text("[color=green](" . self::$dbname . ") " . self::$db->db . " backup ($title).[/color]");
+        else Terminal::text("[color=red]Backup fail.[/color]");
+        return true;
+    }
+
+    public static function restore()
+    {
+        $backups = glob(base_path('/database/backups/' . self::$db->db . '/*'));
+
+        if (!count($backups)) return Terminal::text("[color=yellow](" . self::$dbname . ") " . self::$db->db . " haven't any backup.[/color]");
+
+        Terminal::text("\n[color=yellow]*[/color] [color=blue]Backup list for `(" . self::$dbname . ") " . self::$db->db . "` database[/color]");
+        foreach ($backups as $key => $name) Terminal::text("[color=yellow]" . ($key + 1) . "[/color]. [color=green]" . $name . "[/color]");
+        Terminal::text("\n[color=yellow]*[/color] [color=blue]Select a backup[/color]");
+        $backup = (int) readline('> ');
+
+        if (!is_int($backup) || !isset($backups[$backup - 1])) return Terminal::clear()::text('[color=red]Selection is not acceptable.[/color]');
+
+        Terminal::clear()::text("[color=yellow]Clearing...[/color]");
+        $clear = self::$db->prepare("SELECT table_name FROM information_schema.tables WHERE table_schema = :DB_NAME", ['DB_NAME' => self::$dbname])->fetchAll(\PDO::FETCH_ASSOC);
+        if (count($clear)) self::$db->prepare(implode(';', array_map(function ($table_name) {
+            return "DROP TABLE IF EXISTS $table_name";
+        }, array_column($clear, 'table_name'))));
+
+        Terminal::clear()::text("[color=green]Cleared...[/color]");
+        Terminal::text("[color=yellow]Restoring...[/color]");
+
+        $backup = $backups[$backup - 1];
+        $data   = file_get_contents($backup);
+        self::$db->prepare($data);
+        Terminal::clear()::text("[color=green]Backup restored...[/color]");
 
         return true;
     }

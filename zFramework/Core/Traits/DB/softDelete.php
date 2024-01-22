@@ -1,6 +1,6 @@
 <?php
 
-namespace zFramework\Core\Traits;
+namespace zFramework\Core\Traits\DB;
 
 trait softDelete
 {

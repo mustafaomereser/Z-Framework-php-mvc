@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use zFramework\Core\Abstracts\Model;
-use zFramework\Core\Traits\softDelete;
+use zFramework\Core\Traits\DB\softDelete;
 
 class Posts extends Model
 {

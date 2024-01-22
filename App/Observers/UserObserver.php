@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use zFramework\Core\Abstracts\Observer;
 use zFramework\Core\Crypter;
+use zFramework\Core\Facades\Str;
 
 class UserObserver extends Observer
 {
@@ -14,6 +15,7 @@ class UserObserver extends Observer
     {
         echo "inserting";
 
+        if (!isset($sets['api_token'])) $sets['api_token'] = Str::rand(60);
         if (isset($sets['username'])) $sets['username'] = ucfirst(strip_tags($sets['username']));
         if (isset($sets['password'])) $sets['password'] = Crypter::encode($sets['password']);
 

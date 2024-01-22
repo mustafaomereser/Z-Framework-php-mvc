@@ -86,11 +86,11 @@ class File
             if ($error) continue;
 
             $uploadName = "$path/" . self::createName($name);
-            if (move_uploaded_file($file['tmp_name'][$key], $uploadName)) $files[] = self::removePublic($uploadName);
+            if (move_uploaded_file($file['tmp_name'][$key], $uploadName)) $files[$key] = self::removePublic($uploadName);
         }
 
         if (!count($files)) return false;
-        return count($files) > 1 ? $files : $files[0];
+        return count($files) > 1 ? $files : @end($files);
     }
 
     /**
@@ -122,13 +122,32 @@ class File
      */
     public static function resizeImage(string $file, int $width = 50, int $height = 50): string
     {
+
         $file = public_path($file);
         if (!is_file($file)) return false;
 
         list($image_width, $image_height) = getimagesize($file);
 
         $target = imagecreatetruecolor($width, $height);
-        $source = imagecreatefromjpeg($file);
+
+        $source = [
+            'jpg' => function () use ($file) {
+                return imagecreatefromjpeg($file);
+            },
+            'png' => function () use ($file) {
+                return imagecreatefrompng($file);
+            },
+            'gif' => function () use ($file) {
+                return imagecreatefromgif($file);
+            },
+            'webp' => function () use ($file) {
+                return imagecreatefromwebp($file);
+            },
+            'bmp' => function () use ($file) {
+                return imagecreatefrombmp($file);
+            },
+        ][strtolower(pathinfo($file)['extension'])]();
+
         imagecopyresampled($target, $source, 0, 0, 0, 0, $width, $height, $image_width, $image_height);
 
         $ext = @end(explode('.', $file));

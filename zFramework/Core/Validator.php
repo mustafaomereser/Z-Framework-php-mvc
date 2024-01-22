@@ -102,7 +102,7 @@ class Validator
 
                     case 'exists':
                         $column = $parameters['key'] ?? $dataKey;
-                        $exists = (new DB(@$parameters['db']))->table($val)->where($column, '=', $dataValue);
+                        $exists = (new DB(@$parameters['db']))->table($val)->where($column, $dataValue);
 
                         if ($ex = @$parameters['ex']) $exists->where('id', '!=', $ex);
 
@@ -118,7 +118,7 @@ class Validator
                             $ok = true;
                         } else {
                             $column = $parameters['key'] ?? $dataKey;
-                            if (!(new DB(@$parameters['db']))->table($val)->where($column, '=', $dataValue)->count()) $ok = true;
+                            if (!(new DB(@$parameters['db']))->table($val)->where($column, $dataValue)->count()) $ok = true;
                         }
                         break;
 

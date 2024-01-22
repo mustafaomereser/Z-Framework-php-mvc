@@ -46,6 +46,17 @@ class Route
         return $return;
     }
 
+
+    /**
+     * Route Has keyword in URI.
+     * @param string keyword
+     * @return bool
+     */
+    public static function has(string $keyword)
+    {
+        return strstr(uri(), $keyword);
+    }
+
     /**
      * Organize and clear route name.
      * @param string $name

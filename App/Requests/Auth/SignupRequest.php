@@ -14,9 +14,11 @@ class SignupRequest extends Request
         $this->attributeNames = [];
     }
 
-    public function columns()
+    public function columns($parameter1 = null)
     {
         return [
+            // uses parameters for example
+            // 'username'  => ['required', "exists:users ex:$parameter1"],
             'username'  => ['required', 'unique:users'],
             'email'     => ['required', 'email', 'unique:users'],
             'password'  => ['type:string', 'required', 'min:8', 'same:re-password'],

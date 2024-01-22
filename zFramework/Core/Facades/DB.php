@@ -216,7 +216,7 @@ class DB
     private function getSelect()
     {
         if (!count($this->buildQuery['select'])) return null;
-        return implode(', ', $this->buildQuery['select']);
+        return is_array(($select = $this->buildQuery['select'])) ? implode(', ', $select) : $select;
     }
 
     /**
@@ -649,7 +649,7 @@ class DB
         switch ($type) {
             case 'select':
                 $select = $this->getSelect() ?? implode(", ", array_diff(array_column($GLOBALS["DB"]["TABLE_COLUMNS"][$this->table]['columns'], 'COLUMN_NAME'), $this->guard ?? []));
-                $type = "SELECT $select FROM";
+                $type   = "SELECT $select FROM";
                 break;
 
             case 'delete':

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use App\Observers\UserObserver;
 use zFramework\Core\Abstracts\Model;
-use zFramework\Core\Traits\softDelete;
+use zFramework\Core\Traits\DB\softDelete;
 
 class User extends Model
 {

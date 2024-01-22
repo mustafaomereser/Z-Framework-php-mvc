@@ -62,17 +62,20 @@ class Config
 
     /**
      * Update Config set veriables.
+     * @param string $config
+     * @param array $sets
+     * @param bool $compare
      * @return void
      */
-    public static function set(string $config, array $sets)
+    public static function set(string $config, array $sets, bool $compare = true)
     {
         $path = self::parseUrl($config, true)[0];
-        $arr = self::get($config);
+        $data = self::get($config);
 
-        foreach ($sets as $key => $set)
-            if ($set !== 'CONF_VAR_UNSET') $arr[$key] = $set;
-            else unset($arr[$key]);
+        if ($compare == true) foreach ($sets as $key => $set)
+            if ($set !== 'CONF_VAR_UNSET') $data[$key] = $set;
+            else unset($data[$key]);
 
-        file_put_contents(strstr($path, '.php') ? $path : "$path.php", "<?php \nreturn " . var_export($arr, true) . ";");
+        file_put_contents(strstr($path, '.php') ? $path : "$path.php", "<?php \nreturn " . var_export($data, true) . ";");
     }
 }
