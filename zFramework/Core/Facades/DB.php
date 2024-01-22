@@ -589,9 +589,12 @@ class DB
         $this->buildQuery['sets'] = " (" . implode(', ', array_keys($sets)) . ") VALUES (:" . implode(', :', $hashed_keys) . ") ";
 
         $insert = $this->run(__FUNCTION__);
-        if ($insert) $this->trigger('inserted', $this->resetBuild()->where('id', $this->db()->lastInsertId())->first() ?? []);
+        if ($insert) {
+            $inserted_row = $this->resetBuild()->where('id', $this->db()->lastInsertId())->first() ?? [];
+            $this->trigger('inserted', $inserted_row);
+        }
 
-        return $insert;
+        return isset($inserted_row) ? $inserted_row : $insert;
     }
 
     /**
