@@ -82,6 +82,8 @@ class MySQLBackup
         // Procedure için metod
         $this->dumpProcedures();
 
+        if (strlen($this->sql) == 0) return false;
+
         $save_path = $this->config['dir'] . "/" . str_replace('{dbname}', $this->dbname, $this->config['save_as']);
         $ext       = ($this->config['compress'] ? '.sql.gz' : '.sql');
         if (file_exists($save_path . $ext)) $save_path = "$save_path (" . count(glob($this->config['dir'] . "/*" . $ext)) . ")";

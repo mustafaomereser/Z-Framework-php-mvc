@@ -349,7 +349,7 @@ class Db
             'compress' => in_array('--compress', Terminal::$parameters)
         ]))->backup();
         if ($backup) Terminal::text("[color=green](" . self::$dbname . ") " . self::$db->db . " backup ($title).[/color]");
-        else Terminal::text("[color=red]Backup fail.[/color]");
+        else Terminal::text("[color=red]Backup fail.[/color] [color=yellow]Check your database status. (if your database empty can not get backup)[/color]");
         return true;
     }
 
@@ -376,6 +376,9 @@ class Db
         Terminal::text("[color=yellow]Restoring...[/color]");
 
         $backup = $backups[$backup - 1];
+
+        // gz sıkıştırma için formül eklenecek.
+
         $data   = file_get_contents($backup);
         self::$db->prepare($data);
         Terminal::clear()::text("[color=green]Backup restored...[/color]");

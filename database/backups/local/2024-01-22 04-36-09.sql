@@ -27,7 +27,7 @@ CREATE TABLE `test` (
 
 
 -- Tablo Adı: users
--- Satır Sayısı: 2
+-- Satır Sayısı: 1
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -41,12 +41,11 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
 
 
 INSERT INTO `users` (`id`,`username`,`password`,`email`,`api_token`,`updated_at`,`created_at`,`deleted_at`) VALUES 
-('1','Admin','093d3dk=ThisSaltIsSecret','admin@localhost.com','qcrZOIPRnVrDQaCA3HsHkJwggVwlwpXOBYkDkgbCft2iPmw8xDrRb240oVqJ','2024-01-22 06:17:02','2024-01-22 05:57:28',''),
-('2','Test','','','VlXdoZFC4oTTEc6gTUTPccZifYVYMNZbsHiYEqintRknjhMKCSKPFejpX7VK','2024-01-22 06:40:14','2024-01-22 06:40:14','');
+('1','Admin','orKj2J7J5KDG4dnnvsbl17vsw9nO197XThisSaltIsSecret','mD7rafBU5R1WOws@localhost.com','IBY4WRmimvX7MnfLxRNylQZNRIEcKyYXDR3Ah6cuTTDiLXFzJoCz5O7KNkkz','2024-01-22 07:35:47','2024-01-22 07:35:47','');
 
 
 
