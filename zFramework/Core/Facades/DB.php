@@ -3,19 +3,22 @@
 namespace zFramework\Core\Facades;
 
 use ReflectionClass;
+use zFramework\Core\Traits\DB\OrMethods;
 use zFramework\Core\Traits\DB\RelationShips;
 
 class DB
 {
     use RelationShips;
+    use OrMethods;
 
     private $driver;
     /**
      * Options parameters
      */
     public $table;
-    public $buildQuery = [];
-    public $cache      = [];
+    public $buildQuery   = [];
+    public $cache        = [];
+    public $specialChars = false;
 
     /**
      * Initial, Select Database.
@@ -245,7 +248,6 @@ class DB
         }
         return $output;
     }
-
 
     /**
      * add a where
@@ -489,9 +491,17 @@ class DB
     public function get()
     {
         $rows = $this->run()->fetchAll(\PDO::FETCH_ASSOC);
-        foreach ($rows as $key => $row) foreach ($this->closures as $closure) $rows[$key][$closure] = function () use ($row, $closure) {
-            return $this->{$closure}($row);
-        };
+        foreach ($rows as $key => $row) {
+            foreach ($this->closures as $closure) $rows[$key][$closure] = function () use ($row, $closure) {
+                return $this->{$closure}($row);
+            };
+            
+            $row[$key]['update'] = function () {
+            };
+
+            $row[$key]['delete'] = function () {
+            };
+        }
 
         return $rows;
     }
@@ -532,11 +542,11 @@ class DB
      */
     public function paginate($per_count = 20, $page_name = 'page')
     {
+        $uniqueID  = uniqid();
         $rows      = $this->get();
         $row_count = count($rows);
 
-        $uniqueID = uniqid();
-        $current_page = (request($page_name) ?? 1);
+        $current_page   = (request($page_name) ?? 1);
         $max_page_count = ceil($row_count / $per_count);
 
         if ($current_page > $max_page_count) $current_page = $max_page_count;
@@ -580,10 +590,11 @@ class DB
         if ($new_sets = $this->trigger('insert', $sets)) $sets = $new_sets;
 
         $hashed_keys = [];
-        foreach ($sets as $key => $val) {
-            $hashed_key =  $this->hashedKey($key);
+        foreach ($sets as $key => $value) {
+            if ($this->specialChars) $value = htmlspecialchars($value);
+            $hashed_key    = $this->hashedKey($key);
             $hashed_keys[] = $hashed_key;
-            $this->buildQuery['data'][$hashed_key] = $val;
+            $this->buildQuery['data'][$hashed_key] = $value;
         }
 
         $this->buildQuery['sets'] = " (" . implode(', ', array_keys($sets)) . ") VALUES (:" . implode(', :', $hashed_keys) . ") ";
@@ -608,9 +619,10 @@ class DB
 
         if ($new_sets = $this->trigger('update', $sets)) $sets = $new_sets;
 
-        foreach ($sets as $key => $val) {
+        foreach ($sets as $key => $value) {
+            if ($this->specialChars) $value = htmlspecialchars($value);
             $hashed_key = $this->hashedKey($key);
-            $this->buildQuery['data'][$hashed_key] = $val;
+            $this->buildQuery['data'][$hashed_key] = $value;
             $this->buildQuery['sets'] .= "$key = :$hashed_key, ";
         }
 

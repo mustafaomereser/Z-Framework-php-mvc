@@ -7,6 +7,11 @@ function MySQLcreateDatabase($host = "localhost", $dbname, $user, $pass = null)
     return $databases[$dbname] = ["mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass];
 }
 
+function e($value, $emptycheck = false)
+{
+    return strlen($value) ? htmlspecialchars($value) : ($emptycheck ? '-' : null);
+}
+
 // Get project base path.
 function base_path($url = null)
 {

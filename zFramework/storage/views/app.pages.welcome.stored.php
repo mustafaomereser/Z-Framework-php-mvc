@@ -1,6 +1,6 @@
 
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="tr" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -27,14 +27,14 @@
 
                     <div class="btn-group">
                         <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100px">
-                            Languages                        </button>
+                            Diller                        </button>
                         <ul class="dropdown-menu">
                                                         <li>
-                                <a class="dropdown-item active" href="http://192.168.1.18/language/en">
+                                <a class="dropdown-item " href="http://192.168.204.40:81/language/en">
                                     English                                </a>
                             </li>
                                                         <li>
-                                <a class="dropdown-item " href="http://192.168.1.18/language/tr">
+                                <a class="dropdown-item active" href="http://192.168.204.40:81/language/tr">
                                     Türkçe                                </a>
                             </li>
                                                     </ul>
@@ -46,14 +46,14 @@
         
 <div class="my-5">
     <div class="text-center mb-4">
-        <h1>Welcome!</h1>
+        <h1>Hoşgeldin!</h1>
     </div>
     <div class="card rounded-0">
         <pre class="card-body" style="height: 400px; overflow-y: auto;" id="terminal-body">you can read for more information documention.</pre>
     </div>
     <div class="form-group">
         <form id="terminal-form">
-            <input type='hidden' name='_token' value='onJrTstHpyyTFM6zieu9f07xH6FqJW' />            <input type="text" name="command" class="form-control rounded-0" placeholder="Command to Helper Terminal.">
+            <input type='hidden' name='_token' value='U2zsQJhqAMkg2Q3ViPgdP0lT3uKaef' />            <input type="text" name="command" class="form-control rounded-0" placeholder="Command to Helper Terminal.">
         </form>
     </div>
 </div>
@@ -65,7 +65,7 @@
             </div>
             <div class="col-lg-6 col-12 text-lg-end">
                 <small data-toggle="tooltip" title="zFramework Version"><b>zFramework</b> v2.6.0</small>
-                <small data-toggle="tooltip" title="PHP Version">| <b>PHP</b> v7.1.9</small>
+                <small data-toggle="tooltip" title="PHP Version">| <b>PHP</b> v8.2.12</small>
                 <small data-toggle="tooltip" title="Current Project Version">| <b>APP</b> v1.0.0</small>
             </div>
         </div>
@@ -87,7 +87,7 @@
         $(this).find('[name]').each((index, item) => data[$(item).attr('name')] = item.value);
         $.ajax({
             method: 'POST',
-            url: 'http://192.168.1.18',
+            url: 'http://192.168.204.40:81',
             data: data,
             success: e => $('#terminal-body').html(e).scrollTop(99999999999),
             error: e => $('#terminal-body').html(JSON.parse(e.responseText).message)
