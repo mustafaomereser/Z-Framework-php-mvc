@@ -37,6 +37,16 @@ class Run
         }
     }
 
+    public static function loadModules()
+    {
+        if (!is_dir(base_path('/modules'))) return false;
+        $modules = scan_dir(base_path('/modules'));
+        foreach ($modules as $module) {
+            $info = include(base_path("/modules/$module/info.php"));
+            if ($info['status']) self::includer(base_path("/modules/$module/route"));
+        }
+    }
+
     public static function begin()
     {
         ob_start();
@@ -52,15 +62,10 @@ class Run
             // includes
             self::includer('..\zFramework\modules\error_handlers');
             self::includer('..\zFramework\modules', false);
-
-            // Automatic include from zFramework/initalize.php
-            // self::includer('../zFramework/core');
-            // self::includer('../app');
-
             self::includer('..\App\Middlewares\autoload.php');
             self::initProviders();
+            self::loadModules();
             self::includer('..\route');
-            // self::includer('..\zFramework\modules\error_http');
             @self::$loadtime = ((microtime() + 0.003) - $start);
 
             \zFramework\Core\Route::run();

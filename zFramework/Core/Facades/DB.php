@@ -325,6 +325,50 @@ class DB
     }
 
     /**
+     * Where between sql build.
+     * @param string $column
+     * @param mixed $start
+     * @param mixed $stop
+     * @param string $prev
+     * @return self
+     */
+    public function whereBetween(string $column, $start, $stop, string $prev = 'AND')
+    {
+        $uniqid = uniqid();
+
+        $this->buildQuery['where'][] = [
+            'type'     => 'row',
+            'queries'  => [
+                [
+                    'raw'      => true,
+                    'key'      => $column,
+                    'operator' => 'BETWEEN',
+                    'value'    => ":start_$uniqid AND :stop_$uniqid",
+                    'prev'     => $prev
+                ]
+            ]
+        ];
+
+        $this->buildQuery['data']["start_$uniqid"] = $start;
+        $this->buildQuery['data']["stop_$uniqid"]  = $stop;
+
+        return $this;
+    }
+
+    /**
+     * Where NOT between sql build.
+     * @param string $column
+     * @param mixed $start
+     * @param mixed $stop
+     * @param string $prev
+     * @return self
+     */
+    public function whereNotBetween(string $column, $start, $stop, string $prev = 'AND')
+    {
+        return $this->whereBetween("$column NOT", $start, $stop, $prev);
+    }
+
+    /**
      * Raw where query sql build.
      * @param string $sql
      * @param array $data

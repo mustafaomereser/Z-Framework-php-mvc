@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * Module informations.
+ */
+return [
+    'status'            => true,
+    'name'              => '{name}',
+    'description'       => '',
+    'author'            => '{author}',
+    'created_at'        => '{date}',
+    'framework_version' => '{framework_version}'
+];

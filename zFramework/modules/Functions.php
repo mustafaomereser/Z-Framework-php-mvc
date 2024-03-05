@@ -234,3 +234,8 @@ function model($model)
 {
     return new $model;
 }
+
+function scan_dir($dir)
+{
+    return array_values(array_diff(scandir($dir), ['.', '..']));
+}

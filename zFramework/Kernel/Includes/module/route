@@ -1,0 +1,9 @@
+<?php
+
+use zFramework\Core\Route;
+
+Route::pre('/{name}')->group(function () {
+    Route::get('/', function () {
+        return "{name} module is created.";
+    });
+});

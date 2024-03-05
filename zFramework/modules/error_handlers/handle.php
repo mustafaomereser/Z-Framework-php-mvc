@@ -85,35 +85,19 @@ function errorHandler($data)
         ?>
 
             <div class="code-block d-none h-100">
-                <ul class="nav nav-pills" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#<?= $id ?>-code-tab" type="button" role="tab" aria-controls="<?= $id  ?>-code-tab" aria-selected="true">Code</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="<?= $id  ?>-arguments-tab-tab" data-bs-toggle="pill" data-bs-target="#<?= $id  ?>-arguments-tab" type="button" role="tab" aria-controls="<?= $id  ?>-arguments-tab" aria-selected="false">Arguments</button>
-                    </li>
-                </ul>
                 <div class="tab-content h-100">
-                    <div class="tab-pane fade show active h-100" id="<?= $id  ?>-code-tab" role="tabpanel">
-                        <div class="p-2">
-                            <b>Line: </b> <code><?= $val['line'] ?></code>
-                            <a href="javascript:goIDE(`<?= str_replace("\\", "/", $val['file']) ?>`, <?= $val['line'] ?>, 9999);" class="fw-bold">(Go to line)</a>
-                        </div>
+                    <div class="p-2">
+                        <?php foreach (['Line' => $val['line'], 'Method' => @$val['class'] . @$val['type'] . @$val['function'], 'Arguments' => (@$val['args'] ? "<pre>" . var_export($val['args'], true) . "</pre>" : null)] as $title => $error) : if (!$error) continue; ?>
+                            <div>
+                                <b><?= $title ?>:</b> <code><?= $error ?></code>
+                                <?php if ($title == 'Line') : ?>
+                                    <a href="javascript:goIDE(`<?= str_replace("\\", "/", $val['file']) ?>`, <?= $error ?>, 9999);" class="fw-bold">(Go to line)</a>
+                                <?php endif ?>
+                            </div>
+                        <?php endforeach ?>
+                    </div>
 
-                        <pre class="language-js h-100"><code class="language-js h-100"><?= $code ?></code></pre>
-                    </div>
-                    <div class="tab-pane fade" id="<?= $id  ?>-arguments-tab" role="tabpanel">
-                        <div class="p-2">
-                            <?php foreach (['Line' => $val['line'], 'Method' => @$val['class'] . @$val['type'] . @$val['function'], 'Arguments' => (@$val['args'] ? "<pre>" . var_export($val['args'], true) . "</pre>" : null)] as $title => $error) : if (!$error) continue; ?>
-                                <div>
-                                    <b><?= $title ?>:</b> <code><?= $error ?></code>
-                                    <?php if ($title == 'Line') : ?>
-                                        <a href="javascript:goIDE(`<?= str_replace("\\", "/", $val['file']) ?>`, <?= $error ?>, 9999);" class="fw-bold">(Go to line)</a>
-                                    <?php endif ?>
-                                </div>
-                            <?php endforeach ?>
-                        </div>
-                    </div>
+                    <pre class="language-js h-100"><code class="language-js h-100"><?= $code ?></code></pre>
                 </div>
             </div>
         <?php endforeach ?>

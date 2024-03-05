@@ -16,21 +16,20 @@ class Config
      */
     private static function parseUrl(string $config, bool $justConfig = false): array
     {
-        $ex = explode(".", $config);
-
-        $path = base_path(self::$path);
-        $arg = "";
+        $config = explode(".", $config);
+        $path   = base_path(self::$path);
+        $arg    = "";
 
         $config_found = 0;
-        foreach ($ex as $g) {
+        foreach ($config as $row) {
             if (!$config_found) {
-                $path .= "/$g";
+                $path .= "/$row";
                 if (is_file("$path.php")) {
                     $config_found = 1;
                     $path .= ".php";
                 }
             } elseif (!$justConfig) {
-                $arg .= ".$g";
+                $arg .= ".$row";
             }
         }
 

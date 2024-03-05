@@ -5,9 +5,6 @@ use zFramework\Core\Route;
 use App\Controllers\HomeController;
 use App\Controllers\LanguageController;
 
-Route::get('/test', function () {
-});
-
 Route::get('/language/{lang}', [LanguageController::class, 'set'])->name('language');
 
 Route::middleware([App\Middlewares\Guest::class])->group(function () {

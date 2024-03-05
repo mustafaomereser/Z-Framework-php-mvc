@@ -1,5 +1,6 @@
 <?php
 $startTime = time();
+
 use zFramework\Run;
 
 //
