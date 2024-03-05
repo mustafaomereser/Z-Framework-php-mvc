@@ -49,6 +49,9 @@ class Db
 
         $path       = Terminal::$parameters['path'] ?? null;
         $migrations = glob(BASE_PATH . '\database\migrations\\' . ($path ? "$path\\" : null) . '*.php');
+
+        // $modules = ""
+
         if (!count($migrations)) {
             Terminal::text("[color=red]You haven't a migration.[/color]");
             if ($path) Terminal::text("[color=yellow]in " . $path . "[/color]");
