@@ -3,6 +3,7 @@ namespace App\Controllers{namespace};
 
 use zFramework\Core\Abstracts\Controller;
 
+#[\AllowDynamicProperties]
 class {name} extends Controller 
 {
 

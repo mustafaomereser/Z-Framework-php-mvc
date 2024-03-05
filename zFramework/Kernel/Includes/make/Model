@@ -4,6 +4,7 @@ namespace App\Models{namespace};
 
 use zFramework\Core\Abstracts\Model;
 
+#[\AllowDynamicProperties]
 class {name} extends Model
 {
     public $table = "{table}";

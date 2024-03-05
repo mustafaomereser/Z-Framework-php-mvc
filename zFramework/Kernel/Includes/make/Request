@@ -3,6 +3,7 @@ namespace App\Requests{namespace};
 
 use zFramework\Core\Abstracts\Request;
 
+#[\AllowDynamicProperties]
 class {name} extends Request 
 {
 

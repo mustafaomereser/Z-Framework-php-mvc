@@ -2,6 +2,7 @@
 
 namespace Database\Seeders{namespace};
 
+#[\AllowDynamicProperties]
 class {name}
 {
     public function __construct()

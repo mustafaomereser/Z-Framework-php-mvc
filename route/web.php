@@ -4,14 +4,8 @@ use App\Controllers\AuthController;
 use zFramework\Core\Route;
 use App\Controllers\HomeController;
 use App\Controllers\LanguageController;
-use App\Models\User;
-use zFramework\Core\Facades\Alerts;
-use zFramework\Core\Helpers\File;
 
 Route::get('/test', function () {
-    print_r((new User)->select(['id'])->get());
-
-    print_r(Alerts::get());
 });
 
 Route::get('/language/{lang}', [LanguageController::class, 'set'])->name('language');

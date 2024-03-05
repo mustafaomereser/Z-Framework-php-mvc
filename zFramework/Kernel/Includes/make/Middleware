@@ -2,6 +2,7 @@
 
 namespace App\Middlewares{namespace};
 
+#[\AllowDynamicProperties]
 class {name}
 {
     public function attempt()

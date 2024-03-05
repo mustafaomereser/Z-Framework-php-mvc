@@ -30,11 +30,11 @@
                             Diller                        </button>
                         <ul class="dropdown-menu">
                                                         <li>
-                                <a class="dropdown-item " href="http://192.168.204.40:81/language/en">
+                                <a class="dropdown-item " href="http://192.168.22.97/language/en">
                                     English                                </a>
                             </li>
                                                         <li>
-                                <a class="dropdown-item active" href="http://192.168.204.40:81/language/tr">
+                                <a class="dropdown-item active" href="http://192.168.22.97/language/tr">
                                     Türkçe                                </a>
                             </li>
                                                     </ul>
@@ -53,7 +53,7 @@
     </div>
     <div class="form-group">
         <form id="terminal-form">
-            <input type='hidden' name='_token' value='U2zsQJhqAMkg2Q3ViPgdP0lT3uKaef' />            <input type="text" name="command" class="form-control rounded-0" placeholder="Command to Helper Terminal.">
+            <input type='hidden' name='_token' value='k7wOQSTAC8l2euSIVmmjRytszFcLUW' />            <input type="text" name="command" class="form-control rounded-0" placeholder="Command to Helper Terminal.">
         </form>
     </div>
 </div>
@@ -87,7 +87,7 @@
         $(this).find('[name]').each((index, item) => data[$(item).attr('name')] = item.value);
         $.ajax({
             method: 'POST',
-            url: 'http://192.168.204.40:81',
+            url: 'http://192.168.22.97',
             data: data,
             success: e => $('#terminal-body').html(e).scrollTop(99999999999),
             error: e => $('#terminal-body').html(JSON.parse(e.responseText).message)

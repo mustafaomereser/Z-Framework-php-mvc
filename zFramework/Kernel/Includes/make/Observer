@@ -4,6 +4,7 @@ namespace App\Observers{namespace};
 
 use zFramework\Core\Abstracts\Observer;
 
+#[\AllowDynamicProperties]
 class {name} extends Observer
 {
     /**

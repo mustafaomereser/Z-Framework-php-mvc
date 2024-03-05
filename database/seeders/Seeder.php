@@ -21,6 +21,13 @@ class Seeder
             'email'     => Str::rand(15) . '@localhost.com',
             'api_token' => Str::rand(60)
         ]);
+
+        for ($i = 0; $i < 50; $i++) (new User)->insert([
+            'username'  => Str::rand(15),
+            'password'  => Crypter::encode('admin'),
+            'email'     => Str::rand(15) . '@localhost.com',
+            'api_token' => Str::rand(60)
+        ]);
     }
 
     public function destroy()

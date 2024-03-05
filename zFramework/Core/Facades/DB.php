@@ -3,15 +3,18 @@
 namespace zFramework\Core\Facades;
 
 use ReflectionClass;
+use zFramework\Core\Helpers\_Array;
 use zFramework\Core\Traits\DB\OrMethods;
 use zFramework\Core\Traits\DB\RelationShips;
 
+#[\AllowDynamicProperties]
 class DB
 {
     use RelationShips;
     use OrMethods;
 
     private $driver;
+    public $db;
     /**
      * Options parameters
      */
@@ -67,7 +70,7 @@ class DB
      * Execute sql query.
      * @param string $sql
      * @param array $data
-     * @return array
+     * @return object
      */
     public function prepare(string $sql, array $data = [])
     {
@@ -495,12 +498,17 @@ class DB
             foreach ($this->closures as $closure) $rows[$key][$closure] = function () use ($row, $closure) {
                 return $this->{$closure}($row);
             };
-            
-            $row[$key]['update'] = function () {
-            };
 
-            $row[$key]['delete'] = function () {
-            };
+            $primary_key = $this->getPrimary();
+            if (isset($row[$primary_key])) {
+                $rows[$key]['update'] = function ($sets) use ($row, $primary_key) {
+                    return $this->where($primary_key, $row[$primary_key])->update($sets);
+                };
+
+                $rows[$key]['delete'] = function () use ($row, $primary_key) {
+                    return $this->where($primary_key, $row[$primary_key])->delete();
+                };
+            }
         }
 
         return $rows;
@@ -540,42 +548,9 @@ class DB
      * @param string $page_name
      * @return array
      */
-    public function paginate($per_count = 20, $page_name = 'page')
+    public function paginate(int $per_page = 20, string $page_id = 'page')
     {
-        $uniqueID  = uniqid();
-        $rows      = $this->get();
-        $row_count = count($rows);
-
-        $current_page   = (request($page_name) ?? 1);
-        $max_page_count = ceil($row_count / $per_count);
-
-        if ($current_page > $max_page_count) $current_page = $max_page_count;
-        elseif ($current_page <= 0) $current_page = 1;
-
-        $start_count = ($per_count * ($current_page - 1));
-        if (!$row_count) $start_count = -1;
-
-        parse_str(@$_SERVER['QUERY_STRING'], $queryString);
-        $queryString[$page_name] = "{change_page_$uniqueID}";
-        $url = "?" . http_build_query($queryString);
-
-        $return = [
-            'items'          => $row_count ? array_slice($rows, $start_count, $per_count, true) : [],
-            'item_count'     => $row_count,
-            'shown'          => ($start_count + 1) . " / " . (($per_count * $current_page) >= $row_count ? $row_count : ($per_count * $current_page)),
-            'start'          => ($start_count + 1),
-
-            'per_page'       => $per_count,
-            'max_page_count' => $max_page_count,
-            'current_page'   => $current_page,
-
-            'links'          => function ($view = null) use ($max_page_count, $current_page, $url, $uniqueID) {
-                if (!$view) $view = 'layouts.pagination.default';
-                return view($view, compact('max_page_count', 'current_page', 'url', 'uniqueID'));
-            }
-        ];
-
-        return $return;
+        return _Array::paginate($this->get(), $per_page, $page_id);
     }
 
     /**

@@ -1,5 +1,7 @@
 <?php
 namespace Database\Migrations{namespace};
+
+#[\AllowDynamicProperties]
 class {name}
 {
     static $storageEngine = "InnoDB";

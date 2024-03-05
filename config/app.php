@@ -1,16 +1,8 @@
 <?php
 
 return [
-    'ws' => [
-        'protocol'     => 'tcp',
-        'server'       => getHostByName(getHostName()),
-        'port'         => 5000,
-        'worker-count' => 4
-    ],
-
-    'debug'    => true,
-
-    'lang'     => 'tr', // if browser haven't language in Languages list automatic choose that default lang.
+    'debug'    => true, # turn false on production.
+    'lang'     => 'tr', # if browser haven't language in Languages list auto choose that default lang.
 
     'title'    => 'Z Framework Project',
     'public'   => 'public_html',
@@ -22,7 +14,8 @@ return [
 
     'version'  => '1.0.0',
 
-    'mysql'    => [
-        'mysqldump' => 'D:\wamp\bin\mysql\mysql5.7.19\bin\mysqldump'
+    'pagination' => [
+        'default-view' => 'layouts.pagination.default'
     ]
+
 ];

@@ -1,10 +1,6 @@
-<?php 
-use zFramework\Core\Facades\Lang;
-$lang_list = Lang::list();
- ?>
 
 <!DOCTYPE html>
-<html lang="<?=Lang::$locale?>" data-bs-theme="dark">
+<html lang="tr" data-bs-theme="dark">
 
 <head>
     <meta charset="UTF-8">
@@ -31,17 +27,17 @@ $lang_list = Lang::list();
 
                     <div class="btn-group">
                         <button class="btn btn-outline-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="width: 100px">
-                            <?=_l('lang.languages')?>
-                        </button>
+                            Diller                        </button>
                         <ul class="dropdown-menu">
-                            <?php foreach($lang_list as $lang): ?>
-                            <li>
-                                <a class="dropdown-item <?=Lang::currentLocale() == $lang ? 'active' : null?>" href="<?=route('language', ['lang' => $lang])?>">
-                                    <?=config("languages.$lang")?>
-                                </a>
+                                                        <li>
+                                <a class="dropdown-item " href="http://192.168.22.97/language/en">
+                                    English                                </a>
                             </li>
-                            <?php endforeach; ?>
-                        </ul>
+                                                        <li>
+                                <a class="dropdown-item active" href="http://192.168.22.97/language/tr">
+                                    Türkçe                                </a>
+                            </li>
+                                                    </ul>
                     </div>
                 </div>
             </div>
@@ -53,8 +49,7 @@ $lang_list = Lang::list();
         404 Not Found Page
     </div>
     <div>
-        <?= $message ?>
-    </div>
+            </div>
 </div>
 
 
@@ -63,9 +58,9 @@ $lang_list = Lang::list();
                 <a href="/api/v1">API</a>
             </div>
             <div class="col-lg-6 col-12 text-lg-end">
-                <small data-toggle="tooltip" title="zFramework Version"><b>zFramework</b> v<?=FRAMEWORK_VERSION?></small>
-                <small data-toggle="tooltip" title="PHP Version">| <b>PHP</b> v<?=PHP_VERSION?></small>
-                <small data-toggle="tooltip" title="Current Project Version">| <b>APP</b> v<?=config('app.version')?></small>
+                <small data-toggle="tooltip" title="zFramework Version"><b>zFramework</b> v2.6.0</small>
+                <small data-toggle="tooltip" title="PHP Version">| <b>PHP</b> v8.2.12</small>
+                <small data-toggle="tooltip" title="Current Project Version">| <b>APP</b> v1.0.0</small>
             </div>
         </div>
     </div>
@@ -82,3 +77,4 @@ $lang_list = Lang::list();
 </body>
 
 </html>
+
