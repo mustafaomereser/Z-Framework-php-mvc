@@ -1,5 +1,5 @@
 <?php
-namespace Database\Migrations{namespace};
+namespace {namespace};
 
 #[\AllowDynamicProperties]
 class {name}

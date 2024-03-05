@@ -33,7 +33,7 @@ class Module
     {
         if (is_dir(base_path("/modules/$name"))) return Terminal::text("[color=red]`$name` module already exists.[/color]");
 
-        foreach (['route', 'views', 'Controllers', 'Middlewares', 'Models', 'Requests'] as $folder) @mkdir(base_path("/modules/$name/$folder"), 0777, true);
+        foreach (['route', 'views', 'Controllers', 'Middlewares', 'Models', 'Requests', 'Observers', 'migrations'] as $folder) @mkdir(base_path("/modules/$name/$folder"), 0777, true);
         file_put_contents(base_path("/modules/$name/route/web.php"), str_replace(['{name}'], [$name], file_get_contents(self::$assets['route'])));
         file_put_contents(base_path("/modules/$name/info.php"), str_replace(['{name}', '{date}', '{author}', '{framework_version}'], [$name, Date::timestamp(), gethostname(), FRAMEWORK_VERSION], file_get_contents(self::$assets['info'])));
 

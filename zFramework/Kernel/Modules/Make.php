@@ -8,9 +8,15 @@ class Make
 {
     static $assets_path;
     static $assets;
-
+    static $save        = "App";
+    static $save_status = false;
     public static function begin()
     {
+        if (isset(Terminal::$parameters['--module'])) {
+            self::$save        = "Modules\\" . ucfirst(Terminal::$parameters['--module']);
+            self::$save_status = true;
+        }
+
         self::assets();
         self::do();
     }
@@ -46,7 +52,7 @@ class Make
         if (in_array('--resource', Terminal::$parameters)) $make .= "_resource";
 
         extract(self::parseName());
-        $make = str_replace(['{namespace}', '{name}'], [(strlen($namespace) ? "\\$namespace" : null), $name], file_get_contents($make));
+        $make = str_replace(['{name}'], [$name], file_get_contents($make));
 
         if (!$make) return Terminal::text('This is not acceptable.');
 
@@ -55,24 +61,24 @@ class Make
 
     private static function request($make)
     {
-        return self::save('App\Requests', $make);
+        return self::save(self::$save . '\Requests', $make);
     }
 
     private static function controller($make)
     {
-        return self::save('App\Controllers', $make);
+        return self::save(self::$save . '\Controllers', $make);
     }
 
     private static function middleware($make)
     {
-        return self::save('App\Middlewares', $make);
+        return self::save(self::$save . '\Middlewares', $make);
     }
 
     private static function migration($make)
     {
         global $databases;
         return self::save(
-            'database\migrations',
+            (!self::$save_status ? 'Database' : self::$save) . '\Migrations',
             str_replace(
                 ['{table}', '{dbname}'],
                 [(Terminal::$parameters['table'] ?? self::parseName()['name']), (Terminal::$parameters['dbname'] ?? array_keys($databases)[0])],
@@ -83,13 +89,13 @@ class Make
 
     private static function seeder($make)
     {
-        return self::save('database\seeders', $make);
+        return self::save('Database\Seeders', $make);
     }
 
     private static function model($make)
     {
         return self::save(
-            'App\Models',
+            self::$save . '\Models',
             str_replace(
                 ['{table}'],
                 [(Terminal::$parameters['table'] ?? self::parseName()['name'])],
@@ -100,7 +106,7 @@ class Make
 
     private static function observer($make)
     {
-        return self::save('App\Observers', $make);
+        return self::save(self::$save . '\Observers', $make);
     }
 
     private static function clearPath($str)
@@ -113,12 +119,12 @@ class Make
     {
         extract(self::parseName());
 
-        $to = base_path("$to\\$namespace");
-        @mkdir($to, 0777, true);
-        $save_to = self::clearPath($to . "\\" . $name . ".php");
+        $_to = base_path("$to\\$namespace");
+        @mkdir($_to, 0777, true);
+        $save_to = self::clearPath($_to . "\\" . $name . ".php");
 
         if (file_exists($save_to)) return Terminal::text("[color=red]This is already exists. $save_to" . "[/color]");
-        file_put_contents($save_to, $content);
+        file_put_contents($save_to, str_replace(["{namespace}"], [$to . (strlen($namespace) ? "\\$namespace" : null)], $content));
         Terminal::text("[color=green]Asset is created to $save_to" . "[/color]");
     }
 }

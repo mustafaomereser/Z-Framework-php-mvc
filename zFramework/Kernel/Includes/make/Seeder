@@ -1,6 +1,6 @@
 <?php
 
-namespace Database\Seeders{namespace};
+namespace {namespace};
 
 #[\AllowDynamicProperties]
 class {name}

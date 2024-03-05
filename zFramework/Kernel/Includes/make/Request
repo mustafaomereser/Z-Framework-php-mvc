@@ -1,5 +1,5 @@
 <?php
-namespace App\Requests{namespace};
+namespace {namespace};
 
 use zFramework\Core\Abstracts\Request;
 

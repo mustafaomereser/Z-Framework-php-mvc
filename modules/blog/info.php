@@ -8,6 +8,6 @@ return [
     'name'              => 'blog',
     'description'       => '',
     'author'            => 'Mustafa',
-    'created_at'        => '2024-03-05 13:47:10',
+    'created_at'        => '2024-03-05 14:20:15',
     'framework_version' => '2.6.0'
 ];

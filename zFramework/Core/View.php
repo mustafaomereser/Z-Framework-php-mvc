@@ -44,6 +44,7 @@ class View
         if (isset(self::$binds[$view_name])) $data = array_merge(self::$binds[$view_name](), $data);
 
         $view_path = self::$config['dir'] . '\\' . self::parseViewName($view_name);
+        if (!is_file($view_path)) $view_path = base_path(self::parseViewName($view_name));
 
         self::$view = file_get_contents($view_path);
         self::$data = $data;
