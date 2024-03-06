@@ -8,39 +8,9 @@ use zFramework\Core\Abstracts\Model;
 class {name} extends Model
 {
     public $table = "{table}";
-    
-    public function getAttributes()
-    {
-        return [$this->attributes, $this->attrCount];
-    }
 
-
-    /**
-     * Every reset/init model that will be initilaze
-     * 
-     */
     public function beginQuery() 
     {
         // return $this->where();
-    }
-
-    /**
-     * every row get this special methods.
-     * 
-     * example:
-     * *****
-     *   $users = (new User)->get();
-     *   foreach ($users as $user) $user['posts']()->get();
-     * *****
-     */
-
-    /**
-     * User's posts.
-     * @param array $values
-     * @return self
-     */
-    public function userPosts(array $values) 
-    {
-        return $this->hasMany(Posts::class, $values['id'], 'user_id');
     }
 }

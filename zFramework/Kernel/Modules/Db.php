@@ -43,24 +43,30 @@ class Db
     public static function migrate()
     {
         global $databases;
+        $MySQL_defines = ['CURRENT_TIMESTAMP'];
 
-        $MySQL_defines = [
-            'CURRENT_TIMESTAMP'
-        ];
+        $migrations      = [];
+        $path            = Terminal::$parameters['--path'] ?? null;
+        $migrations_path = 'migrations' . ($path ? "/$path" : null);
 
-        $path       = Terminal::$parameters['--path'] ?? null;
-        $scan_in    = BASE_PATH . '/database';
 
-        // Run::findModules()::$modules get module list
         if (isset(Terminal::$parameters['--module'])) {
-            $module =  BASE_PATH . ("/modules/" . Terminal::$parameters['--module']);
+            # select one module migrations
+            $module = BASE_PATH . ("/modules/" . Terminal::$parameters['--module']);
             if (!is_dir($module)) return Terminal::text("[color=red]You haven't a module like this.[/color]");
-            $scan_in = $module;
+            foreach (glob("$module/$migrations_path/*.php") as $row) $migrations[] = $row;
             Terminal::text('[color=blue]You have selected a module: `' . Terminal::$parameters['--module'] . '`.[/color]');
+            #
+        } else if (in_array('--module', Terminal::$parameters)) {
+            # select all modules migrations
+            foreach (Run::findModules()::$modules as $module) foreach (glob(BASE_PATH . ("/modules/$module") . "/$migrations_path/*.php") as $row) $migrations[] = $row;
+            Terminal::text('[color=blue]All modules migrates selected.[/color]');
+            #       
+        } else {
+            # default migrations
+            foreach (glob(BASE_PATH . '/database/$migrations_path/*.php') as $row) $migrations[] = $row;
+            #
         }
-
-        $migrations_path = "$scan_in/migrations" . ($path ? "/$path" : null);
-        $migrations      = glob("$migrations_path/*.php");
 
         if (!count($migrations)) {
             Terminal::text("[color=red]You haven't a migration in `$migrations_path`.[/color]"); //  . ($path ? " [color=yellow]in `" . $path . "` folder[/color]" : null)

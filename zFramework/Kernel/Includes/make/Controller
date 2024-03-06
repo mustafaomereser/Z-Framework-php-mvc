@@ -6,12 +6,13 @@ use zFramework\Core\Abstracts\Controller;
 #[\AllowDynamicProperties]
 class {name} extends Controller 
 {
-
     public function __construct()
     {
-        // Set models here (suggestion)
-        // $this->user = new User();
-        // $this->user->where('id', '=', 1)->first();
+
     }
 
+    public function index() 
+    {
+        
+    }
 }

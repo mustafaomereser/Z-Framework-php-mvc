@@ -9,13 +9,12 @@ class {name} extends Observer
 {
     /**
      * Insert before run that
-     * @param array $args
+     * @param array $sets
      * @return array
      */
-    public function oninsert(array $sets)
+    public function oninsert(array $sets) : array
     {
-        echo "inserting";
-        return $sets;
+
     }
 
     /**
@@ -24,18 +23,17 @@ class {name} extends Observer
      */
     public function oninserted(array $args)
     {
-        echo "inserted: " . $args['id'];
+        
     }
 
     /**
      * Update before run that
-     * @param array $args
+     * @param array $sets
      * @return array
      */
-    public function onupdate(array $sets)
+    public function onupdate(array $sets) : array
     {
-        echo "updating:";
-        return $sets;
+     
     }
 
     /**
@@ -44,8 +42,7 @@ class {name} extends Observer
      */
     public function onupdated(array $args)
     {
-        echo "updated:";
-        var_dump($args);
+        
     }
 
     /**
@@ -54,8 +51,7 @@ class {name} extends Observer
      */
     public function ondelete(array $args)
     {
-        echo "deleting:";
-        var_dump($args);
+        
     }
 
     /**
@@ -64,7 +60,6 @@ class {name} extends Observer
      */
     public function ondeleted(array $args)
     {
-        echo "deleted:";
-        var_dump($args);
+        
     }
 }

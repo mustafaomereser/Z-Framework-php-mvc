@@ -34,13 +34,18 @@ class Make
 
     private static function parseName()
     {
-        $namespace = explode('\\', str_replace('/', '\\', Terminal::$commands[2]));
-        $name      = ucfirst(end($namespace));
+        $namespace  = explode('\\', str_replace('/', '\\', Terminal::$commands[2]));
+        $name       = ucfirst(end($namespace));
         unset($namespace[array_search(end($namespace), $namespace)]);
+        $namespace  = implode('\\', $namespace);
+        $table_name = "";
 
-        $namespace = implode('\\', $namespace);
+        foreach (str_split($name) as $key => $char) {
+            if (ctype_upper($char)) $table_name .= ($key != 0 ? '_' : null) . mb_strtolower($char);
+            else $table_name .= $char;
+        }
 
-        return compact('namespace', 'name');
+        return compact('namespace', 'name', 'table_name');
     }
 
     private static function do()
@@ -81,7 +86,7 @@ class Make
             (!self::$save_status ? 'Database' : self::$save) . '\Migrations',
             str_replace(
                 ['{table}', '{dbname}'],
-                [(Terminal::$parameters['table'] ?? self::parseName()['name']), (Terminal::$parameters['dbname'] ?? array_keys($databases)[0])],
+                [(Terminal::$parameters['table'] ?? self::parseName()['table_name']), (Terminal::$parameters['dbname'] ?? array_keys($databases)[0])],
                 $make
             )
         );
@@ -98,7 +103,7 @@ class Make
             self::$save . '\Models',
             str_replace(
                 ['{table}'],
-                [(Terminal::$parameters['table'] ?? self::parseName()['name'])],
+                [(Terminal::$parameters['table'] ?? self::parseName()['table_name'])],
                 $make
             )
         );
