@@ -5,6 +5,7 @@ namespace zFramework\Kernel\Modules;
 use zFramework\Core\Facades\DB as FacadesDB;
 use zFramework\Kernel\Helpers\MySQLBackup;
 use zFramework\Kernel\Terminal;
+use zFramework\Run;
 
 class Db
 {
@@ -47,21 +48,29 @@ class Db
             'CURRENT_TIMESTAMP'
         ];
 
-        $path       = Terminal::$parameters['path'] ?? null;
-        $migrations = glob(BASE_PATH . '\database\migrations\\' . ($path ? "$path\\" : null) . '*.php');
+        $path       = Terminal::$parameters['--path'] ?? null;
+        $scan_in    = BASE_PATH . '/database';
 
-        // $modules = ""
+        // Run::findModules()::$modules get module list
+        if (isset(Terminal::$parameters['--module'])) {
+            $module =  BASE_PATH . ("/modules/" . Terminal::$parameters['--module']);
+            if (!is_dir($module)) return Terminal::text("[color=red]You haven't a module like this.[/color]");
+            $scan_in = $module;
+            Terminal::text('[color=blue]You have selected a module: `' . Terminal::$parameters['--module'] . '`.[/color]');
+        }
+
+        $migrations_path = "$scan_in/migrations" . ($path ? "/$path" : null);
+        $migrations      = glob("$migrations_path/*.php");
 
         if (!count($migrations)) {
-            Terminal::text("[color=red]You haven't a migration.[/color]");
-            if ($path) Terminal::text("[color=yellow]in " . $path . "[/color]");
+            Terminal::text("[color=red]You haven't a migration in `$migrations_path`.[/color]"); //  . ($path ? " [color=yellow]in `" . $path . "` folder[/color]" : null)
             return false;
         }
 
         foreach ($migrations as $migration) {
             // if (!in_array($migration, \zFramework\Run::$included)) \zFramework\Run::includer($migration);
 
-            $class = str_replace(['.php', BASE_PATH], '', $migration);
+            $class = str_replace(['.php', BASE_PATH, '/'], ['', '', '\\'], $migration);
             // control
             if (!class_exists($class)) {
                 Terminal::text("[color=red]There are not a $class migrate class.[/color]");

@@ -728,9 +728,9 @@ Run project.
     # Database Seeder:
     php terminal db seed // output: seed all seeders.
     
-    # Database Backup:
-    # you must set app.config.mysql.mysqldump path.
-    php terminal db backup local // output: backup db to /database/backups/mysql/...
+    # Database Backup and Restore:
+    php terminal db backup // output: backup db to /database/backups/{dbname}...
+    php terminal db restore
 
     # cache delete
     php terminal cache clear sessions|caches|views

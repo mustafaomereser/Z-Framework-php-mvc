@@ -35,8 +35,7 @@ class Module
 
         foreach (['route', 'views', 'Controllers', 'Middlewares', 'Models', 'Requests', 'Observers', 'migrations'] as $folder) @mkdir(base_path("/modules/$name/$folder"), 0777, true);
         file_put_contents(base_path("/modules/$name/route/web.php"), str_replace(['{name}'], [$name], file_get_contents(self::$assets['route'])));
-        file_put_contents(base_path("/modules/$name/info.php"), str_replace(['{name}', '{date}', '{author}', '{framework_version}'], [$name, Date::timestamp(), gethostname(), FRAMEWORK_VERSION], file_get_contents(self::$assets['info'])));
-
+        file_put_contents(base_path("/modules/$name/info.php"), str_replace(['{name}', '{date}', '{author}', '{framework_version}', '{sort}'], [$name, Date::timestamp(), gethostname(), FRAMEWORK_VERSION, count(scan_dir(base_path("/modules")))], file_get_contents(self::$assets['info'])));
         return Terminal::text("[color=green]`$name` module is created.[/color]");
     }
 }

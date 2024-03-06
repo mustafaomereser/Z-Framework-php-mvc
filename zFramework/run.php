@@ -6,6 +6,7 @@ class Run
 {
     static $loadtime;
     static $included = [];
+    static $modules  = [];
 
     public static function includer($_path, $include_in_folder = true, $reverse_include = false, $ext = '.php')
     {
@@ -37,14 +38,23 @@ class Run
         }
     }
 
-    public static function loadModules()
+    public static function findModules()
     {
         if (!is_dir(base_path('/modules'))) return false;
-        $modules = scan_dir(base_path('/modules'));
+        $modules         = scan_dir(base_path('/modules'));
+        $include_modules = [];
         foreach ($modules as $module) {
             $info = include(base_path("/modules/$module/info.php"));
-            if ($info['status']) self::includer(base_path("/modules/$module/route"));
+            if ($info['status']) $include_modules[$info['sort']] = $module;;
         }
+        ksort($include_modules);
+        self::$modules = $include_modules;
+        return new self();
+    }
+
+    public static function loadModules()
+    {
+        foreach (self::$modules as $module) self::includer(base_path("/modules/$module/route"));
     }
 
     public static function begin()
@@ -64,7 +74,7 @@ class Run
             self::includer('..\zFramework\modules', false);
             self::includer('..\App\Middlewares\autoload.php');
             self::initProviders();
-            self::loadModules();
+            self::findModules()::loadModules();
             self::includer('..\route');
             @self::$loadtime = ((microtime() + 0.003) - $start);
 
