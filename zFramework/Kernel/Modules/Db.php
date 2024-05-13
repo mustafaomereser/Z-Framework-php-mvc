@@ -64,7 +64,7 @@ class Db
             #       
         } else {
             # default migrations
-            foreach (glob(BASE_PATH . '/database/$migrations_path/*.php') as $row) $migrations[] = $row;
+            foreach (glob(BASE_PATH . "/database/$migrations_path/*.php") as $row) $migrations[] = $row;
             #
         }
 
