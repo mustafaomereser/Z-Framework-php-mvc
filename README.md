@@ -147,6 +147,12 @@ You can read detailed documention(only Turkish) or read here.
 
     // And you can use for findRoute
     route('admin.index') // output www.host.com/admin
+
+
+    // current uri has a spesific keyword?
+
+    if(Route::has('/admin')) echo "You are now in admin pages.";
+
 ```
 ### 1.1. Form examples
 
