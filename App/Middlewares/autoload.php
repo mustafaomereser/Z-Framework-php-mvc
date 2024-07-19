@@ -6,7 +6,7 @@ use zFramework\Core\Middleware;
 
 $list = [
     Language::class,
-    ErrorView::class
+    ViewDirectives::class
 ];
 
 Middleware::middleware($list);

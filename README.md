@@ -284,7 +284,7 @@ ALSO you can normal query like /1?test=true
     // Where example
     $user->where('id', '=', 1)->where('email', '=', 'test@mail.com', 'OR')->get();
     
-    // Find example that is for first key my users table's first key is id
+    // Find example that is for primary key.
     $user->find(1);
 
     // Select example
@@ -308,7 +308,25 @@ ALSO you can normal query like /1?test=true
     // OR Joins example
     $user->join('LEFT|RIGHT|OUTER|FULL|NULL', App\Models\User::class, ['table_name.id = this_table.id'])->get();
 
-    var_dump($result); // row count
+    // Debug Example
+    $user->sqlDebug(true)->select('id, username')->where('id', 1)->update([
+        'username' => 'John Doe'
+    ]);
+
+    #output
+    UPDATE users SET username = 'John Doe' WHERE id = '1' AND deleted_at IS NULL
+
+
+    # Note
+    If row has a model and has a primary key, row automaticly have delete and update closures.
+
+    #example
+    $user->where('id', 1)->first()['update']([
+        'username' => 'test'
+    ]);
+
+    $user->where('id', 1)->first()['delete']();
+    
 ```
 
 ### 2.1. User
@@ -340,9 +358,15 @@ ALSO you can normal query like /1?test=true
         
         public $table = "users";
 
-        public function getAttributes()
+        // reletable closures callbacks
+        public function posts(array $values)
         {
-            return [$this->attributes, $this->attrCount];
+            return $this->hasMany(Posts::class, $values['id'], 'user_id');
+        }
+        
+        public function user_email(array $values)
+        {
+            return $this->hasOne(UserEmails::class, $values['id'], 'user_id');
         }
     }
 

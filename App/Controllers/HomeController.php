@@ -11,12 +11,9 @@ class HomeController extends Controller
 
     public function __construct($method)
     {
-        echo (new User)->sqlDebug(true)->where('id', 2)->update([
-            'username'  => 'test',
-            'email'     => 'naber',
-            'api_token' => "teteqt''''eqtq"
+        (new User)->sqlDebug(true)->select('id, username')->where('id', 1)->update([
+            'username' => 'John Doe'
         ]);
-        exit;
     }
 
     /** Index page | GET: /

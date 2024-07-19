@@ -43,7 +43,7 @@ class View
     {
         if (isset(self::$binds[$view_name])) $data = array_merge(self::$binds[$view_name](), $data);
 
-        $view_path = self::$config['dir'] . '\\' . self::parseViewName($view_name);
+        $view_path = self::$config['dir'] . '/' . self::parseViewName($view_name);
         if (!is_file($view_path)) $view_path = base_path(self::parseViewName($view_name));
 
         self::$view = file_get_contents($view_path);
@@ -53,7 +53,7 @@ class View
         // crate views folder.
         @mkdir(self::$config['caches'], 0777, true);
         //
-        
+
         $cache = self::$config['caches'] . '/' . $view_name . '.stored.php';
         // if (!file_exists($cache) || filemtime($cache) < filemtime($view_path)) 
         file_put_contents($cache, self::$view);
@@ -85,7 +85,7 @@ class View
      */
     private static function parseViewName(string $name): string
     {
-        $name = str_replace('.', '\\', $name);
+        $name = str_replace('.', '/', $name);
         return $name . (!empty(self::$config['suffix']) ? '.' . self::$config['suffix'] : null) . '.php';
     }
 

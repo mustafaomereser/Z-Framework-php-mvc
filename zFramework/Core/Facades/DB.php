@@ -7,6 +7,8 @@ use zFramework\Core\Helpers\_Array;
 use zFramework\Core\Traits\DB\OrMethods;
 use zFramework\Core\Traits\DB\RelationShips;
 
+use function PHPSTORM_META\type;
+
 #[\AllowDynamicProperties]
 class DB
 {
@@ -207,10 +209,10 @@ class DB
     #region BUILD QUERIES
     /**
      * Set Select
-     * @param array $select
+     * @param array|string $select
      * @return self
      */
-    public function select(array $select = [])
+    public function select($select)
     {
         $this->buildQuery['select'] = $select;
         return $this;
@@ -222,8 +224,19 @@ class DB
      */
     private function getSelect()
     {
-        if (!count($this->buildQuery['select'])) return null;
-        return is_array(($select = $this->buildQuery['select'])) ? implode(', ', $select) : $select;
+        switch (gettype($this->buildQuery['select'])) {
+            case 'array':
+                if (!count($this->buildQuery['select'])) return null;
+                return is_array(($select = $this->buildQuery['select'])) ? implode(', ', $select) : $select;
+                break;
+
+            case 'string':
+                return $this->buildQuery['select'];
+                break;
+
+            default:
+                return null;
+        }
     }
 
     /**
