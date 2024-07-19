@@ -34,6 +34,12 @@ function host()
     return $protocol . $_SERVER['SERVER_NAME'] . (!empty($port) && !in_array($port, $dont_show_port) ? ":$port" : null);
 }
 
+function asset($value)
+{
+    $value = str_replace("//", "/", "/$value");
+    return host() . $value . "?v=" . filemtime(public_path($value));
+}
+
 // Redirect to url what are you want.
 function redirect($url = "/")
 {

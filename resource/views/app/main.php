@@ -14,8 +14,8 @@ $lang_list = Lang::list();
 
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.15.4/css/all.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="/assets/libs/notify/style.css" />
-    <link rel="stylesheet" href="/assets/css/style.css" />
+    <link rel="stylesheet" href="<?= asset('/assets/libs/notify/style.css') ?>" />
+    <link rel="stylesheet" href="<?= asset('/assets/css/style.css') ?>" />
     @yield('header')
 </head>
 

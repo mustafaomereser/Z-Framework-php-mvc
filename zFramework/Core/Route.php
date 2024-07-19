@@ -54,7 +54,7 @@ class Route
      */
     public static function has(string $keyword)
     {
-        return strstr(uri(), $keyword);
+        return strstr(uri(), $keyword) ? true : false;
     }
 
     /**
@@ -76,7 +76,7 @@ class Route
      */
     public static function name(string $name)
     {
-        $name = self::nameOrganize(@self::$groups['pre'] . "/$name");
+        $name    = self::nameOrganize(@self::$groups['pre'] . "/$name");
         $old_key = @end(array_keys(self::$routes));
         self::$routes[$name] = array_pop(self::$routes);
         if (!is_null(self::$calledRoute) && @self::$calledRoute['name'] == $old_key) self::$calledRoute['name'] = $name;
@@ -159,22 +159,6 @@ class Route
     }
 
     /**
-     * Web socket
-     * @param string $method
-     * @param string $url
-     * @param \Closure $callback
-     * @return self
-     */
-    public static function ws(string $method = 'GET', string $url, \Closure $callback)
-    {
-        self::pre('/ws')->group(function () use ($method, $url, $callback) {
-            self::call($method, [$url, $callback]);
-        });
-
-        return new self();
-    }
-
-    /**
      * Set a resource scheme.
      * @param string $url
      * @param string $callback
@@ -195,7 +179,7 @@ class Route
     }
 
     /**
-     * Dispatch Route.
+     * Dispatch Route. 
      * @param string|null $method
      * @param array $args
      * @return array

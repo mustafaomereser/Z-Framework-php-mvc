@@ -14,6 +14,7 @@ class DB
     use OrMethods;
 
     private $driver;
+    private $sql_debug = false;
     public $db;
     /**
      * Options parameters
@@ -668,13 +669,25 @@ class DB
     #endregion
 
     #region BUILD & Execute
+
+    /**
+     * Debug mode for sql queries
+     * @param bool $mode
+     * @return self
+     */
+    public function sqlDebug(bool $mode)
+    {
+        $this->sql_debug = $mode;
+        return $this;
+    }
+
     /**
      * Build a sql query for execute.
      * @param string $type
      * @param bool $debug_output
      * @return string
      */
-    public function buildSQL(string $type = 'select', bool $debug_output = false): string
+    public function buildSQL(string $type = 'select'): string
     {
         $limit = $this->getLimit();
         switch ($type) {
@@ -702,6 +715,13 @@ class DB
         }
 
         $sql = "$type $this->table" . @$sets . $this->getJoin() . $this->getWhere() . $this->getGroupBy() . $this->getOrderBy() . $limit;
+
+        if ($this->sql_debug) {
+            $debug_sql = $sql;
+            foreach ($this->buildQuery['data'] as $key => $value) $debug_sql = str_replace(":$key", $this->db()->quote($value), $debug_sql);
+            echo $debug_sql;
+        }
+
         return $sql;
     }
 

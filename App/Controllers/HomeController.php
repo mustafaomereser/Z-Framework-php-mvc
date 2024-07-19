@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\User;
 use App\Requests\Welcome\CommandRequest;
 use zFramework\Core\Abstracts\Controller;
 
@@ -10,7 +11,12 @@ class HomeController extends Controller
 
     public function __construct($method)
     {
-        //
+        echo (new User)->sqlDebug(true)->where('id', 2)->update([
+            'username'  => 'test',
+            'email'     => 'naber',
+            'api_token' => "teteqt''''eqtq"
+        ]);
+        exit;
     }
 
     /** Index page | GET: /

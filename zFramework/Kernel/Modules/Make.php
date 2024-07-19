@@ -2,6 +2,7 @@
 
 namespace zFramework\Kernel\Modules;
 
+use zFramework\Kernel\Helpers\Ask;
 use zFramework\Kernel\Terminal;
 
 class Make
@@ -10,6 +11,8 @@ class Make
     static $assets;
     static $save        = "App";
     static $save_status = false;
+    static $ask         = true;
+
     public static function begin()
     {
         if (isset(Terminal::$parameters['--module'])) {
@@ -64,56 +67,6 @@ class Make
         return self::{$method}($make);
     }
 
-    private static function request($make)
-    {
-        return self::save(self::$save . '\Requests', $make);
-    }
-
-    private static function controller($make)
-    {
-        return self::save(self::$save . '\Controllers', $make);
-    }
-
-    private static function middleware($make)
-    {
-        return self::save(self::$save . '\Middlewares', $make);
-    }
-
-    private static function migration($make)
-    {
-        global $databases;
-        return self::save(
-            (!self::$save_status ? 'Database' : self::$save) . '\Migrations',
-            str_replace(
-                ['{table}', '{dbname}'],
-                [(Terminal::$parameters['table'] ?? self::parseName()['table_name']), (Terminal::$parameters['dbname'] ?? array_keys($databases)[0])],
-                $make
-            )
-        );
-    }
-
-    private static function seeder($make)
-    {
-        return self::save('Database\Seeders', $make);
-    }
-
-    private static function model($make)
-    {
-        return self::save(
-            self::$save . '\Models',
-            str_replace(
-                ['{table}'],
-                [(Terminal::$parameters['table'] ?? self::parseName()['table_name'])],
-                $make
-            )
-        );
-    }
-
-    private static function observer($make)
-    {
-        return self::save(self::$save . '\Observers', $make);
-    }
-
     private static function clearPath($str)
     {
         if (!strstr($str, '\\\\')) return $str;
@@ -131,5 +84,71 @@ class Make
         if (file_exists($save_to)) return Terminal::text("[color=red]This is already exists. $save_to" . "[/color]");
         file_put_contents($save_to, str_replace(["{namespace}"], [$to . (strlen($namespace) ? "\\$namespace" : null)], $content));
         Terminal::text("[color=green]Asset is created to $save_to" . "[/color]");
+    }
+
+
+    public static function request($make)
+    {
+        return self::save(self::$save . '\Requests', $make);
+    }
+
+    public static function controller($make)
+    {
+        return self::save(self::$save . '\Controllers', $make);
+    }
+
+    public static function middleware($make)
+    {
+        return self::save(self::$save . '\Middlewares', $make);
+    }
+
+    public static function migration($make)
+    {
+        global $databases;
+
+        self::save(
+            (!self::$save_status ? 'Database' : self::$save) . '\Migrations',
+            str_replace(
+                ['{table}', '{dbname}'],
+                [(Terminal::$parameters['table'] ?? self::parseName()['table_name']), (Terminal::$parameters['dbname'] ?? array_keys($databases)[0])],
+                $make
+            )
+        );
+
+        if (self::$ask) Ask::do("Do you wan't create a model also?", function () {
+            self::$ask = false;
+            Terminal::$commands[1] = 'model';
+            return self::do();
+        });
+
+        return true;
+    }
+
+    public static function model($make)
+    {
+        self::save(
+            self::$save . '\Models',
+            str_replace(
+                ['{table}'],
+                [(Terminal::$parameters['table'] ?? self::parseName()['table_name'])],
+                $make
+            )
+        );
+
+        if (self::$ask) Ask::do("Do you wan't create a migration also?", function () {
+            self::$ask = false;
+            Terminal::$commands[1] = 'migration';
+            return self::do();
+        });
+    }
+
+    public static function seeder($make)
+    {
+        return self::save('Database\Seeders', $make);
+    }
+
+    public static function observer($make)
+    {
+        return self::save(self::$save . '\Observers', $make);
     }
 }

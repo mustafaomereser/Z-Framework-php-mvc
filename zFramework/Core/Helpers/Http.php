@@ -4,6 +4,7 @@ namespace zFramework\Core\Helpers;
 
 class Http
 {
+    static $error_view = 'errors.app';
     /**
      * Check is XMLHttpRequest Or Normal Request
      */
@@ -16,7 +17,7 @@ class Http
     public static function abort(int $code = 418, $message = null)
     {
         http_response_code($code);
-        $view = @view("errors.$code", ['message' => $message], 'errors.main');
-        die(self::isAjax() ? json_encode(['code' => $code, 'message' => $message], JSON_UNESCAPED_UNICODE) : (!empty($view) ? $view : $message));
+        $view = @view(self::$error_view . ".$code", compact('message', 'code'));
+        die(self::isAjax() ? json_encode(compact('message', 'code'), JSON_UNESCAPED_UNICODE) : (!empty($view) ? $view : $message));
     }
 }
