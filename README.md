@@ -13,8 +13,6 @@ PHP>=7.0.23
 
 ### 0.1. Z Framework (V2.6.5)
 ### 0.2. Easiest, fastest PHP framework. (Simple)
-
-You can read detailed documention(only Turkish) or read here.
 ### 0.3. Document
 - [1. Route](#1-route)
   - [1.1. Form examples](#11-form-examples)
