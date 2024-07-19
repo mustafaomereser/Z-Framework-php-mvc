@@ -45,7 +45,6 @@ You can read detailed documention(only Turkish) or read here.
 - [18. Development](#18-development)
 - [19. Helper Methods](#19-helper-methods)
 - [20. Run Project](#20-run-project)
-- [21. Run WS Server](#21-run-ws-server)
 
 ## 1. Route
 ```php
@@ -716,10 +715,14 @@ Run project.
     # Controller                   # what are u want  // if u want get ready resource controller (Optional)
     > php terminal make controller Test/TestController --resource
     
+    #region MODEL
     # Model                   # what are u want
     > php terminal make model Test/Test
-    
 
+    #optional parameters for model
+    > php terminal make model Test/Test dbname=main table=test_table
+    #endregion
+    
 
     # Request for methods.      # what are u want
     > php terminal make request Users/StoreRequest
@@ -755,6 +758,18 @@ Run project.
     # Database Backup and Restore:
     php terminal db backup // output: backup db to /database/backups/{dbname}...
     php terminal db restore
+
+    
+    # Create Module
+    php terminal module create blog
+    // Module has self cotnroller, middlewares, migrations, models, observers, requests, routes and views.
+
+    # make asset for module.
+    php terminal make model|migration|controller|etc. --module=blog
+
+    #for example
+    php terminal make controller TestController --resource --module=blog
+
 
     # cache delete
     php terminal cache clear sessions|caches|views
@@ -800,6 +815,18 @@ Run project.
 
 ## 11. Crypter
 ```php
+
+    # Attention!
+    You must change your crypt key.
+
+    config
+        -> app.php
+            -> 
+                'crypt'    => [
+                    'key'  => 'cryptkey',
+                    'salt' => 'ThisSaltIsSecret'
+                ]
+
     # Usage:
 
     $encode = Crypter::encode('test'); // result: {test_hashed_code}
@@ -971,6 +998,9 @@ Run project.
     // Show host name
     host();
 
+    // set Asset
+    asset('/assets/style.css');
+
     // Redirect
     redirect("URL");
 
@@ -1004,7 +1034,7 @@ Run project.
     csrf();
 
     // Call view method easy way, it's same View::view() 
-    view(...., ....., ....);
+    view(...., .....);
 
     // shortcut for Lang::get()
     _l(...);
@@ -1041,10 +1071,4 @@ Run project.
     
     // with custom ip and port
     C:\Users\...\Desktop\Project>php terminal run host=127.0.0.1 port=2000 (press enter)
-```
-
-## 21. Run WS Server
-```php
-    ....
-    C:\Users\...\Desktop\Project>php terminal ws (press enter)
 ```
