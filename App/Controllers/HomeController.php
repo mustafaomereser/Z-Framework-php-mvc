@@ -11,9 +11,7 @@ class HomeController extends Controller
 
     public function __construct($method)
     {
-        (new User)->sqlDebug(true)->select('id, username')->where('id', 1)->update([
-            'username' => 'John Doe'
-        ]);
+        //
     }
 
     /** Index page | GET: /
