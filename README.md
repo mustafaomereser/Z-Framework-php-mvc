@@ -11,7 +11,7 @@ PHP VERSION
 PHP>=7.0.23
 ```
 
-### 0.1. Z Framework (V2.6.0)
+### 0.1. Z Framework (V2.6.5)
 ### 0.2. Easiest, fastest PHP framework. (Simple)
 
 You can read detailed documention(only Turkish) or read here.
