@@ -760,8 +760,9 @@ Run project.
     php terminal db seed // output: seed all seeders.
     
     # Database Backup and Restore:
-    php terminal db backup // output: backup db to /database/backups/{dbname}...
-    php terminal db restore
+    php terminal db backup /* optional parameters */ db=database_connection_key
+    // output: backup db to /database/backups/{dbname}...
+    php terminal db restore /* optional parameters */ db=database_connection_key
 
     
     # Create Module

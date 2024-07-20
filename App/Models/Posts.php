@@ -10,9 +10,4 @@ class Posts extends Model
     use softDelete;
 
     public $table = "posts";
-
-    public function getAttributes()
-    {
-        return [$this->attributes, $this->attrCount];
-    }
 }

@@ -60,16 +60,20 @@ class MySQLBackup
 
                 // INSERT INTO kategoriler (kategori_id, kategori_adi) VALUES (1,'test'), (2, 'test2')
 
-                $this->sql .= 'INSERT INTO `' . $tableName . '` (`' . implode('`,`', $columns) . '`) VALUES ' . PHP_EOL;
+                // $this->sql .= 'INSERT INTO `' . $tableName . '` (`' . implode('`,`', $columns) . '`) VALUES ' . PHP_EOL;
 
-                $columnsData = [];
-                foreach ($rows as $row) {
-                    $row = array_map(function ($item) {
-                        return $this->db->quote($item);
-                    }, $row);
-                    $columnsData[] = '(' . implode(',', $row) . ')';
-                }
-                $this->sql .= implode(',' . PHP_EOL, $columnsData) . ';' . str_repeat(PHP_EOL, 5);
+                // $columnsData = [];
+                // foreach ($rows as $row) {
+                //     $row = array_map(function ($item) {
+                //         return $this->db->quote($item);
+                //     }, $row);
+                //     $columnsData[] = '(' . implode(',', $row) . ')';
+                // }
+                // $this->sql .= implode(',' . PHP_EOL, $columnsData) . ';' . str_repeat(PHP_EOL, 5);
+
+                foreach ($rows as $row) $this->sql .= 'INSERT INTO `' . $tableName . '` (`' . implode('`,`', $columns) . '`) VALUES  (' . implode(',', array_map(function ($item) {
+                    return $this->db->quote($item);
+                }, $row)) . ');' . PHP_EOL;
             }
         }
 
