@@ -11,7 +11,9 @@ class HomeController extends Controller
 
     public function __construct($method)
     {
-        //
+        echo "<pre>";
+        print_r((new User)->sqlDebug(true)->paginate());
+        exit;
     }
 
     /** Index page | GET: /

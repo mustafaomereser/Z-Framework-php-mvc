@@ -15,7 +15,7 @@ class User extends Model
     public $table    = "users";
     public $guard    = ['password', 'api_token'];
 
-    # everytime set query begin.
+    # every reset after begin query.
     // public function beginQuery()
     // {
     //     return $this->where('id', 1);

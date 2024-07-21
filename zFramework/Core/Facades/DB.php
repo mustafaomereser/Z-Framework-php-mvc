@@ -3,11 +3,8 @@
 namespace zFramework\Core\Facades;
 
 use ReflectionClass;
-use zFramework\Core\Helpers\_Array;
 use zFramework\Core\Traits\DB\OrMethods;
 use zFramework\Core\Traits\DB\RelationShips;
-
-use function PHPSTORM_META\type;
 
 #[\AllowDynamicProperties]
 class DB
@@ -179,6 +176,17 @@ class DB
         $closures = [];
         foreach ((new ReflectionClass($this))->getMethods() as $closure) if (strstr($closure->class, 'Models') && !in_array($closure->name, $this->not_closures)) $closures[] = $closure->name;
         $this->closures = $closures;
+        return $this;
+    }
+
+
+    /**
+     * Begin query for models.
+     * this is empty
+     * @return $this
+     */
+    public function beginQuery()
+    {
         return $this;
     }
 
@@ -608,7 +616,51 @@ class DB
      */
     public function paginate(int $per_page = 20, string $page_id = 'page')
     {
-        return _Array::paginate($this->get(), $per_page, $page_id);
+        $last_query       = $this->buildQuery;
+        $row_count        = $this->select("COUNT($this->table." . $this->getPrimary() . ") count")->first()['count'];
+        $this->buildQuery = $last_query;
+
+        $uniqueID         = uniqid();
+        $current_page     = (request($page_id) ?? 1);
+        $page_count       = ceil($row_count / $per_page);
+
+        if ($current_page > $page_count) $current_page = $page_count;
+        elseif ($current_page <= 0) $current_page = 1;
+
+        $start_count = ($per_page * ($current_page - 1));
+        if (!$row_count) $start_count = -1;
+
+        parse_str(@$_SERVER['QUERY_STRING'], $queryString);
+        $queryString[$page_id] = "change_page_$uniqueID";
+        $url = "?" . http_build_query($queryString);
+
+
+        return [
+            'items'          => $row_count ? self::limit($start_count, $per_page)->get() : [],
+            'item_count'     => $row_count,
+            'shown'          => ($start_count + 1) . " / " . (($per_page * $current_page) >= $row_count ? $row_count : ($per_page * $current_page)),
+            'start'          => ($start_count + 1),
+
+            'per_page'       => $per_page,
+            'page_count'     => $page_count,
+            'current_page'   => $current_page,
+
+            'links'          => function ($view = null) use ($page_count, $current_page, $url, $uniqueID) {
+                if (!$view) $view = config('app.pagination.default-view');
+
+                $pages = [];
+                for ($x = 1; $x <= $page_count; $x++) {
+                    $pages[$x] = [
+                        'type'    => 'page',
+                        'page'    => $x,
+                        'current' => $x == $current_page,
+                        'url'     => str_replace("change_page_$uniqueID", $x, $url)
+                    ];
+                }
+
+                return view($view, compact('pages'));
+            }
+        ];
     }
 
     /**
@@ -731,8 +783,11 @@ class DB
 
         if ($this->sql_debug) {
             $debug_sql = $sql;
-            foreach ($this->buildQuery['data'] as $key => $value) $debug_sql = str_replace(":$key", $this->db()->quote($value), $debug_sql);
-            echo $debug_sql;
+            foreach ($this->buildQuery['data'] ?? [] as $key => $value) $debug_sql = str_replace(":$key", $this->db()->quote($value), $debug_sql);
+
+            echo "#Begin SQL Query:\n";
+            var_dump($debug_sql);
+            echo "#End of SQL Query\n";
         }
 
         return $sql;
