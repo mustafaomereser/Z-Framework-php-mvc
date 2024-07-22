@@ -104,13 +104,11 @@ class Make
 
     public static function migration($make)
     {
-        global $databases;
-
         self::save(
             (!self::$save_status ? 'Database' : self::$save) . '\Migrations',
             str_replace(
                 ['{table}', '{dbname}'],
-                [(Terminal::$parameters['table'] ?? self::parseName()['table_name']), (Terminal::$parameters['dbname'] ?? array_keys($databases)[0])],
+                [(Terminal::$parameters['table'] ?? self::parseName()['table_name']), (Terminal::$parameters['dbname'] ?? array_keys($GLOBALS['databases']['connections'])[0])],
                 $make
             )
         );

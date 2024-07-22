@@ -12,9 +12,9 @@ class DB
     use RelationShips;
     use OrMethods;
 
+    public $db;
     private $driver;
     private $sql_debug = false;
-    public $db;
     /**
      * Options parameters
      */
@@ -30,11 +30,10 @@ class DB
      */
     public function __construct(string $db = null)
     {
-        global $databases;
-        if ($db && isset($databases[$db])) $this->db = $db;
-        else $this->db = array_keys($databases)[0];
+        if ($db && isset($GLOBALS['databases']['connections'][$db])) $this->db = $db;
+        else $this->db = array_keys($GLOBALS['databases']['connections'])[0];
 
-        $this->tables();
+        $this->db();
         $this->reset();
     }
 
@@ -43,27 +42,28 @@ class DB
      */
     public function db()
     {
-        global $connected_databases, $databases;
-
-        if (!isset($databases[$this->db])) die('Böyle bir veritabanı yok!');
-        if (!in_array($this->db, $connected_databases)) {
-            $connected_databases[] = $this->db;
-            $parameters = $databases[$this->db];
-
-            # For WebSocket api
-            if (gettype($parameters) == 'object') return $databases[$this->db];
-
+        if (!isset($GLOBALS['databases']['connections'][$this->db])) die('Böyle bir veritabanı yok!');
+        if (!isset($GLOBALS['databases']['connected'][$this->db])) {
             try {
-                $databases[$this->db] = new \PDO($parameters[0], $parameters[1], ($parameters[2] ?? null));
-            } catch (\PDOException $err) {
+                $parameters = $GLOBALS['databases']['connections'][$this->db];
+                $conenction = new \PDO($parameters[0], $parameters[1], ($parameters[2] ?? null));
+                foreach ($parameters['options'] ?? [] as $option) $conenction->setAttribute($option[0], $option[1]);
+            } catch (\Throwable $err) {
                 die(errorHandler($err));
             }
 
-            foreach ($parameters['options'] ?? [] as $option) $databases[$this->db]->setAttribute($option[0], $option[1]);
+            $GLOBALS['databases']['connected'][$this->db]   = ['name' => $conenction->query('SELECT DATABASE()')->fetchColumn(), 'driver' => $conenction->getAttribute(\PDO::ATTR_DRIVER_NAME)];
+            $GLOBALS['databases']['connections'][$this->db] = $conenction;
+
+            $new_connection = true;
         }
 
-        $this->driver = $databases[$this->db]->getAttribute(\PDO::ATTR_DRIVER_NAME);
-        return $databases[$this->db];
+        $this->dbname = $GLOBALS['databases']['connected'][$this->db]['name'];
+        $this->driver = $GLOBALS['databases']['connected'][$this->db]['driver'];
+
+        if (isset($new_connection)) $this->tables();
+
+        return $GLOBALS['databases']['connections'][$this->db];
     }
 
     /**
@@ -97,33 +97,22 @@ class DB
      */
     private function tables()
     {
-        if (@$tables = $GLOBALS['DB']['TABLES'][$GLOBALS["NAMES"][$this->db]]) return $tables;
-        try {
-            $dbname = $this->prepare('SELECT DATABASE()')->fetchColumn();
+        $engines = [];
+        $tables  = $this->prepare("SELECT TABLE_NAME, ENGINE FROM information_schema.tables WHERE table_schema = :table_scheme", ['table_scheme' => $this->dbname])->fetchAll(\PDO::FETCH_ASSOC);
 
-            $engines = [];
-            $tables  = $this->prepare("SELECT TABLE_NAME, ENGINE FROM information_schema.tables WHERE table_schema = :this_database", ['this_database' => $dbname])->fetchAll(\PDO::FETCH_ASSOC);
-            foreach ($tables as $key => $table) {
-                $tables[$key] = $table['TABLE_NAME'];
-                $engines[$table['TABLE_NAME']] = $table['ENGINE'];
-            }
+        foreach ($tables as $key => $table) {
+            $tables[$key] = $table['TABLE_NAME'];
+            $engines[$table['TABLE_NAME']] = $table['ENGINE'];
 
-            foreach ($tables as $table) {
-                $columns = $this->prepare("SELECT COLUMN_NAME, CHARACTER_MAXIMUM_LENGTH, COLUMN_TYPE, COLUMN_KEY FROM information_schema.columns where table_schema = DATABASE() AND table_name = :table", ['table' => $table])->fetchAll(\PDO::FETCH_ASSOC);
-                $GLOBALS["DB"]["TABLE_COLUMNS"][$table] = [
-                    'primary' => $columns[array_search("PRI", array_column($columns, 'COLUMN_KEY'))]['COLUMN_NAME'],
-                    'columns' => $columns
-                ];
-            }
-
-            $GLOBALS["DB"]["TABLES"][$dbname]         = $tables;
-            $GLOBALS["DB"]["TABLE_ENGINES"][$dbname]  = $engines;
-            $GLOBALS["DB"]["NAMES"][$this->db]        = $dbname;
-            return $tables;
-        } catch (\Throwable $e) {
-            errorHandler($e);
-            return false;
+            $columns = $this->prepare("SELECT COLUMN_NAME, CHARACTER_MAXIMUM_LENGTH, COLUMN_TYPE, COLUMN_KEY FROM information_schema.columns where table_schema = DATABASE() AND table_name = :table", ['table' => $table['TABLE_NAME']])->fetchAll(\PDO::FETCH_ASSOC);
+            $GLOBALS["DB"][$this->dbname]["TABLE_COLUMNS"][$table['TABLE_NAME']] = [
+                'primary' => $columns[array_search("PRI", array_column($columns, 'COLUMN_KEY'))]['COLUMN_NAME'],
+                'columns' => $columns
+            ];
         }
+
+        $GLOBALS["DB"][$this->dbname]["TABLES"]         = $tables;
+        $GLOBALS["DB"][$this->dbname]["TABLE_ENGINES"]  = $engines;
     }
 
     /**
@@ -132,7 +121,7 @@ class DB
     private function getPrimary()
     {
         if (!$this->table) throw new \Exception('firstly you must select a table for get primary key.');
-        return $this->primary ?? $GLOBALS["DB"]["TABLE_COLUMNS"][$this->table]['primary'];
+        return $this->primary ?? $GLOBALS["DB"][$this->dbname]["TABLE_COLUMNS"][$this->table]['primary'];
     }
 
     #region Preparing
@@ -173,9 +162,11 @@ class DB
      */
     private function closures()
     {
+        if (isset($GLOBALS['model-closures'][$this->table])) return $this;
+
         $closures = [];
         foreach ((new ReflectionClass($this))->getMethods() as $closure) if (strstr($closure->class, 'Models') && !in_array($closure->name, $this->not_closures)) $closures[] = $closure->name;
-        $this->closures = $closures;
+        $GLOBALS['model-closures'][$this->table] = $closures;
         return $this;
     }
 
@@ -559,13 +550,13 @@ class DB
      */
     public function get()
     {
-        $rows = $this->run()->fetchAll(\PDO::FETCH_ASSOC);
+        $rows        = $this->run()->fetchAll(\PDO::FETCH_ASSOC);
+        $primary_key = $this->getPrimary();
         foreach ($rows as $key => $row) {
-            foreach ($this->closures as $closure) $rows[$key][$closure] = function () use ($row, $closure) {
+            foreach ($GLOBALS['model-closures'][$this->table] as $closure) $rows[$key][$closure] = function () use ($row, $closure) {
                 return $this->{$closure}($row);
             };
 
-            $primary_key = $this->getPrimary();
             if (isset($row[$primary_key])) {
                 $rows[$key]['update'] = function ($sets) use ($row, $primary_key) {
                     return $this->where($primary_key, $row[$primary_key])->update($sets);
@@ -757,7 +748,7 @@ class DB
         $limit = $this->getLimit();
         switch ($type) {
             case 'select':
-                $select = $this->getSelect() ?? implode(", ", array_diff(array_column($GLOBALS["DB"]["TABLE_COLUMNS"][$this->table]['columns'], 'COLUMN_NAME'), $this->guard ?? []));
+                $select = $this->getSelect() ?? (!count($this->guard ?? []) ? "$this->table.*" : implode(", ", array_diff(array_column($GLOBALS["DB"][$this->dbname]["TABLE_COLUMNS"][$this->table]['columns'], 'COLUMN_NAME'), $this->guard)));
                 $type   = "SELECT $select FROM";
                 break;
 
@@ -813,7 +804,7 @@ class DB
     private function checkisInnoDB()
     {
         if (empty($this->table)) throw new \Exception('This table is not defined.');
-        if ($GLOBALS["DB"]["TABLE_ENGINES"][$GLOBALS["DB"]["NAMES"][$this->db]][$this->table] == 'InnoDB') return true;
+        if ($GLOBALS["DB"][$this->dbname]["TABLE_ENGINES"][$this->table] == 'InnoDB') return true;
         throw new \Exception('This table is not InnoDB. If you want to use transaction system change store engine to InnoDB.');
     }
 

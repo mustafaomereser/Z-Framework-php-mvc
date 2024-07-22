@@ -15,8 +15,10 @@ ini_set('session.gc_probability', 1);
 session_start();
 // Session: End
 
-$connected_databases = [];
-$databases = include(BASE_PATH . '\database\connections.php'); #db connections strings
+$GLOBALS['databases'] = [
+    'connected'   => [],
+    'connections' => include(BASE_PATH . '\database\connections.php') #db connections strings
+];
 
 include(BASE_PATH . '\zFramework\run.php');
 include(BASE_PATH . '\zFramework\vendor\autoload.php');

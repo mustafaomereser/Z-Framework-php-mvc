@@ -3,8 +3,7 @@
 // Create new database connection string
 function MySQLcreateDatabase($host = "localhost", $dbname, $user, $pass = null)
 {
-    global $databases;
-    return $databases[$dbname] = ["mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass];
+    return $GLOBALS['databases']['connections'][$dbname] = ["mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass];
 }
 
 function e($value, $emptycheck = false)

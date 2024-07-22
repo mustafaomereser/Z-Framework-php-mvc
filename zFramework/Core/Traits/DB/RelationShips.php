@@ -4,7 +4,7 @@ namespace zFramework\Core\Traits\DB;
 
 trait RelationShips
 {
-    private function findRelation(string $model, string $value, string $column = null)
+    public function findRelation(string $model, string $value, string $column = null)
     {
         if (!$column) $column = $this->table . "_id";
         return model($model)->where($column, '=', $value);

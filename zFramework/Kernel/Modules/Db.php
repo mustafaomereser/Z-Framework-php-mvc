@@ -15,8 +15,7 @@ class Db
 
     public static function begin()
     {
-        global $databases;
-        self::connectDB(Terminal::$parameters['db'] ?? array_keys($databases)[0]);
+        self::connectDB(Terminal::$parameters['db'] ?? array_keys($GLOBALS['databases']['connections'])[0]);
         self::{Terminal::$commands[1]}();
     }
 
@@ -42,7 +41,6 @@ class Db
 
     public static function migrate()
     {
-        global $databases;
         $MySQL_defines = ['CURRENT_TIMESTAMP'];
 
         $migrations      = [];
@@ -83,7 +81,7 @@ class Db
                 continue;
             }
 
-            if (!isset($databases[$class::$db])) {
+            if (!isset($GLOBALS['databases']['connections'][$class::$db])) {
                 Terminal::text("[color=red]" . $class::$db . " database is not exists.[/color]");
                 continue;
             }
