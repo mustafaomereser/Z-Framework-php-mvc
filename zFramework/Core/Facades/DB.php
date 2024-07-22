@@ -14,6 +14,7 @@ class DB
 
     public $db;
     private $driver;
+    private $dbname;
     private $sql_debug = false;
     /**
      * Options parameters
