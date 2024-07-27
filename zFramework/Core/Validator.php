@@ -10,6 +10,8 @@ use zFramework\Core\Helpers\Http;
 
 class Validator
 {
+
+    static $errors = [];
     /**
      * Validate a array
      * @param array $data
@@ -25,38 +27,36 @@ class Validator
         $errors  = [];
         $statics = [];
 
-        foreach ($validate as $dataKey => $validateArray) {
-            $dataValue = @$data[$dataKey];
+        foreach ($validate as $key => $validateArray) {
+            $value = @$data[$key];
 
             $length = -1;
-            if (empty($dataValue) && $dataValue != 0) {
-                $type  = 'null';
-            } elseif (is_numeric($dataValue) || $dataValue == "0") {
-                $type = 'integer';
-                $length = $dataValue;
-            } elseif (is_string($dataValue)) {
-                $type = 'string';
-                $length = strlen($dataValue);
-            } elseif (is_array($dataValue)) {
-                $type = 'array';
-                $length = count($dataValue);
-            } elseif (is_object($dataValue)) {
-                $type = 'object';
-                $length = count((array) $dataValue);
+            if (is_numeric($value) || $value == "0") {
+                $type   = 'integer';
+                $length = strlen($value);
+            } elseif (is_string($value)) {
+                $type   = 'string';
+                $length = strlen($value);
+            } elseif (is_array($value)) {
+                $type   = 'array';
+                $length = count($value);
+            } elseif (is_object($value)) {
+                $type   = 'object';
+                $length = count((array) $value);
             }
 
+            $equivalent = null;
+            $parameters = [];
             foreach ($validateArray as $validate) {
-                $e = explode(':', $validate);
-                $key = $e[0];
+                $e    = explode(':', $validate);
+                $case = $e[0];
 
                 if (isset($e[1])) {
                     $_ = explode(' ', $e[1]);
-                    $val = $_[0];
+                    $equivalent = $_[0];
 
                     if (!empty($_[1])) {
-                        $arr_parameter = @explode(',', $_[1]);
-                        $parameters = [];
-                        foreach ($arr_parameter as $parameter) {
+                        foreach (@explode(',', $_[1]) as $parameter) {
                             $parameter = explode('=', trim($parameter));
 
                             if (isset($parameter[1])) $parameters[$parameter[0]] = $parameter[1];
@@ -65,81 +65,16 @@ class Validator
                     }
                 }
 
-                $ok = false;
-                switch ($key) {
-                    case 'type':
-                        if ($type == $val) $ok = true;
-                        else $errorData = ['now-type' => $type, 'must-type' => $val];
-                        break;
-
-                    case 'email':
-                        if ($length <= 0 && in_array('nullable', $validateArray)) $ok = true;
-                        elseif (filter_var($dataValue, FILTER_VALIDATE_EMAIL)) $ok = true;
-                        break;
-
-                    case 'required':
-                        if ($length > 0 || strlen((string) $dataValue) > 0) $ok = true;
-                        break;
-
-                    case 'nullable':
-                        $ok = true;
-                        break;
-
-                    case 'max':
-                        if ($val >= $length) $ok = true;
-                        else $errorData = ['now-val' => $length, 'max-val' => $val];
-                        break;
-
-                    case 'min':
-                        if ($length >= $val) $ok = true;
-                        else $errorData = ['now-val' => $length, 'min-val' => $val];
-                        break;
-
-                    case 'same':
-                        if ($dataValue === @$data[$val]) $ok = true;
-                        else $errorData = ['attribute-name' => (Lang::get("validator.attributes.$val") ?? $val)];
-                        break;
-
-                    case 'exists':
-                        $column = $parameters['key'] ?? $dataKey;
-                        $exists = (new DB(@$parameters['db']))->table($val)->where($column, $dataValue);
-
-                        if ($ex = @$parameters['ex']) $exists->where('id', '!=', $ex);
-
-                        $exists = $exists->first() ?? [];
-                        if (count($exists)) {
-                            $dataValue = $exists;
-                            $ok = true;
-                        }
-                        break;
-
-                    case 'unique':
-                        if (empty($dataValue)) {
-                            $ok = true;
-                        } else {
-                            $column = $parameters['key'] ?? $dataKey;
-                            if (!(new DB(@$parameters['db']))->table($val)->where($column, $dataValue)->count()) $ok = true;
-                        }
-                        break;
-
-                    default:
-                        $ok = true;
-                }
-
-                if ($ok) {
-                    $statics[$dataKey] = $dataValue;
-                    // $statics[$dataKey]['value'] = $dataValue;
-                    // $statics[$dataKey]['length'] = $length;
-                    // $statics[$dataKey]['type'] = $type;
+                if (self::{$case}(compact('value', 'equivalent', 'length', 'type', 'key'), $parameters, in_array('nullable', $validateArray), $validateArray, $data)) {
+                    $statics[$key] = $value;
                 } else {
-                    $errors[$dataKey][] = (Lang::get("validator.attributes.$dataKey") ?? ($attributeNames[$dataKey] ?? $dataKey)) . " " . Lang::get("validator.errors.$key", $errorData ?? []);
-                    unset($data[$dataKey]);
+                    $errors[$key][] = (Lang::get("validator.attributes.$key") ?? ($attributeNames[$key] ?? $key)) . " " . Lang::get("validator.errors.$case", self::$errors);
+                    unset($data[$key]);
                 }
-
-                // $statics[$dataKey]['validate'][$ok ? 'accept' : 'decline'][] = $key;
             }
         }
 
+        self::$errors = [];
         if (count($errors)) {
             if (!$callback) {
                 if (Http::isAjax()) abort(400, Response::json($errors));
@@ -151,5 +86,62 @@ class Validator
         }
 
         return $statics;
+    }
+
+    public static function email($data, $parameters, $nullable)
+    {
+        if ($nullable) return true;
+        if (filter_var($data['value'], FILTER_VALIDATE_EMAIL)) return true;
+        return false;
+    }
+
+    public static function required($data, $parameters, $nullable, $validate)
+    {
+        if (in_array('nullable', $validate)) return throw new \Throwable('“required” cannot be used in a validation that is ”nullable”.');
+        if ($data['length'] > 0) return true;
+        return false;
+    }
+
+    public static function nullable($data, $parameters, $nullable, $validate)
+    {
+        if (in_array('required', $validate)) return throw new \Throwable('“nullable” cannot be used in a validation that is ”required”.');
+        return true;
+    }
+
+    public static function max($data)
+    {
+        if ($data['equivalent'] >= $data['length']) return true;
+        self::$errors = ['now-val' => $data['length'], 'max-val' => $data['equivalent']];
+        return false;
+    }
+
+    public static function min($data)
+    {
+        if ($data['length'] >= $data['equivalent']) return true;
+        self::$errors = ['now-val' => $data['length'], 'min-val' => $data['equivalent']];
+        return false;
+    }
+
+    public static function same($data, $parameters, $nullable, $validate, $validate_data)
+    {
+        if ($data['value'] === @$validate_data[$data['equivalent']]) return true;
+        self::$errors = ['attribute-name' => (Lang::get("validator.attributes." . $data['equivalent']) ?? $data['equivalent'])];
+        return false;
+    }
+
+    public static function exists($data, $parameters)
+    {
+        $exists = (new DB(@$parameters['db']))->table($data['equivalent'])->where(($parameters['key'] ?? $data['key']), $data['value']);
+        if ($ex = @$parameters['ex']) $exists->where('id', '!=', $ex);
+        if (count($exists->first() ?? [])) return true;
+        return false;
+    }
+
+    public static function unique($data, $parameters)
+    {
+        if (empty($data['value'])) return true;
+        $column = $parameters['key'] ?? $data['key'];
+        if (!(new DB(@$parameters['db']))->table($data['equivalent'])->where($column, $data['value'])->count()) return true;
+        return false;
     }
 }

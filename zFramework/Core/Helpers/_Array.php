@@ -28,7 +28,7 @@ class _Array
         $actual_stop = (!$last_page ? $stop : $start + count($items));
 
         parse_str(@$_SERVER['QUERY_STRING'], $queryString);
-        $queryString[$page_id] = "{change_page_$uniqueID}";
+        $queryString[$page_id] = "change_page_$uniqueID";
         $url = "?" . http_build_query($queryString);
 
         return [
@@ -55,7 +55,7 @@ class _Array
                             'type'    => 'page',
                             'page'    => $x,
                             'current' => $x == $current_page,
-                            'url'     => str_replace("%7Bchange_page_$uniqueID%7D", $x, $url)
+                            'url'     => str_replace("change_page_$uniqueID", $x, $url)
                         ];
                     }
                 } else {
@@ -71,7 +71,7 @@ class _Array
                             'type'    => 'page',
                             'page'    => $x,
                             'current' => $x == $current_page,
-                            'url'     => str_replace("%7Bchange_page_$uniqueID%7D", $x, $url)
+                            'url'     => str_replace("change_page_$uniqueID", $x, $url)
                         ];
                         if ($x == $page_count) {
                             $finish = true;
@@ -91,7 +91,7 @@ class _Array
                                 'type'    => 'page',
                                 'page'    => $x,
                                 'current' => $x == $current_page,
-                                'url'     => str_replace("%7Bchange_page_$uniqueID%7D", $x, $url)
+                                'url'     => str_replace("change_page_$uniqueID", $x, $url)
                             ];
                             if ($x == $page_count) break;
 
@@ -104,5 +104,20 @@ class _Array
                 return view($view, compact('pages'));
             }
         ];
+    }
+
+    /**
+     * Array Filter. 
+     * desctiption: Array keys must ineteger
+     * @param array $array1
+     * @param array $array2
+     * @param \Closure $callback
+     * @return array
+     */
+    public static function filter(array $array1, array $array2, \Closure $callback): array
+    {
+        $output = [];
+        foreach ($array1 as $key => $value) if ($callback($value, $array2[$key])) $output[$key] = $value;
+        return $output;
     }
 }

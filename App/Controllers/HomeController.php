@@ -11,9 +11,24 @@ class HomeController extends Controller
 
     public function __construct($method)
     {
-        echo "<pre>";
-        print_r((new User)->sqlDebug(true)->paginate());
-        exit;
+        // echo "<pre>";
+        // print_r((new User)->sqlDebug(true)->paginate());
+        // exit;
+        // $data    = [
+        //     ['test', 'naber'],
+        //     ['naber', 'test']
+        // ];
+        // $compare = [
+        //     ['test', 'naber'],
+        //     ['yiğit', 'mustafa']
+        // ];
+
+        // $output = _Array::filter($data, $compare, function ($data, $compare) {
+        //     return $data[0] != $compare[0] || $data[1] != $compare[1];
+        // });
+
+        // print_r($output);
+        // exit;
     }
 
     /** Index page | GET: /

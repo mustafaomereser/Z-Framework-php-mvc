@@ -14,7 +14,7 @@ class SignupRequest extends Request
         $this->attributeNames = [];
     }
 
-    public function columns($parameter1 = null)
+    public function columns($parameter1 = null): array
     {
         return [
             // uses parameters for example

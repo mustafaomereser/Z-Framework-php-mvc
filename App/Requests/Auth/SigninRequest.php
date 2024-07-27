@@ -14,7 +14,7 @@ class SigninRequest extends Request
         $this->attributeNames = [];
     }
 
-    public function columns()
+    public function columns(): array
     {
         return [
             'email'          => ['required', 'email'],

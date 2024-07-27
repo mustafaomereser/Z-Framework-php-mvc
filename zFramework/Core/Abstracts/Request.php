@@ -11,11 +11,16 @@ abstract class Request
     public $htmlencode     = false;
     public $attributeNames = [];
 
+    public function columns(): array
+    {
+        return [];
+    }
+
     /**
      * Validate from extends.
      * @return array
      */
-    public function validated()
+    public function validated(): array
     {
         if ($this->authorize && !Auth::check()) abort(401);
         $validate = Validator::validate($_REQUEST, $this->columns(func_get_args()), $this->attributeNames);
