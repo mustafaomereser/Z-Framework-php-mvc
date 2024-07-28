@@ -2,15 +2,17 @@
 
 namespace App\Controllers;
 
-use App\Models\User;
 use App\Requests\Welcome\CommandRequest;
 use zFramework\Core\Abstracts\Controller;
+use zFramework\Core\Facades\Alerts;
+use zFramework\Core\Validator;
 
 class HomeController extends Controller
 {
 
     public function __construct($method)
     {
+
         // echo "<pre>";
         // print_r((new User)->sqlDebug(true)->paginate());
         // exit;
@@ -36,6 +38,22 @@ class HomeController extends Controller
      */
     public function index()
     {
+        echo "<pre>";
+
+        $validate = Validator::validate([
+            'test'     => 'admin',
+            'password' => 1231231
+        ], [
+            'test'     => ['unique:users key=username'],
+            'password' => ['type:string', 'min:30']
+        ], [], function ($errors) {
+            print_r($errors);
+        });
+        // print_r(Alerts::get());
+        print_r($validate);
+        exit;
+
+
         return view('app.pages.welcome');
     }
 

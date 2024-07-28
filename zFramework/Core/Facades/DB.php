@@ -134,8 +134,10 @@ class DB
      */
     private function trigger(string $name, array $args = [])
     {
-        if (!isset($this->observe)) return false;
-        return call_user_func_array([new $this->observe(), 'router'], [$name, $args]);
+        if (!isset($this->observe) || !count($this->observe)) return false;
+        $output = [];
+        foreach ($this->observe as $observe) $output[] = call_user_func_array([new $observe, 'router'], [$name, $args]);
+        return $output[$this->observe_key ?? 0];
     }
 
     /**

@@ -58,7 +58,6 @@ class Validator
                     if (!empty($_[1])) {
                         foreach (@explode(',', $_[1]) as $parameter) {
                             $parameter = explode('=', trim($parameter));
-
                             if (isset($parameter[1])) $parameters[$parameter[0]] = $parameter[1];
                             else $parameters[] = $parameter[0];
                         }
@@ -88,23 +87,31 @@ class Validator
         return $statics;
     }
 
+    public static function type($data, $parameters, $nullable)
+    {
+        if ($nullable && !strlen($data['value'])) return true;
+        if ($data['equivalent'] == $data['type']) return true;
+        self::$errors = ['now-type' => $data['type'], 'must-type' => $data['equivalent']];
+        return false;
+    }
+
     public static function email($data, $parameters, $nullable)
     {
-        if ($nullable) return true;
+        if ($nullable && !strlen($data['value'])) return true;
         if (filter_var($data['value'], FILTER_VALIDATE_EMAIL)) return true;
         return false;
     }
 
     public static function required($data, $parameters, $nullable, $validate)
     {
-        if (in_array('nullable', $validate)) return throw new \Throwable('“required” cannot be used in a validation that is ”nullable”.');
+        if (in_array('nullable', $validate)) return throw new \Exception('“required” cannot be used in a validation that is ”nullable”.');
         if ($data['length'] > 0) return true;
         return false;
     }
 
     public static function nullable($data, $parameters, $nullable, $validate)
     {
-        if (in_array('required', $validate)) return throw new \Throwable('“nullable” cannot be used in a validation that is ”required”.');
+        if (in_array('required', $validate)) return throw new \Exception('“nullable” cannot be used in a validation that is ”required”.');
         return true;
     }
 
@@ -133,7 +140,7 @@ class Validator
     {
         $exists = (new DB(@$parameters['db']))->table($data['equivalent'])->where(($parameters['key'] ?? $data['key']), $data['value']);
         if ($ex = @$parameters['ex']) $exists->where('id', '!=', $ex);
-        if (count($exists->first() ?? [])) return true;
+        if ($exists->count()) return true;
         return false;
     }
 

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Observers\UserObserver;
 use zFramework\Core\Abstracts\Model;
 use zFramework\Core\Traits\DB\softDelete;
 
@@ -10,10 +9,14 @@ class User extends Model
 {
     use softDelete;
 
-    // public $observe  = UserObserver::class;
+    // public $observe      = [UserObserver::class, TestObserver::class];
+    /**
+     * Observer key to receive return data
+     */
+    // public $observe_key  = 0;
 
     public $table    = "users";
-    public $guard    = ['password', 'api_token'];
+    // public $guard    = ['password', 'api_token'];
 
     # every reset after begin query.
     // public function beginQuery()
@@ -24,7 +27,7 @@ class User extends Model
     /**
      * every row get this special methods.
      * 
-     * example:
+     * using example:
      * *****
      *   $users = (new User)->get();
      *   foreach ($users as $user) $user['posts']()->get();

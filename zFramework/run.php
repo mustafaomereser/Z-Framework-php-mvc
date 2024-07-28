@@ -32,10 +32,8 @@ class Run
 
     public static function initProviders()
     {
-        foreach (glob(BASE_PATH . "\App\Providers\*.php") as $provider) {
-            $provider = str_replace([BASE_PATH . '\\', '.php'], '', $provider);
-            new $provider;
-        }
+        foreach (glob(BASE_PATH . "\App\Providers\*.php") as $provider) (new ($provider = str_replace([BASE_PATH . '\\', '.php'], '', $provider)));
+        return new self();
     }
 
     public static function findModules()
@@ -45,7 +43,7 @@ class Run
         $include_modules = [];
         foreach ($modules as $module) {
             $info = include(base_path("/modules/$module/info.php"));
-            if ($info['status']) $include_modules[$info['sort']] = $module;;
+            if ($info['status']) $include_modules[$info['sort']] = array_merge(['module' => $module], $info);
         }
         ksort($include_modules);
         self::$modules = $include_modules;
@@ -54,7 +52,8 @@ class Run
 
     public static function loadModules()
     {
-        foreach (self::$modules as $module) self::includer(base_path("/modules/$module/route"));
+        foreach (self::$modules as $module) self::includer(base_path("/modules/" . $module['module'] . "/route"));
+        return new self();
     }
 
     public static function begin()
@@ -73,8 +72,7 @@ class Run
             self::includer('..\zFramework\modules\error_handlers');
             self::includer('..\zFramework\modules', false);
             self::includer('..\App\Middlewares\autoload.php');
-            self::initProviders();
-            self::findModules()::loadModules();
+            self::initProviders()::findModules()::loadModules();
             self::includer('..\route');
             @self::$loadtime = ((microtime() + 0.003) - $start);
 

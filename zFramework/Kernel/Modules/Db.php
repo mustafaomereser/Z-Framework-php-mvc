@@ -57,7 +57,7 @@ class Db
             #
         } else if (in_array('--module', Terminal::$parameters)) {
             # select all modules migrations
-            foreach (Run::findModules()::$modules as $module) foreach (glob(BASE_PATH . ("/modules/$module") . "/$migrations_path/*.php") as $row) $migrations[] = $row;
+            foreach (array_column(Run::findModules()::$modules, 'module') as $module) foreach (glob(BASE_PATH . ("/modules/$module") . "/$migrations_path/*.php") as $row) $migrations[] = $row;
             Terminal::text('[color=blue]All modules migrates selected.[/color]');
             #       
         } else {
