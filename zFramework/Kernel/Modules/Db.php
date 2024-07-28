@@ -298,7 +298,7 @@ class Db
 
                             case '1068':
                                 $while['status'] = 3;
-                                $while['loop'] = false;
+                                $while['loop']   = false;
                                 break;
 
                             default:

@@ -6,8 +6,9 @@ class Terminal
 {
     static $terminate = false;
     static $commands;
-    static $parameters;
+    static $parameters = [];
     static $history;
+    static $textlist = [];
 
     public static function begin($args)
     {
@@ -76,8 +77,10 @@ class Terminal
             self::text("[color=yellow]" . $e->getMessage() . "[/color]");
         }
 
+        if (count(self::$textlist)) echo json_encode(self::$textlist, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
         if (self::$terminate) return null;
 
+        self::$textlist = [];
         return self::readline();
     }
 
@@ -95,7 +98,9 @@ class Terminal
      */
     public static function text(string $text): void
     {
-        $cli = !in_array('--web', self::$parameters ?? []);
+        $json = in_array('--json', self::$parameters);
+        $cli  = !in_array('--web', self::$parameters) && !$json;
+
 
         $colors = $cli ? [
             'default'       => 39,
@@ -147,6 +152,7 @@ class Terminal
             }
         }
 
-        echo $text . PHP_EOL;
+        if ($json) self::$textlist[] = $text;
+        else echo $text . PHP_EOL;
     }
 }

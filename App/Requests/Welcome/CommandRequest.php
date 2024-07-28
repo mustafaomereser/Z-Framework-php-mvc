@@ -12,7 +12,7 @@ class CommandRequest extends Request
         $this->authorize = false;
     }
 
-    public function columns()
+    public function columns(): array
     {
         return [
             'command' => ['required']

@@ -14,6 +14,20 @@ class HomeController extends Controller
     {
 
         // echo "<pre>";
+
+        // $validate = Validator::validate([
+        //     'test'     => 'admin',
+        //     'password' => 1231231
+        // ], [
+        //     'test'     => ['unique:users key=username'],
+        //     'password' => ['type:string', 'min:30']
+        // ], [], function ($errors) {
+        //     print_r($errors);
+        // });
+        // // print_r(Alerts::get());
+        // print_r($validate);
+        // exit;
+
         // print_r((new User)->sqlDebug(true)->paginate());
         // exit;
         // $data    = [
@@ -38,22 +52,6 @@ class HomeController extends Controller
      */
     public function index()
     {
-        echo "<pre>";
-
-        $validate = Validator::validate([
-            'test'     => 'admin',
-            'password' => 1231231
-        ], [
-            'test'     => ['unique:users key=username'],
-            'password' => ['type:string', 'min:30']
-        ], [], function ($errors) {
-            print_r($errors);
-        });
-        // print_r(Alerts::get());
-        print_r($validate);
-        exit;
-
-
         return view('app.pages.welcome');
     }
 
