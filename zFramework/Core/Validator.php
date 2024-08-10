@@ -31,6 +31,7 @@ class Validator
             $value = @$data[$key];
 
             $length = -1;
+            $type   = null;
             if (is_numeric($value) || $value == "0") {
                 $type   = 'integer';
                 $length = strlen($value);
