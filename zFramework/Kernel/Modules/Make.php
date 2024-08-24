@@ -16,7 +16,7 @@ class Make
     public static function begin()
     {
         if (isset(Terminal::$parameters['--module'])) {
-            self::$save        = "Modules\\" . ucfirst(Terminal::$parameters['--module']);
+            self::$save        = "Modules/" . ucfirst(Terminal::$parameters['--module']);
             self::$save_status = true;
         }
 
@@ -26,7 +26,7 @@ class Make
 
     private static function assets()
     {
-        self::$assets_path = FRAMEWORK_PATH . "\Kernel\Includes\make\\";
+        self::$assets_path = FRAMEWORK_PATH . "/Kernel/Includes/make/";
         $assets = glob(self::$assets_path . "*");
         foreach ($assets as $key => $val) {
             unset($assets[$key]);
@@ -37,7 +37,7 @@ class Make
 
     private static function parseName()
     {
-        $namespace  = explode('\\', str_replace('/', '\\', Terminal::$commands[2]));
+        $namespace  = explode('/', str_replace('\\', '/', Terminal::$commands[2]));
         $name       = ucfirst(end($namespace));
         unset($namespace[array_search(end($namespace), $namespace)]);
         $namespace  = implode('\\', $namespace);
@@ -69,17 +69,17 @@ class Make
 
     private static function clearPath($str)
     {
-        if (!strstr($str, '\\\\')) return $str;
-        return self::clearPath(str_replace('\\\\', '\\', $str));
+        if (!strstr($str, '\\\\') && !strstr($str, '//')) return $str;
+        return self::clearPath(str_replace(['\\\\', '//'], '/', $str));
     }
 
     private static function save($to, $content)
     {
         extract(self::parseName());
 
-        $_to = base_path("$to\\$namespace");
+        $_to = base_path(str_replace('\\', '/', "$to/$namespace"));
         @mkdir($_to, 0777, true);
-        $save_to = self::clearPath($_to . "\\" . $name . ".php");
+        $save_to = self::clearPath($_to . "/" . $name . ".php");
 
         if (file_exists($save_to)) return Terminal::text("[color=red]This is already exists. $save_to" . "[/color]");
         file_put_contents($save_to, str_replace(["{namespace}"], [$to . (strlen($namespace) ? "\\$namespace" : null)], $content));

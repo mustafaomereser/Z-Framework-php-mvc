@@ -6,6 +6,7 @@ use App\Requests\Welcome\CommandRequest;
 use zFramework\Core\Abstracts\Controller;
 use zFramework\Core\Facades\Alerts;
 use zFramework\Core\Validator;
+use zFramework\Kernel\Terminal;
 
 class HomeController extends Controller
 {
@@ -87,7 +88,8 @@ class HomeController extends Controller
     public function store(CommandRequest $command)
     {
         $command = $command->validated()['command'];
-        $message = shell_exec("php " . base_path('terminal') . " $command --web");
+        $message = \zFramework\Kernel\Terminal::begin(["terminal", $command, "--web"]);
+
         echo $message;
     }
 

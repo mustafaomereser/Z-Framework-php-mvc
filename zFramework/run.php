@@ -10,18 +10,18 @@ class Run
 
     public static function includer($_path, $include_in_folder = true, $reverse_include = false, $ext = '.php')
     {
-        // $_path = "/$_path";
+
+        $_path = str_replace('\\', '/', $_path);
         if (is_file($_path)) {
             self::$included[] = $_path;
             return include($_path);
         }
 
         $path = array_values(array_diff(scandir($_path), ['.', '..']));
-
         if ($reverse_include) $path = array_reverse($path);
 
         foreach ($path as $inc) {
-            $inc = "$_path\\$inc";
+            $inc = "$_path/$inc";
             if ((is_dir($inc) && $include_in_folder)) self::includer($inc);
             elseif (file_exists($inc) && strstr($inc, $ext)) {
                 include($inc);
@@ -32,7 +32,7 @@ class Run
 
     public static function initProviders()
     {
-        foreach (glob(BASE_PATH . "\App\Providers\*.php") as $provider) (new ($provider = str_replace([BASE_PATH . '\\', '.php'], '', $provider)));
+        foreach (glob(BASE_PATH . "/App/Providers/*.php") as $provider) new ($provider = str_replace("/", "\\", str_replace([BASE_PATH . '/', '.php'], '', $provider)));
         return new self();
     }
 
@@ -63,17 +63,17 @@ class Run
         try {
             # set view options
             \zFramework\Core\View::settingUP([
-                'caches' => FRAMEWORK_PATH . '\storage\views',
-                'dir'    => BASE_PATH . '\resource\views',
+                'caches' => FRAMEWORK_PATH . '/storage/views',
+                'dir'    => BASE_PATH . '/resource/views',
                 'suffix' => ''
             ]);
 
             // includes
-            self::includer('..\zFramework\modules\error_handlers');
-            self::includer('..\zFramework\modules', false);
-            self::includer('..\App\Middlewares\autoload.php');
+            self::includer('../zFramework/modules/error_handlers');
+            self::includer('../zFramework/modules', false);
+            self::includer('../App/Middlewares/autoload.php');
             self::initProviders()::findModules()::loadModules();
-            self::includer('..\route');
+            self::includer('../route');
             @self::$loadtime = ((microtime() + 0.003) - $start);
 
             \zFramework\Core\Route::run();

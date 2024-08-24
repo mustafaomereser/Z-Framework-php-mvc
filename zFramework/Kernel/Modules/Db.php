@@ -304,7 +304,7 @@ class Db
                             default:
                                 Terminal::text('[color=red]Unkown Error: ' . $e->getMessage() . '[/color]');
                                 $while['loop'] = false;
-                                continue;
+                                continue 2;
                         }
                     }
                 }
@@ -343,11 +343,10 @@ class Db
 
     public static function seed()
     {
-        $seeders = glob(BASE_PATH . '\database\seeders\*.php');
+        $seeders = glob(BASE_PATH . '/database/seeders/*.php');
         if (!count($seeders)) return Terminal::text("[color=red]You haven't any seeder.[/color]");
         foreach ($seeders as $inc) {
-            if (!in_array($inc, \zFramework\Run::$included)) \zFramework\Run::includer($inc);
-            $className = ucfirst(str_replace(['.php', BASE_PATH], '', $inc));
+            $className = ucfirst(str_replace(['.php', BASE_PATH, '/'], ['', '', '\\'], $inc));
             (new $className())->destroy()->seed();
             Terminal::text("[color=green]$className seeded.[/color]");
         }
@@ -371,7 +370,7 @@ class Db
 
     public static function restore()
     {
-        $backups = glob(base_path('/database/backups/' . self::$db->db . '/*'));
+        $backups = glob(base_path('database/backups/' . self::$db->db . '/*'));
 
         if (!count($backups)) return Terminal::text("[color=yellow](" . self::$dbname . ") " . self::$db->db . " haven't any backup.[/color]");
 

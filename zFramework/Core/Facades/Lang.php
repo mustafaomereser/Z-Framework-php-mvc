@@ -64,7 +64,7 @@ class Lang
     public static function get(string $_name, array $data = [])
     {
         $name = explode('.', $_name);
-        $lang = self::$path . "\\" . $name[0] . ".php";
+        $lang = self::$path . "/" . $name[0] . ".php";
         if (!is_file($lang)) return null;
 
         $lang = include($lang);

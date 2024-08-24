@@ -1,9 +1,9 @@
 <?php
 
 // Create new database connection string
-function MySQLcreateDatabase($host = "localhost", $dbname, $user, $pass = null)
+function MySQLcreateDatabase($host = "localhost", $dbname, $user, $pass = null, $name = null)
 {
-    return $GLOBALS['databases']['connections'][$dbname] = ["mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass];
+    return $GLOBALS['databases']['connections'][$name ? $name : $dbname] = ["mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass];
 }
 
 function e($value, $emptycheck = false)
@@ -14,13 +14,13 @@ function e($value, $emptycheck = false)
 // Get project base path.
 function base_path($url = null)
 {
-    return BASE_PATH . ($url ? "\\$url" : null);
+    return BASE_PATH . ($url ? "/$url" : null);
 }
 
 // Get project's public path
 function public_path($url = null)
 {
-    return base_path('\\' . zFramework\Core\Facades\Config::get('app.public')) . $url;
+    return base_path('/' . zFramework\Core\Facades\Config::get('app.public')) . $url;
 }
 
 // Get Run's server's host.
@@ -55,7 +55,7 @@ function back($add = null)
 function script_name()
 {
     $script_name = dirname($_SERVER['SCRIPT_NAME']);
-    if ($script_name == '\\') return null;
+    if ($script_name == '\\' || $script_name == '/') return null;
     return strlen($script_name) ? $script_name : null;
 }
 
@@ -65,6 +65,12 @@ function uri()
     $uri = str_replace(script_name(), '', $_SERVER['REQUEST_URI']);
     if (!strlen($uri)) $add = '/';
     return ($uri . @$add);
+}
+
+function globals($name, $value = NULL)
+{
+    if ($value === NULL) return @$GLOBALS[$name];
+    return @$GLOBALS[$name] = $value;
 }
 
 // Get Current Request Method.
@@ -151,7 +157,7 @@ function request($name = null, $val = NULL)
 // Find file.
 function findFile($file, $ext = null, $path = null)
 {
-    if ($path) $path .= "\\";
+    if ($path) $path .= "/";
 
 
     try {
