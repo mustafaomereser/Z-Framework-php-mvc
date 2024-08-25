@@ -2,6 +2,8 @@
 
 namespace zFramework;
 
+use zFramework\Core\Facades\Config;
+
 class Run
 {
     static $loadtime;
@@ -60,6 +62,7 @@ class Run
     {
         ob_start();
         $start = microtime();
+
         try {
             # set view options
             \zFramework\Core\View::settingUP([
@@ -69,16 +72,18 @@ class Run
             ]);
 
             // includes
-            self::includer('../zFramework/modules/error_handlers');
             self::includer('../zFramework/modules', false);
+            self::includer('../zFramework/modules/error_handlers/handle.php');
             self::includer('../App/Middlewares/autoload.php');
             self::initProviders()::findModules()::loadModules();
             self::includer('../route');
             @self::$loadtime = ((microtime() + 0.003) - $start);
 
+            if (!Config::get('crypt')) throw new \Exception('Create a crypt key with terminal. Command is: php terminal security key --regen', 1000);
+
             \zFramework\Core\Route::run();
-            \zFramework\Core\Facades\Alerts::unset(); // forget alerts
-            \zFramework\Core\Facades\JustOneTime::unset(); // forget data
+            \zFramework\Core\Facades\Alerts::unset(); // forgot alerts
+            \zFramework\Core\Facades\JustOneTime::unset(); // forgot data
         } catch (\Throwable $errorHandle) {
             errorHandler($errorHandle);
         } catch (\Exception $errorHandle) {

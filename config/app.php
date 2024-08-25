@@ -7,15 +7,9 @@ return [
     'title'    => 'Z Framework Project',
     'public'   => 'public_html',
 
-    'crypt'    => [
-        'key'  => 'cryptkey',
-        'salt' => 'ThisSaltIsSecret'
-    ],
-
     'version'  => '1.0.0',
 
     'pagination' => [
         'default-view' => 'layouts.pagination.default'
     ]
-
 ];

@@ -6,11 +6,11 @@ use zFramework\Core\Facades\Config;
 function errorHandler($data)
 {
     ob_end_clean();
-    $data = array_values((array) $data);
-    $message = $data[0];
+    $data     = array_values((array) $data);
+    $message  = $data[0];
     if (!Config::get('app.debug')) abort(500, $message);
-
-    $errors = [$data[3] => [['file' => $data[3], 'line' => $data[4]]]];
+    $err_code = $data[2];
+    $errors   = [$data[3] => [['file' => $data[3], 'line' => $data[4]]]];
     foreach ($data[5] as $error) if (isset($error['file'])) $errors[$error['file']][] = $error;
 
     function getButtons($errors)
@@ -154,7 +154,7 @@ function errorHandler($data)
 
             <section class="mb-3">
                 <div class="row">
-                    <div class="col-7 pe-1" id="error-message">
+                    <div class="col pe-1" id="error-message">
                         <div class="h-100 bg-body-tertiary border rounded-3 position-relative">
                             <div class="d-flex align-items-center gap-2 text-muted position-absolute" style="top: 5px; right: 10px;">
                                 <div><i class="fab fa-lg fa-php"></i> <?= phpversion() ?></div>
@@ -175,21 +175,21 @@ function errorHandler($data)
                             </select>
                         </div>
                     </div>
-                    <div class="col-5 ps-1" id="did-you-mean">
-                        <div class="border rounded-3 h-100 position-relative" style="background: #6ee7b7;">
-                            <div class="text-end position-absolute" style="top: 5px; right: 10px;" onclick="$('#did-you-mean').remove(); $('#error-message').removeClass('col-7').addClass('col-12');">
-                                <i class="fa fa-times text-muted"></i>
-                            </div>
-                            <div class="p-5">
-                                <div>
-                                    <h4>Bad Method Call</h4>
+                    <?php if ($err_code) : ?>
+                        <?php $suggestion = str_replace('\\', '/', dirname(__FILE__) . "/suggestions/$err_code.php") ?>
+                        <?php if (is_file($suggestion)) : ?>
+                            <div class="col-5 ps-1" id="suggestion">
+                                <div class="border rounded-3 h-100 position-relative" style="background: #6ee7b7;">
+                                    <div class="text-end position-absolute" style="top: 5px; right: 10px;" onclick="$('#suggestion').remove();">
+                                        <i class="fa fa-times text-muted"></i>
+                                    </div>
+                                    <div class="p-5">
+                                        <?php include($suggestion) ?>
+                                    </div>
                                 </div>
-                                <div>
-                                    did you mean App\Models\Post::query() ?
-                                </div>
                             </div>
-                        </div>
-                    </div>
+                        <?php endif ?>
+                    <?php endif ?>
                 </div>
             </section>
 

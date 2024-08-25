@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'welcome'        => 'Hoşgeldin!',
+    'welcome'        => 'Hoş geldin!',
     'languages'      => 'Diller',
     'current'        => 'Mevcut',
 
