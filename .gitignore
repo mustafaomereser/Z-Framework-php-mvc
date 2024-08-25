@@ -1,4 +1,4 @@
 push.bat
 composer.lock
-zFramework/storage/sessions/sess_*
+zFramework/storage/*
 config/crypt.php
