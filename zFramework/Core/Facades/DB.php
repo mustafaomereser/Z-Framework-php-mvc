@@ -652,7 +652,7 @@ class DB
                     ];
                 }
 
-                return view($view, compact('pages'));
+                return view($view, compact('pages', 'page_count', 'current_page', 'url', 'uniqueID'));
             }
         ];
     }
