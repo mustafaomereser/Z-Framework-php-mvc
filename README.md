@@ -756,6 +756,9 @@ Run project.
     php terminal db migrate --fresh // output: reset table and write all columns.
     php terminal db migrate --fresh --seed // output: reset table and seed it.
     
+    # Module Migrate
+    php terminal db migrate --module=blog // and other parameters can be use.
+
     # Database Seeder:
     php terminal db seed // output: seed all seeders.
     
