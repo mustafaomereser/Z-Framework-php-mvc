@@ -68,7 +68,7 @@ class Validator
                 if (self::{$case}(compact('value', 'equivalent', 'length', 'type', 'key'), $parameters, in_array('nullable', $validateArray), $validateArray, $data)) {
                     $statics[$key] = $value;
                 } else {
-                    $errors[$key][] = (Lang::get("validator.attributes.$key") ?? ($attributeNames[$key] ?? $key)) . " " . Lang::get("validator.errors.$case", self::$errors);
+                    $errors[$key][$case] = (Lang::get("validator.attributes.$key") ?? ($attributeNames[$key] ?? $key)) . " " . Lang::get("validator.errors.$case", self::$errors);
                     unset($data[$key]);
                 }
             }
@@ -79,7 +79,7 @@ class Validator
             if (!$callback) {
                 if (Http::isAjax()) abort(400, Response::json($errors));
                 foreach ($errors as $key => $error_list) foreach ($error_list as $error) Alerts::danger($error);
-                back();
+                // back();
             } else {
                 $callback($errors, $statics);
             }
@@ -147,9 +147,9 @@ class Validator
 
     public static function unique($data, $parameters)
     {
-        if (empty($data['value'])) return true;
-        $column = $parameters['key'] ?? $data['key'];
-        if (!(new DB(@$parameters['db']))->table($data['equivalent'])->where($column, $data['value'])->count()) return true;
-        return false;
+        $unique = (new DB(@$parameters['db']))->table($data['equivalent'])->where(($parameters['key'] ?? $data['key']), $data['value']);
+        if ($ex = @$parameters['ex']) $unique->where('id', '!=', $ex);
+        if ($unique->count()) return false;
+        return true;
     }
 }

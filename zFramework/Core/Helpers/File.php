@@ -134,6 +134,9 @@ class File
             'jpg' => function () use ($file) {
                 return imagecreatefromjpeg($file);
             },
+            'jpeg' => function () use ($file) {
+                return imagecreatefromjpeg($file);
+            },
             'png' => function () use ($file) {
                 return imagecreatefrompng($file);
             },

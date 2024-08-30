@@ -16,6 +16,7 @@ class DB
     private $driver;
     private $dbname;
     private $sql_debug = false;
+    private $wherePrev = 'AND';
     /**
      * Options parameters
      */
@@ -23,6 +24,7 @@ class DB
     public $buildQuery   = [];
     public $cache        = [];
     public $specialChars = false;
+    public $setClosures  = true;
 
     /**
      * Initial, Select Database.
@@ -269,12 +271,27 @@ class DB
     }
 
     /**
-     * add a where
+     * add a "AND" where
      * @return self
      */
     public function where()
     {
-        $parameters = func_get_args();
+        $this->wherePrev = 'AND';
+        return self::addWhere(func_get_args());
+    }
+
+    /**
+     * add a "OR" where
+     * @return self
+     */
+    public function whereOr()
+    {
+        $this->wherePrev = 'OR';
+        return self::addWhere(func_get_args());
+    }
+
+    private function addWhere($parameters)
+    {
         if (gettype($parameters[0]) == 'array') {
             $type    = 'group';
             $queries = [];
@@ -417,7 +434,7 @@ class DB
     private function prepareWhere(array $data)
     {
         $key      = $data[0];
-        $prev     = "AND";
+        $prev     = $this->wherePrev;
         $operator = "=";
         $value    = null;
 
@@ -429,8 +446,6 @@ class DB
             $operator = $data[1];
             $value    = $data[2];
         }
-
-        if ($count > 3) $prev = $data[3];
 
         return compact('key', 'operator', 'value', 'prev');
     }
@@ -459,14 +474,14 @@ class DB
         foreach ($this->buildQuery['where'] as $where_key => $where) {
             $response = "";
             foreach ($where['queries'] as $query_key => $query) {
+                $query['prev'] = mb_strtoupper($query['prev']);
 
                 if (!isset($query['raw'])) if (strlen($query['value']) > 0) {
                     $hashed_key = $this->hashedKey($query['key']);
                     $this->buildQuery['data'][$hashed_key] = $query['value'];
                 }
 
-
-                if (count($where['queries']) == 1) $prev = ($where_key + $query_key > 0) ? $query['prev'] . " " : null;
+                if (count($where['queries']) == 1) $prev = ($where_key + $query_key > 0) ? $query['prev'] : null;
                 else $prev = ($query_key > 0) ? $query['prev'] : null;
 
                 $response .= implode(" ", [
@@ -477,7 +492,7 @@ class DB
                 ]);
             }
 
-            if ($where['type'] == 'group') $response = $where['queries'][0]['prev'] . " (" . rtrim($response) . ")";
+            if ($where['type'] == 'group') $response = (!empty($output) ? $where['queries'][0]['prev'] . " " : null) . "(" . rtrim($response) . ") ";
             $output .= $response;
         }
 
@@ -553,21 +568,24 @@ class DB
      */
     public function get()
     {
-        $rows        = $this->run()->fetchAll(\PDO::FETCH_ASSOC);
-        $primary_key = $this->getPrimary();
-        foreach ($rows as $key => $row) {
-            foreach ($GLOBALS['model-closures'][$this->table] as $closure) $rows[$key][$closure] = function () use ($row, $closure) {
-                return $this->{$closure}($row);
-            };
+        $rows = $this->run()->fetchAll(\PDO::FETCH_ASSOC);
 
-            if (isset($row[$primary_key])) {
-                $rows[$key]['update'] = function ($sets) use ($row, $primary_key) {
-                    return $this->where($primary_key, $row[$primary_key])->update($sets);
+        if ($this->setClosures) {
+            $primary_key = $this->getPrimary();
+            foreach ($rows as $key => $row) {
+                foreach ($GLOBALS['model-closures'][$this->table] as $closure) $rows[$key][$closure] = function () use ($row, $closure) {
+                    return $this->{$closure}($row);
                 };
 
-                $rows[$key]['delete'] = function () use ($row, $primary_key) {
-                    return $this->where($primary_key, $row[$primary_key])->delete();
-                };
+                if (isset($row[$primary_key])) {
+                    $rows[$key]['update'] = function ($sets) use ($row, $primary_key) {
+                        return $this->where($primary_key, $row[$primary_key])->update($sets);
+                    };
+
+                    $rows[$key]['delete'] = function () use ($row, $primary_key) {
+                        return $this->where($primary_key, $row[$primary_key])->delete();
+                    };
+                }
             }
         }
 

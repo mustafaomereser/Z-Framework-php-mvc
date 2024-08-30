@@ -2,11 +2,9 @@
 
 namespace App\Controllers;
 
+use App\Models\User;
 use App\Requests\Welcome\CommandRequest;
 use zFramework\Core\Abstracts\Controller;
-use zFramework\Core\Facades\Alerts;
-use zFramework\Core\Validator;
-use zFramework\Kernel\Terminal;
 
 class HomeController extends Controller
 {
@@ -14,19 +12,30 @@ class HomeController extends Controller
     public function __construct($method)
     {
 
+        echo (new User)
+            ->where('username', 'Test')
+            ->whereOr([['phone', '1'], ['username', 'LIKE', 'test']])
+            ->where('phone', '1')
+            ->buildSQL();
+
+        exit;
+
         // echo "<pre>";
 
         // $validate = Validator::validate([
         //     'test'     => 'admin',
-        //     'password' => 1231231
+        //     'password' => "asdasdasdadasdasdsadsad1231231"
         // ], [
         //     'test'     => ['unique:users key=username'],
         //     'password' => ['type:string', 'min:30']
-        // ], [], function ($errors) {
+        // ], [], function ($errors, $staticts) {
+        //     echo "<pre>";
+        //     echo "Errors:";
         //     print_r($errors);
+        //     echo "Staticts:";
+        //     print_r($staticts);
         // });
-        // // print_r(Alerts::get());
-        // print_r($validate);
+
         // exit;
 
         // print_r((new User)->sqlDebug(true)->paginate());
