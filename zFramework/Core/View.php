@@ -7,7 +7,6 @@ class View
 
     static $binds  = [];
     static $config = [];
-    static $renderMode = false;
     static $view;
     static $data;
     static $sections;
@@ -27,7 +26,6 @@ class View
      */
     private static function reset(): void
     {
-        self::$renderMode = false;
         self::$view       = null;
         self::$data       = null;
         self::$sections   = [];
@@ -43,8 +41,13 @@ class View
     {
         if (isset(self::$binds[$view_name])) $data = array_merge(self::$binds[$view_name](), $data);
 
+        // search view path: start
         $view_path = self::$config['dir'] . '/' . self::parseViewName($view_name);
+        // if doesn't exists in config->dir go search in modules.
+        if (!is_file($view_path)) $view_path = base_path('Modules/' . self::parseViewName($view_name));
+        // if doesn't exists in config->dir go search in whole base path.
         if (!is_file($view_path)) $view_path = base_path(self::parseViewName($view_name));
+        // search view path: end
 
         self::$view = file_get_contents($view_path);
         self::$data = $data;

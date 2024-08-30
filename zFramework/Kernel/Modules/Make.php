@@ -82,7 +82,8 @@ class Make
         $save_to = self::clearPath($_to . "/" . $name . ".php");
 
         if (file_exists($save_to)) return Terminal::text("[color=red]This is already exists. $save_to" . "[/color]");
-        file_put_contents($save_to, str_replace(["{namespace}"], [$to . (strlen($namespace) ? "\\$namespace" : null)], $content));
+
+        file_put_contents($save_to, str_replace(["{namespace}"], [str_replace('/', '\\', $to) . (strlen($namespace) ? "\\$namespace" : null)], $content));
         Terminal::text("[color=green]Asset is created to $save_to" . "[/color]");
     }
 

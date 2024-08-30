@@ -17,6 +17,23 @@ $.showAlerts = alerts => {
     }
 }
 
+$.selectData = (trigger = true, force = false) => $('[data-select]').each((index, item) => {
+    is = $(item);
+    if (is.hasAttr('data-selected') && force == false) return;
+
+    is.attr('data-selected', true);
+    is.attr('data-select').split(',').forEach(e => is.find(`option[value="${e}"]`).prop('selected', true));
+    if (trigger) is.trigger('change');
+});
+
+$.checkData = (trigger = true) => $('[data-check]:not([data-checked])').each((index, item) => {
+    is = $(item);
+    is.attr('data-checked', true);
+    if (parseInt(is.attr('data-check'))) is.prop('checked', true);
+    if (trigger) is.trigger('checked');
+});
+
+
 $.ajaxSetup({
     // beforeSend: jqXHR => $.xhrPool.push(jqXHR),
     // complete: jqXHR => {
@@ -465,6 +482,8 @@ function initTooltips() {
 
 function init() {
     initModals();
+    $.selectData(false);
+    $.checkData(false);
     $(() => initTooltips());
 }
 

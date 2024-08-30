@@ -290,7 +290,12 @@ class DB
         return self::addWhere(func_get_args());
     }
 
-    private function addWhere($parameters)
+    /**
+     * Add where item.
+     * @param array $parameters
+     * @return self
+     */
+    private function addWhere(array $parameters)
     {
         if (gettype($parameters[0]) == 'array') {
             $type    = 'group';

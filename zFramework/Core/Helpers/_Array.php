@@ -107,14 +107,14 @@ class _Array
     }
 
     /**
-     * Array Filter. 
+     * Array Compare. 
      * desctiption: Array keys must ineteger
      * @param array $array1
      * @param array $array2
      * @param \Closure $callback
      * @return array
      */
-    public static function filter(array $array1, array $array2, \Closure $callback): array
+    public static function compare(array $array1, array $array2, \Closure $callback): array
     {
         $output = [];
         foreach ($array1 as $key => $value) if ($callback($value, $array2[$key])) $output[$key] = $value;

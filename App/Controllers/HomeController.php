@@ -12,13 +12,13 @@ class HomeController extends Controller
     public function __construct($method)
     {
 
-        echo (new User)
-            ->where('username', 'Test')
-            ->whereOr([['phone', '1'], ['username', 'LIKE', 'test']])
-            ->where('phone', '1')
-            ->buildSQL();
+        // echo (new User)
+        //     ->where('username', 'Test')
+        //     ->whereOr([['phone', '1'], ['username', 'LIKE', 'test']])
+        //     ->where('phone', '1')
+        //     ->buildSQL();
 
-        exit;
+        // exit;
 
         // echo "<pre>";
 

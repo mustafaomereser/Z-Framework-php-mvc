@@ -27,6 +27,10 @@ $lang_list = Lang::list();
             </div>
             <div class="float-end">
                 <div class="d-flex align-items-center gap-2">
+                    <?php foreach ($GLOBALS['menu'] ?? [] as $module => $menu) : ?>
+                        <a href="<?= $menu['route'] ?>"><i class="<?= $menu['icon'] ?>"></i> <?= $menu['title'] ?></a>
+                    <?php endforeach ?>
+
                     <div id="auth-content"></div>
 
                     <div class="btn-group">

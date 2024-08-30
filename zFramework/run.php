@@ -54,15 +54,16 @@ class Run
 
     public static function loadModules()
     {
-        foreach (self::$modules as $module) self::includer(base_path("/modules/" . $module['module'] . "/route"));
+        foreach (self::$modules as $module) {
+            self::includer(base_path("/modules/" . $module['module'] . "/route"));
+            if ($module['status']) if (isset($module['callback'])) $module['callback']();
+        }
         return new self();
     }
 
     public static function begin()
     {
         ob_start();
-        $start = microtime();
-
         try {
             # set view options
             \zFramework\Core\View::settingUP([
@@ -77,7 +78,6 @@ class Run
             self::includer('../App/Middlewares/autoload.php');
             self::initProviders()::findModules()::loadModules();
             self::includer('../route');
-            @self::$loadtime = ((microtime() + 0.003) - $start);
 
             if (!Config::get('crypt')) throw new \Exception('Create a crypt key with terminal. Command is: php terminal security key --regen', 1000);
 
