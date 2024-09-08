@@ -127,6 +127,7 @@ class DB
         return $this->primary ?? $GLOBALS["DB"][$this->dbname]["TABLE_COLUMNS"][$this->table]['primary'];
     }
 
+    #region Columns Controls
 
     /**
      * Get table columns
@@ -149,6 +150,30 @@ class DB
         foreach ($GLOBALS["DB"][$this->dbname]["TABLE_COLUMNS"][$this->table]['columns'] as $column) $columns[$column['COLUMN_NAME']] = $column['CHARACTER_MAXIMUM_LENGTH'] ?? 65535;
         return $columns;
     }
+
+    /**
+     * compare data and Columns max length
+     * @param array $data
+     * @return array
+     */
+    public function compareColumnsLength(array $data)
+    {
+        $errors    = [];
+        $lengthies = $this->columnsLength();
+        foreach ($data as $key => $value) {
+            $length = strlen($value);
+            if ($length > $lengthies[$key]) $errors[$key] = [
+                'length' => $length,
+                'excess' => $length - $lengthies[$key],
+                'max'    => $lengthies[$key],
+            ];
+        }
+
+        return $errors;
+    }
+
+    #endregion
+
 
     #region Preparing
     /**
@@ -706,26 +731,6 @@ class DB
         ];
     }
 
-    /**
-     * compare data and Columns max length
-     * @param array $data
-     * @return array
-     */
-    public function compareColumnsLength(array $data)
-    {
-        $errors    = [];
-        $lengthies = $this->columnsLength();
-        foreach ($data as $key => $value) {
-            $length = strlen($value);
-            if ($length > $lengthies[$key]) $errors[$key] = [
-                'length' => $length,
-                'excess' => $length - $lengthies[$key],
-                'max'    => $lengthies[$key],
-            ];
-        }
-
-        return $errors;
-    }
 
     /**
      * Insert a row to database
