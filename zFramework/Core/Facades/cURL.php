@@ -36,6 +36,20 @@ class cURL
     }
 
     /**
+     * Set Request Headers
+     * @param array $headers
+     * @return self
+     */
+
+    public static function headers(array $headers)
+    {
+        $output = [];
+        foreach ($headers as $key => $value) $output[] = "$key: $value";
+        curl_setopt(self::$cURL, CURLOPT_HTTPHEADER, $output);
+        return new self();
+    }
+
+    /**
      * Set Options
      * @param array $options
      * @return self

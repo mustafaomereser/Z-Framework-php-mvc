@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'home-page'      => 'Ana Sayfa',
     'welcome'        => 'Hoş geldin!',
     'languages'      => 'Diller',
     'current'        => 'Mevcut',

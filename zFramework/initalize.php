@@ -4,7 +4,7 @@ define('FRAMEWORK_VERSION', '2.6.5');
 header("X-Powered-By: zFramework v" . FRAMEWORK_VERSION);
 
 // Initalize settings
-date_default_timezone_set('ETC/UTC');
+date_default_timezone_set('Europe/Istanbul');
 
 // Session: Start
 $storage_path = FRAMEWORK_PATH . "/storage";

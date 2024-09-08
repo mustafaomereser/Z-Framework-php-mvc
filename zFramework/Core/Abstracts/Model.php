@@ -17,6 +17,7 @@ abstract class Model extends DB
     public $updated_at;
     public $deleted_at;
     public $not_closures  = ['beginQuery'];
+    public $_not_found    = 'Not found.';
 
     /**
      * Run parent construct and set table.

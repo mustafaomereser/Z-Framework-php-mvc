@@ -45,12 +45,13 @@ class Date
     }
 
     /**
-     * Current Timestamp For Mysql Or Mssql
+     * Current Timestamp For Mysql
+     * @param string $strtotime
      * @return string
      */
-    public static function timestamp(): string
+    public static function timestamp(string $strtotime = '-0 days'): string
     {
-        return date('Y-m-d H:i:s');
+        return date('Y-m-d H:i:s', strtotime($strtotime));
     }
 
     /**

@@ -15,7 +15,8 @@ class User extends Model
      */
     // public $observe_key  = 0;
 
-    public $table    = "users";
+    public $table      = "users";
+    public $_not_found = 'User is not found.';
     // public $guard    = ['password', 'api_token'];
 
     # every reset after begin query.
@@ -33,7 +34,7 @@ class User extends Model
      *   foreach ($users as $user) $user['posts']()->get();
      * *****
      */
-    public function posts($values)
+    public function posts(array $values)
     {
         return $this->hasMany(Posts::class, $values['id'], 'user_id');
     }

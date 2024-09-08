@@ -11,7 +11,10 @@ trait OrMethods
      */
     public function firstOrFail($exception = null)
     {
+        if ($exception == null) $exception = $this->_not_found;
+
         $row = $this->first();
+
         if (!count($row)) {
             if (is_string($exception)) abort(404, $exception);
             if (is_object($exception)) $exception();

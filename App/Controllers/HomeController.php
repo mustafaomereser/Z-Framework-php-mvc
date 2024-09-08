@@ -11,7 +11,22 @@ class HomeController extends Controller
 
     public function __construct($method)
     {
+        // $users = (new User);
+        // echo "<pre>";
+        // print_r(
+        //     $users->columns()
+        // );
 
+        // print_r(
+        //     $users->columnsLength()
+        // );
+
+        // print_r(
+        //     $users->compareColumnsLength([
+        //         'username' => 'testtesttesttesttesttesttesttesttesttesttesttesttesttest'
+        //     ])
+        // );
+        // exit;
         // echo (new User)
         //     ->where('username', 'Test')
         //     ->whereOr([['phone', '1'], ['username', 'LIKE', 'test']])

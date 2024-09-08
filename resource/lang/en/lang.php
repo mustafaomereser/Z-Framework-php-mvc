@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'home-page'      => 'Home Page',
     'welcome'        => 'Welcome!',
     'languages'      => 'Languages',
     'current'        => 'Current',

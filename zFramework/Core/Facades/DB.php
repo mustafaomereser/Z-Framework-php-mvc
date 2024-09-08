@@ -127,6 +127,29 @@ class DB
         return $this->primary ?? $GLOBALS["DB"][$this->dbname]["TABLE_COLUMNS"][$this->table]['primary'];
     }
 
+
+    /**
+     * Get table columns
+     * @return array
+     */
+    public function columns()
+    {
+        $columns = array_column($GLOBALS["DB"][$this->dbname]["TABLE_COLUMNS"][$this->table]['columns'], 'COLUMN_NAME');
+        if (count($this->guard ?? [])) $columns = array_diff($columns, $this->guard);
+        return $columns;
+    }
+
+    /**
+     * Get table column's lengths 
+     * @return array
+     */
+    public function columnsLength()
+    {
+        $columns = [];
+        foreach ($GLOBALS["DB"][$this->dbname]["TABLE_COLUMNS"][$this->table]['columns'] as $column) $columns[$column['COLUMN_NAME']] = $column['CHARACTER_MAXIMUM_LENGTH'] ?? 65535;
+        return $columns;
+    }
+
     #region Preparing
     /**
      * Observer trigger on CRUD methods.
@@ -574,7 +597,6 @@ class DB
     public function get()
     {
         $rows = $this->run()->fetchAll(\PDO::FETCH_ASSOC);
-
         if ($this->setClosures) {
             $primary_key = $this->getPrimary();
             foreach ($rows as $key => $row) {
@@ -582,17 +604,21 @@ class DB
                     return $this->{$closure}($row);
                 };
 
-                if (isset($row[$primary_key])) {
-                    $rows[$key]['update'] = function ($sets) use ($row, $primary_key) {
-                        return $this->where($primary_key, $row[$primary_key])->update($sets);
-                    };
+                if (!isset($row[$primary_key])) continue;
 
-                    $rows[$key]['delete'] = function () use ($row, $primary_key) {
-                        return $this->where($primary_key, $row[$primary_key])->delete();
-                    };
-                }
+                $rows[$key]['update'] = function ($sets) use ($row, $primary_key) {
+                    return $this->where($primary_key, $row[$primary_key])->update($sets);
+                };
+
+                $rows[$key]['delete'] = function () use ($row, $primary_key) {
+                    return $this->where($primary_key, $row[$primary_key])->delete();
+                };
+
+                // $rows[$key] = new \ArrayObject($rows[$key], \ArrayObject::ARRAY_AS_PROPS);
             }
         }
+
+        // $rows = new \ArrayObject($rows, \ArrayObject::ARRAY_AS_PROPS);
 
         return $rows;
     }
@@ -681,6 +707,27 @@ class DB
     }
 
     /**
+     * compare data and Columns max length
+     * @param array $data
+     * @return array
+     */
+    public function compareColumnsLength(array $data)
+    {
+        $errors    = [];
+        $lengthies = $this->columnsLength();
+        foreach ($data as $key => $value) {
+            $length = strlen($value);
+            if ($length > $lengthies[$key]) $errors[$key] = [
+                'length' => $length,
+                'excess' => $length - $lengthies[$key],
+                'max'    => $lengthies[$key],
+            ];
+        }
+
+        return $errors;
+    }
+
+    /**
      * Insert a row to database
      * @param array $sets
      * @return self
@@ -742,7 +789,7 @@ class DB
     public function delete()
     {
         $this->trigger('delete');
-        if (!isset($this->softDelete)) $delete = $this->run(__FUNCTION__);
+        if (!isset($this->softDelete)) $delete = $this->run(__FUNCTION__)->rowCount();
         else $delete = $this->update([$this->deleted_at => date('Y-m-d H:i:s')]);
         $this->trigger('deleted');
 
@@ -774,7 +821,7 @@ class DB
         $limit = $this->getLimit();
         switch ($type) {
             case 'select':
-                $select = $this->getSelect() ?? (!count($this->guard ?? []) ? "$this->table.*" : implode(", ", array_diff(array_column($GLOBALS["DB"][$this->dbname]["TABLE_COLUMNS"][$this->table]['columns'], 'COLUMN_NAME'), $this->guard)));
+                $select = $this->getSelect() ?? count($this->guard ?? []) ? "$this->table." . implode(", $this->table.", $this->columns()) : "$this->table.*";
                 $type   = "SELECT $select FROM";
                 break;
 
