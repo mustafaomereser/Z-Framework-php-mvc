@@ -39,6 +39,13 @@ class Db
         return false;
     }
 
+    private static function recursiveScanMigrations($path)
+    {
+        $files = [];
+        foreach (new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::SKIP_DOTS)) as $file) if ($file->isFile()) $files[] = $file->getPathname();
+        return $files;
+    }
+
     public static function migrate()
     {
         $MySQL_defines = ['CURRENT_TIMESTAMP'];
@@ -52,18 +59,18 @@ class Db
             # select one module migrations
             $module = BASE_PATH . ("/modules/" . Terminal::$parameters['--module']);
             if (!is_dir($module)) return Terminal::text("[color=red]You haven't a module like this.[/color]");
-            foreach (glob("$module/$migrations_path/*.php") as $row) $migrations[] = $row;
+            foreach (self::recursiveScanMigrations("$module/$migrations_path") as $row) $migrations[] = $row;
             Terminal::text('[color=blue]You have selected a module: `' . Terminal::$parameters['--module'] . '`.[/color]');
             #
         } else if (in_array('--module', Terminal::$parameters)) {
             # select all modules migrations
-            foreach (array_column(Run::findModules()::$modules, 'module') as $module) foreach (glob(BASE_PATH . ("/modules/$module") . "/$migrations_path/*.php") as $row) $migrations[] = $row;
+            foreach (array_column(Run::findModules()::$modules, 'module') as $module) foreach (self::recursiveScanMigrations(BASE_PATH . ("/modules/$module") . "/$migrations_path") as $row) $migrations[] = $row;
             Terminal::text('[color=blue]All modules migrates selected.[/color]');
             #       
         } else {
             # default migrations
-            foreach (glob(BASE_PATH . "/database/$migrations_path/*.php") as $row) $migrations[] = $row;
-            #
+            foreach (self::recursiveScanMigrations(BASE_PATH . "/database/$migrations_path") as $row) $migrations[] = $row;
+            # 
         }
 
         if (!count($migrations)) {
