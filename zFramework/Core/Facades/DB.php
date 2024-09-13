@@ -858,7 +858,8 @@ class DB
         $limit = $this->getLimit();
         switch ($type) {
             case 'select':
-                $select = $this->getSelect() ?? count($this->guard ?? []) ? "$this->table." . implode(", $this->table.", $this->columns()) : "$this->table.*";
+                $select = $this->getSelect();
+                $select = strlen($select) ? $select : (count($this->guard ?? []) ? "$this->table." . implode(", $this->table.", $this->columns()) : "$this->table.*");
                 $type   = "SELECT $select FROM";
                 break;
 
