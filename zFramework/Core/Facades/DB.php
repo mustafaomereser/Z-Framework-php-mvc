@@ -411,6 +411,38 @@ class DB
     }
 
     /**
+     * Where MOT In sql build.
+     * @param string $column
+     * @param array $in
+     * @param string $prev
+     * @return self
+     */
+    public function whereNotIn(string $column, array $in = [], string $prev = "AND")
+    {
+        $hashed_keys = [];
+        foreach ($in as $val) {
+            $hashed_key    = $this->hashedKey($column);
+            $hashed_keys[] = $hashed_key;
+            $this->buildQuery['data'][$hashed_key] = $val;
+        }
+
+        $this->buildQuery['where'][] = [
+            'type'     => 'row',
+            'queries'  => [
+                [
+                    'raw'      => true,
+                    'key'      => $column,
+                    'operator' => 'NOT IN',
+                    'value'    => '(:' . implode(', :', $hashed_keys) . ')',
+                    'prev'     => $prev
+                ]
+            ]
+        ];
+
+        return $this;
+    }
+
+    /**
      * Where between sql build.
      * @param string $column
      * @param mixed $start
