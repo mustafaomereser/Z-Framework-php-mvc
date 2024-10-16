@@ -118,23 +118,31 @@ class File
      * @param string $file
      * @param int $width
      * @param int $height
+     * @param string $_target
+     * @param bool $info_size
      * @return string
      */
-    public static function resizeImage(string $file, int $width = 50, int $height = 50): string
+    public static function resizeImage(string $file, int $width = 50, int $height = 50, string $_target = null, bool $info_size = false): string
     {
 
         $file = public_path($file);
         if (!is_file($file)) return false;
 
+        $ext = strtolower(pathinfo($file)['extension']);
+
         list($image_width, $image_height) = getimagesize($file);
 
-        $target = imagecreatetruecolor($width, $height);
+        $src_aspect = $image_width / $image_height;
+        $dst_aspect = $width / $height;
+
+        if ($src_aspect > $dst_aspect) {
+            $height = $width / $src_aspect;
+        } else {
+            $width  = $height * $src_aspect;
+        }
 
         $source = [
             'jpg' => function () use ($file) {
-                return imagecreatefromjpeg($file);
-            },
-            'jpeg' => function () use ($file) {
                 return imagecreatefromjpeg($file);
             },
             'png' => function () use ($file) {
@@ -149,13 +157,24 @@ class File
             'bmp' => function () use ($file) {
                 return imagecreatefrombmp($file);
             },
-        ][strtolower(pathinfo($file)['extension'])]();
+        ][$ext]();
 
+        $target = imagecreatetruecolor($width, $height);
         imagecopyresampled($target, $source, 0, 0, 0, 0, $width, $height, $image_width, $image_height);
 
-        $ext = @end(explode('.', $file));
+        $to_save = self::removePublic($file);
+        if ($info_size) $to_save = str_replace(".$ext", '', $file) . "-$width" . "x" . "$height.$ext";
+        if ($_target) {
+            $get_filename = @end(explode('/', str_replace('\\', '/', $file)));
+            $to_save      = "$_target/$get_filename";
+        }
 
-        imagejpeg($target, str_replace(".$ext", '', $file) . "-$width" . "x" . "$height.$ext", 100);
+        imagewebp($target, public_path($to_save), 100);
+
+        // clear cache
+        imagedestroy($source);
+        imagedestroy($target);
+        //
 
         return self::removePublic($file);
     }

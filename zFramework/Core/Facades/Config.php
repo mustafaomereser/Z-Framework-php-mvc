@@ -49,6 +49,7 @@ class Config
         $arr = self::parseUrl($config);
         if (!is_file($arr[0])) return;
 
+        opcache_invalidate($arr[0], true);
         $config = include($arr[0]);
 
         if (isset($arr[1])) {
@@ -69,11 +70,15 @@ class Config
     public static function set(string $config, array $sets, bool $compare = true)
     {
         $path = self::parseUrl($config, true)[0];
-        $data = self::get($config);
 
-        if ($compare == true) foreach ($sets as $key => $set)
-            if ($set !== 'CONF_VAR_UNSET') $data[$key] = $set;
-            else unset($data[$key]);
+        if ($compare == true) {
+            $data = self::get($config);
+            foreach ($sets as $key => $set)
+                if ($set !== 'CONF_VAR_UNSET') $data[$key] = $set;
+                else unset($data[$key]);
+        } else {
+            $data = $sets;
+        }
 
         file_put_contents(strstr($path, '.php') ? $path : "$path.php", "<?php \nreturn " . var_export($data, true) . ";");
     }

@@ -36,7 +36,7 @@ class Lang
      */
     public static function locale(string $lang = null, bool $syncCookie = true): bool
     {
-        $lang = ($lang ?? substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2));
+        $lang = ($lang ?? substr($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? config('app.title') ?? '', 0, 2));
         if (!$path = self::canSelect($lang)) return self::locale(Config::get('app.lang') ?? self::list()[0]);
         if ($syncCookie) setcookie('lang', $lang, time() * 2, '/');
 
