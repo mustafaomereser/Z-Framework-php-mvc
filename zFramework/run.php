@@ -67,9 +67,10 @@ class Run
         try {
             # set view options
             \zFramework\Core\View::settingUP([
-                'caches' => FRAMEWORK_PATH . '/storage/views',
-                'dir'    => BASE_PATH . '/resource/views',
-                'suffix' => ''
+                'caching' => true,
+                'caches'  => FRAMEWORK_PATH . '/storage/views',
+                'dir'     => BASE_PATH . '/resource/views',
+                'suffix'  => ''
             ]);
 
             // includes

@@ -53,17 +53,23 @@ class View
         self::$data = $data;
         self::parse();
 
-        // crate views folder.
-        @mkdir(self::$config['caches'], 0777, true);
-        //
 
-        $cache = self::$config['caches'] . '/' . $view_name . '.stored.php';
-        // if (!file_exists($cache) || filemtime($cache) < filemtime($view_path)) 
-        file_put_contents($cache, self::$view);
+        if (self::$config['caching']) {
+            # crate views folder.
+            @mkdir(self::$config['caches'], 0777, true);
+            $cache = self::$config['caches'] . '/' . $view_name . '.stored.php';
+            file_put_contents($cache, self::$view);
+        }
 
         ob_start();
         extract($data);
-        include($cache);
+
+        if (self::$config['caching']) {
+            include($cache);
+        } else {
+            echo eval('?>' . self::$view);
+        }
+
         $output = ob_get_clean();
         self::reset();
 

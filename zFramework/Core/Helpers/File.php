@@ -163,7 +163,7 @@ class File
         imagecopyresampled($target, $source, 0, 0, 0, 0, $width, $height, $image_width, $image_height);
 
         $to_save = self::removePublic($file);
-        if ($info_size) $to_save = str_replace(".$ext", '', $file) . "-$width" . "x" . "$height.$ext";
+        if ($info_size) $to_save = str_replace(".$ext", '', $to_save) . "-$width" . "x" . "$height.$ext";
         if ($_target) {
             $get_filename = @end(explode('/', str_replace('\\', '/', $file)));
             $to_save      = "$_target/$get_filename";

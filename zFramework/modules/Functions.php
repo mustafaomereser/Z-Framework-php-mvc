@@ -20,7 +20,7 @@ function base_path($url = null)
 // Get project's public path
 function public_path($url = null)
 {
-    return base_path('/' . zFramework\Core\Facades\Config::get('app.public')) . $url;
+    return base_path(zFramework\Core\Facades\Config::get('app.public')) . $url;
 }
 
 // Get Run's server's host.
