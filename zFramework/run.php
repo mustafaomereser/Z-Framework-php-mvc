@@ -66,12 +66,6 @@ class Run
         ob_start();
         try {
             # set view options
-            \zFramework\Core\View::settingUP([
-                'caching' => true,
-                'caches'  => FRAMEWORK_PATH . '/storage/views',
-                'dir'     => BASE_PATH . '/resource/views',
-                'suffix'  => ''
-            ]);
 
             // includes
             self::includer('../zFramework/modules', false);
@@ -80,6 +74,11 @@ class Run
             self::initProviders()::findModules()::loadModules();
             self::includer('../route');
 
+            \zFramework\Core\View::settingUP(array_merge([
+                'caches'  => FRAMEWORK_PATH . '/storage/views',
+                'dir'     => BASE_PATH . '/resource/views',
+                'suffix'  => ''
+            ], Config::get('view')));
             if (!Config::get('crypt')) throw new \Exception('Create a crypt key with terminal. Command is: php terminal security key --regen', 1000);
 
             \zFramework\Core\Route::run();
