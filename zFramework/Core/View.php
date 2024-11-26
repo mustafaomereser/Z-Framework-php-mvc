@@ -73,7 +73,7 @@ class View
         $output = ob_get_clean();
         self::reset();
 
-        if (@self::$config['minify'] ?? false) $output = preg_replace(['/>\s+</', '/\s+(?=[^"\'`]*(?:["\'`][^"\'`]*["\'`][^"\'`]*)*$)/'], ['><', ' '], $output);
+        if (@self::$config['minify'] ?? false) $output = preg_replace(['/\s+/', '/\s*(<.*?>)\s*/', '/(>)\s*(<)/', '/<!--(.|\s)*?-->/'], [' ', '$1', '$1$2', ''], $output);
         return $output;
     }
 
