@@ -188,7 +188,7 @@ class Route
     {
         while (strstr($args[0], '//')) $args[0] = str_replace(['//'], ['/'], $args[0]);
 
-        $method = strtoupper($method);
+        $method = strtoupper($method ?? '');
         $URI    = explode('/', substr(strtok($_SERVER['REQUEST_URI'], '?'), 1));
         $URL    = explode('/', substr($args[0], 1));
 

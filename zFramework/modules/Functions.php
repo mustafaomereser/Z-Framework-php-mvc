@@ -42,7 +42,7 @@ function host()
 function asset($value)
 {
     $value = str_replace("//", "/", "/$value");
-    return host() . $value . "?v=" . filemtime(public_path($value));
+    return host() . $value . "?v=" . filemtime(public_dir($value));
 }
 
 // Redirect to url what are you want.
