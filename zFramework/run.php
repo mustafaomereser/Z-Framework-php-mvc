@@ -68,11 +68,11 @@ class Run
             # set view options
 
             // includes
-            self::includer('../zFramework/modules', false);
-            self::includer('../zFramework/modules/error_handlers/handle.php');
-            self::includer('../App/Middlewares/autoload.php');
+            self::includer(BASE_PATH . '/zFramework/modules', false);
+            self::includer(BASE_PATH . '/zFramework/modules/error_handlers/handle.php');
+            self::includer(BASE_PATH . '/App/Middlewares/autoload.php');
             self::initProviders()::findModules()::loadModules();
-            self::includer('../route');
+            self::includer(BASE_PATH . '/route');
 
             \zFramework\Core\View::settingUP(array_merge([
                 'caches'  => FRAMEWORK_PATH . '/storage/views',
