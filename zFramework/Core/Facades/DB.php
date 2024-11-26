@@ -559,9 +559,9 @@ class DB
         foreach ($this->buildQuery['where'] as $where_key => $where) {
             $response = "";
             foreach ($where['queries'] as $query_key => $query) {
-                $query['prev'] = mb_strtoupper($query['prev']);
+                $query['prev'] = strtoupper($query['prev']);
 
-                if (!isset($query['raw'])) if (strlen($query['value']) > 0) {
+                if (!isset($query['raw'])) if (strlen($query['value'] ?? '') > 0) {
                     $hashed_key = $this->hashedKey($query['key']);
                     $this->buildQuery['data'][$hashed_key] = $query['value'];
                 }
@@ -573,7 +573,7 @@ class DB
                     $prev,
                     $query['key'],
                     $query['operator'],
-                    (isset($query['raw']) ? $query['value'] . " " : (strlen($query['value']) > 0 ? ":$hashed_key " : null))
+                    (isset($query['raw']) ? $query['value'] . " " : (strlen($query['value'] ?? '') > 0 ? ":$hashed_key " : null))
                 ]);
             }
 
@@ -859,7 +859,7 @@ class DB
         switch ($type) {
             case 'select':
                 $select = $this->getSelect();
-                $select = strlen($select) ? $select : (count($this->guard ?? []) ? "$this->table." . implode(", $this->table.", $this->columns()) : "$this->table.*");
+                $select = strlen($select ?? '') ? $select : (count($this->guard ?? []) ? "$this->table." . implode(", $this->table.", $this->columns()) : "$this->table.*");
                 $type   = "SELECT $select FROM";
                 break;
 

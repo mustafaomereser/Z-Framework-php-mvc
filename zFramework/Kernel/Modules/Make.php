@@ -30,7 +30,7 @@ class Make
         $assets = glob(self::$assets_path . "*");
         foreach ($assets as $key => $val) {
             unset($assets[$key]);
-            $assets[mb_strtolower(str_replace(self::$assets_path, '', $val))] = $val;
+            $assets[strtolower(str_replace(self::$assets_path, '', $val))] = $val;
         }
         self::$assets = $assets;
     }
@@ -44,7 +44,7 @@ class Make
         $table_name = "";
 
         foreach (str_split($name) as $key => $char) {
-            if (ctype_upper($char)) $table_name .= ($key != 0 ? '_' : null) . mb_strtolower($char);
+            if (ctype_upper($char)) $table_name .= ($key != 0 ? '_' : null) . strtolower($char);
             else $table_name .= $char;
         }
 

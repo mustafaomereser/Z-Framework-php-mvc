@@ -71,7 +71,7 @@ class Terminal
         self::clear();
 
         try {
-            $module = "\zFramework\Kernel\Modules\\" . ucfirst(mb_strtolower(self::$commands[0]));
+            $module = "\zFramework\Kernel\Modules\\" . ucfirst(strtolower(self::$commands[0]));
             $module::begin();
         } catch (\Throwable $e) {
             self::text("[color=yellow]" . $e->getMessage() . "[/color]");

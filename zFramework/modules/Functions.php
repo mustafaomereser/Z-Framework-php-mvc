@@ -1,7 +1,7 @@
 <?php
 
 // Create new database connection string
-function MySQLcreateDatabase($host = "localhost", $dbname, $user, $pass = null, $name = null)
+function MySQLcreateDatabase($host = "localhost", $dbname = "dbname", $user = "root", $pass = null, $name = null)
 {
     return $GLOBALS['databases']['connections'][$name ? $name : $dbname] = ["mysql:host=$host;dbname=$dbname;charset=utf8mb4", $user, $pass];
 }
@@ -68,7 +68,7 @@ function script_name()
 // Get Current URI
 function uri()
 {
-    $uri = str_replace(script_name(), '', $_SERVER['REQUEST_URI']);
+    $uri = str_replace((script_name() ?? ''), '', $_SERVER['REQUEST_URI']);
     if (!strlen($uri)) $add = '/';
     return ($uri . @$add);
 }
@@ -82,7 +82,7 @@ function globals($name, $value = NULL)
 // Get Current Request Method.
 function method()
 {
-    return mb_strtoupper($_POST['_method'] ?? $_SERVER['REQUEST_METHOD']);
+    return strtoupper($_POST['_method'] ?? $_SERVER['REQUEST_METHOD']);
 }
 
 // Show method with ready input

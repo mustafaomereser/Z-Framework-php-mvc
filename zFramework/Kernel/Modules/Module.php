@@ -24,7 +24,7 @@ class Module
         $assets = glob(self::$assets_path . "*");
         foreach ($assets as $key => $val) {
             unset($assets[$key]);
-            $assets[mb_strtolower(str_replace(self::$assets_path, '', $val))] = $val;
+            $assets[strtolower(str_replace(self::$assets_path, '', $val))] = $val;
         }
         self::$assets = $assets;
     }
