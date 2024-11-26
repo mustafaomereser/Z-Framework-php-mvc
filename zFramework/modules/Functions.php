@@ -20,7 +20,7 @@ function base_path($url = null)
 // Get project real public dir.
 function public_dir($url = null)
 {
-    return PUBLIC_DIR . ($url ? "/$url" : null);
+    return PUBLIC_DIR . @$url;
 }
 
 // Get project's public path
