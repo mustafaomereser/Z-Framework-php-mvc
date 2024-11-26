@@ -30,12 +30,12 @@ class File
     }
 
     /**
-     * Remove public_path string
+     * Remove public_dir string
      * @return string
      */
     private static function removePublic(string $name): string
     {
-        return str_replace(public_path(), '', $name);
+        return str_replace(public_dir(), '', $name);
     }
 
     /**
@@ -94,12 +94,12 @@ class File
     }
 
     /**
-     * Download a file from public_path
+     * Download a file from public_dir
      * @param string $file
      */
     public static function download(string $file)
     {
-        $attachment_location = public_path($file);
+        $attachment_location = public_dir($file);
         $filename = self::removePublic(@end(explode('/', str_replace('\\', '/', $file))));
 
         if (!file_exists($attachment_location)) abort(404, 'File not exists.');
@@ -125,7 +125,7 @@ class File
     public static function resizeImage(string $file, int $width = 50, int $height = 50, string $_target = null, bool $info_size = false): string
     {
 
-        $file = public_path($file);
+        $file = public_dir($file);
         if (!is_file($file)) return false;
 
         $ext = strtolower(pathinfo($file)['extension']);
@@ -169,7 +169,7 @@ class File
             $to_save      = "$_target/$get_filename";
         }
 
-        imagewebp($target, public_path($to_save), 100);
+        imagewebp($target, public_dir($to_save), 100);
 
         // clear cache
         imagedestroy($source);
