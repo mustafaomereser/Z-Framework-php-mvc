@@ -64,16 +64,31 @@ class View
         ob_start();
         extract($data);
 
-        if (self::$config['caching']) {
-            include($cache);
-        } else {
-            echo eval('?>' . self::$view);
-        }
+        if (self::$config['caching']) include($cache);
+        else echo eval('?>' . self::$view);
 
         $output = ob_get_clean();
         self::reset();
 
-        if (@self::$config['minify'] ?? false) $output = preg_replace(['/\s+/', '/\s*(<.*?>)\s*/', '/(>)\s*(<)/', '/<!--(.|\s)*?-->/'], [' ', '$1', '$1$2', ''], $output);
+        if (@self::$config['minify'] ?? false) {
+            $parts = preg_split('/(<textarea.*?>.*?<\/textarea>|<pre.*?>.*?<\/pre>|<script.*?>.*?<\/script>)/si', $output, -1, PREG_SPLIT_DELIM_CAPTURE);
+            for ($i = 0; $i < count($parts); $i++) {
+                if ($i % 2 == 0) {
+                    $parts[$i] = preg_replace(['/\s+(?=(?:[^"\'`]*["\'`][^"\'`]*["\'`])*[^"\'`]*$)/', '/>\s+</'], [' ', '><'], $parts[$i]);
+                } else if (strpos($parts[$i], '<script') !== false) {
+                    $script = $parts[$i];
+                    $script = preg_replace('/(?<!:)\/\/.*|\/\*(?!!)[\s\S]*?\*\//', '', $script);
+                    $script = preg_replace('/\s+/', ' ', $script);
+                    $script = preg_replace('/\s*([{}:;,])\s*/', '$1', $script);
+                    $script = preg_replace('/\s*(\(|\)|\[|\])\s*/', '$1', $script);
+                    $script = preg_replace('/([=+\-*\/<>])\s+/', '$1', $script);
+                    $script = preg_replace('/\s+([=+\-*\/<>])/', '$1', $script);
+                    $parts[$i] = trim($script);
+                }
+            }
+            $output = implode('', $parts);
+        }
+
         return $output;
     }
 
