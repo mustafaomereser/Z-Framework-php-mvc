@@ -17,7 +17,8 @@ class Http
     public static function abort(int $code = 418, $message = null)
     {
         http_response_code($code);
+        if (self::isAjax()) die(json_encode(compact('message', 'code'), JSON_UNESCAPED_UNICODE));
         $view = @view(self::$error_view . ".$code", compact('message', 'code'));
-        die(self::isAjax() ? json_encode(compact('message', 'code'), JSON_UNESCAPED_UNICODE) : (!empty($view) ? $view : $message));
+        die(!empty($view) ? $view : $message);
     }
 }
