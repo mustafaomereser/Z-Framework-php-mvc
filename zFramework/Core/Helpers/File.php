@@ -14,7 +14,7 @@ class File
      */
     private static function path(string $path): string
     {
-        $path = public_path($path);
+        $path = public_dir($path);
         @mkdir($path, 0777, true);
         return $path;
     }
