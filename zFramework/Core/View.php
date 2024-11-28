@@ -78,11 +78,14 @@ class View
                 } else if (strpos($parts[$i], '<script') !== false) {
                     $script = $parts[$i];
                     $script = preg_replace('/(?<!:)\/\/.*|\/\*(?!!)[\s\S]*?\*\//', '', $script);
+                    preg_match_all('/(\'[^\']*\'|"[^"]*")/', $script, $strings);
+                    $script = preg_replace('/(\'[^\']*\'|"[^"]*")/', '@@@STRING@@@', $script);
                     $script = preg_replace('/\s+/', ' ', $script);
                     $script = preg_replace('/\s*([{}:;,])\s*/', '$1', $script);
                     $script = preg_replace('/\s*(\(|\)|\[|\])\s*/', '$1', $script);
                     $script = preg_replace('/([=+\-*\/<>])\s+/', '$1', $script);
                     $script = preg_replace('/\s+([=+\-*\/<>])/', '$1', $script);
+                    foreach ($strings[0] as $string) $script = preg_replace('/@@@STRING@@@/', $string, $script, 1);
                     $parts[$i] = trim($script);
                 }
             }
