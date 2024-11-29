@@ -70,22 +70,19 @@ class View
         $output = ob_get_clean();
         self::reset();
 
-        if (@self::$config['minify'] ?? false) {
-            $parts = preg_split('/(<textarea.*?>.*?<\/textarea>|<pre.*?>.*?<\/pre>|<script.*?>.*?<\/script>)/si', $output, -1, PREG_SPLIT_DELIM_CAPTURE);
+      if (@self::$config['minify'] ?? false) {
+            $parts = preg_split('/(<textarea.*?>.*?<\/textarea>|<pre.*?>.*?<\/pre>|<script.*?>.*?<\/script>|<input.*?>)/si', $output, -1, PREG_SPLIT_DELIM_CAPTURE);
             for ($i = 0; $i < count($parts); $i++) {
                 if ($i % 2 == 0) {
                     $parts[$i] = preg_replace(['/\s+(?=(?:[^"\'`]*["\'`][^"\'`]*["\'`])*[^"\'`]*$)/', '/>\s+</'], [' ', '><'], $parts[$i]);
                 } else if (strpos($parts[$i], '<script') !== false) {
                     $script = $parts[$i];
                     $script = preg_replace('/(?<!:)\/\/.*|\/\*(?!!)[\s\S]*?\*\//', '', $script);
-                    preg_match_all('/(\'[^\']*\'|"[^"]*")/', $script, $strings);
-                    $script = preg_replace('/(\'[^\']*\'|"[^"]*")/', '@@@STRING@@@', $script);
                     $script = preg_replace('/\s+/', ' ', $script);
                     $script = preg_replace('/\s*([{}:;,])\s*/', '$1', $script);
                     $script = preg_replace('/\s*(\(|\)|\[|\])\s*/', '$1', $script);
                     $script = preg_replace('/([=+\-*\/<>])\s+/', '$1', $script);
                     $script = preg_replace('/\s+([=+\-*\/<>])/', '$1', $script);
-                    foreach ($strings[0] as $string) $script = preg_replace('/@@@STRING@@@/', $string, $script, 1);
                     $parts[$i] = trim($script);
                 }
             }
